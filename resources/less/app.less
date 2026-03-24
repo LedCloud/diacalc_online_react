@@ -42,13 +42,25 @@
     grid-template-rows: auto;
     grid-auto-flow: row;
 }
+
 .menu-item {
     padding: 3px 5px;
     background-color: #fff;
     border: 1px solid @border-color;
     border-radius: 0;
     margin: 0;
-    &:first-child {
+
+    display: grid;
+    grid-template-columns: auto 70px 20px;
+    grid-template-rows: 2fr 1fr 1fr 2fr;
+    grid-template-areas:
+        "name . closer"
+        "name weight weight"
+        "name weight weight"
+        "descr descr descr";
+    gap: 2px;
+
+    /*&:first-child {
         border-top-left-radius: @border-radius;
         border-top-right-radius: @border-radius;
         margin-top: 2px;
@@ -57,27 +69,59 @@
         border-bottom-left-radius: @border-radius;
         border-bottom-right-radius: @border-radius;
         margin-bottom: 2px;
-    }
+    }*/
     &__name {
-        position: relative;
+        grid-area: name;
+        //grid-column-start: 1;
+        ///*grid-column-end: 3;*/
+        //grid-row-start: 1;
+        /*grid-row-end: 3;*/
+        /*position: relative;
         top: 3px;
-        left: 3px;
+        left: 0;*/
         font-weight: 600;
         font-size: 1.1em;
-        /** add three dost when exceed the width */
+        background-color: gainsboro;
+        /** add three dots when exceed the width */
     }
     &__descr {
-        display: flex;
+        grid-area: descr;
+        background-color: lightblue;
+        /*display: flex;
         flex-direction: row;
         gap: 3px;
         position: relative;
         bottom: 3px;
-        left: 50%;
+        right: 0;*/
+        justify-self: end;
+    }
+    &__weight {
+        grid-area: weight;
+        input {
+            width: 100%;
+            height: 100%;
+            border: #aaa solid thin;
+            box-shadow: none;
+            /*outline: none;
+            border: none;*/
+            &:focus {
+                border: #888 solid thin;
+                box-shadow: none;
+            }
+            &:hover {
+                border: #333 solid thin;
+                box-shadow: none;
+            }
+        }
     }
     &__remove {
-        position: absolute;
+        justify-self: end;
+        grid-area: closer;
+        margin-right: 3px;
+        mergin-top: 3px;
+        /*position: absolute;
         top: 3px;
-        right: 3px;
+        right: 3px;*/
     }
 }
 

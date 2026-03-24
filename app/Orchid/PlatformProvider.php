@@ -35,6 +35,8 @@ class PlatformProvider extends OrchidServiceProvider
     {
         return [
 
+
+
             Menu::make('Get Started')
                 ->icon('bs.book')
                 ->title('Navigation')
@@ -84,8 +86,19 @@ class PlatformProvider extends OrchidServiceProvider
                 ->permission('platform.systems.users')
                 ->divider(),
 
+            Menu::make('Listeners')
+                ->icon('bs.book')
+                ->title('listener')
+                ->route('platform.archive.listeners'),
+
+            Menu::make(__('Product archive'))
+                ->icon('bs.list-columns')
+                ->permission('platform.systems.users')
+                ->route('platform.archive.list'),
+
             Menu::make(__('System'))
-            ->icon('bs.syste')
+            ->icon('bs.system')
+            ->title('Misc system settings')
             //->permission('platform.index')
             ->list([
                 Menu::make(__('Communications'))

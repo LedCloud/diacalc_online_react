@@ -26,3 +26,4 @@ Thumbs.db
 *.gz
 *.zip
 *.tar
+/nbproject/private/

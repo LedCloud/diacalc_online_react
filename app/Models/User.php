@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
@@ -66,4 +68,26 @@ class User extends Authenticatable
         'updated_at',
         'created_at',
     ];
+
+    /**
+     * Get eating associated with the user.
+     */
+    public function eating(): HasOne
+    {
+        return $this->hasOne(Eating::class);
+    }
+    public function setting(): HasOne
+    {
+        return $this->hasOne(Setting::class);
+    }
+
+    public function menus(): HasMany
+    {
+        return $this->hasMany(Menu::class);
+    }
+
+    public function productGroups(): HasMany
+    {
+        return $this->hasMany(ProductGroup::class)->orderBy('sort_order', 'asc');
+    }
 }

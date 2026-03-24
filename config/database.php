@@ -64,7 +64,7 @@ return [
             ]) : [],
         ],
 
-        'old_mysql' => [
+        'old_diacalc' => [
             'driver' => 'mysql',
             'url' => env('OLD_DB_URL'),
             'host' => env('OLD_DB_HOST', '127.0.0.1'),

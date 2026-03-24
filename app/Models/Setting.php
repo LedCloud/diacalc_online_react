@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Setting extends Model
 {
@@ -30,6 +31,14 @@ class Setting extends Model
      */
     protected $keyType = 'string';
 
-    protected $fillable = ['key', 'values'];
+    protected $fillable = ['key', 'values', 'user_id'];
     protected $guarded = [];
+
+    /**
+     * Get the user that owns eating.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

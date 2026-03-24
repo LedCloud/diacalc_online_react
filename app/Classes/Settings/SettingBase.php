@@ -3,6 +3,7 @@
 namespace App\Classes\Settings;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -37,7 +38,7 @@ abstract class SettingBase
      */
     public function getValues(): ?array
     {
-        $record = Setting::firstWhere('key', $this->settingName);
+        $record = auth()->user()->setting()->firstWhere('key', $this->settingName);
 
         if (isset($record)) {
             $recDecoded = json_decode($record->values, true);

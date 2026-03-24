@@ -106,8 +106,6 @@ class CommunicationsScreen extends Screen
             'Emails.use' => 'bool',
         ]);
 
-        Log::info('Checkme', $validated);
-
         (new ContactEmailsSetting())->setValues($validated['Emails']);
 
         Toast::info(__('Test email was saved'));

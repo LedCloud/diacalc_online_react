@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Orchid\Layouts\SubtractListener;
 use App\Orchid\Screens\Examples\ExampleActionsScreen;
 use App\Orchid\Screens\Examples\ExampleCardsScreen;
 use App\Orchid\Screens\Examples\ExampleChartsScreen;
@@ -119,3 +120,17 @@ Route::screen('captcha', \App\Orchid\Screens\System\CaptchaScreen::class)
     /*->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index.system')
         ->push(__('Captcha'), route('platform.systems.captcha')))*/;
+
+Route::screen('archive', \App\Orchid\Screens\System\ArchiveListScreen::class)
+    ->name('platform.archive.list');
+
+Route::screen('edit', \App\Orchid\Screens\System\ArchiveListScreen::class)
+    ->name('platform.archive.group.edit');
+
+//platform.archive.product.edit
+Route::screen('arc/product/edit', \App\Orchid\Screens\System\ArchiveListScreen::class)
+    ->name('platform.archive.product.edit');
+
+
+Route::screen('listeners', \App\Orchid\Screens\System\SubstractScreen::class)
+    ->name('platform.archive.listeners');
