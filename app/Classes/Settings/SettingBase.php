@@ -16,8 +16,16 @@ abstract class SettingBase
 
     protected ?array $params = null;
 
-    public function __construct()
+    protected ?User $user = null;
+
+    public function __construct(User $user)
     {
+        if (isset($user)) {
+            $this->user = $user;
+        } else {
+            $this->user = auth()->user();
+        }
+
         $this->params = $this->getValues();
     }
 
@@ -38,7 +46,7 @@ abstract class SettingBase
      */
     public function getValues(): ?array
     {
-        $record = auth()->user()->setting()->firstWhere('key', $this->settingName);
+        $record = $this->user->setting()->firstWhere('key', $this->settingName);
 
         if (isset($record)) {
             $recDecoded = json_decode($record->values, true);
@@ -55,7 +63,7 @@ abstract class SettingBase
      */
     public function setValues(array $values)
     {
-        Setting::updateOrCreate(
+        $this->user->setting()->updateOrCreate(
             ['key' => $this->settingName],
             ['values' => json_encode(array_merge($this->getValues(), $values))]
         );

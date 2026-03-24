@@ -30,6 +30,9 @@ return new class extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+
+            $table->dropPrimary();
+            $table->primary(['user_id', 'key']);
         });
     }
 
@@ -39,6 +42,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('settings', function(Blueprint $table) {
+            $table->dropForeign('settings_user_id_foreign');
+            $table->dropPrimary();
+            $table->primary(['key']);
+
             $table->dropColumn('user_id');
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Classes\Settings\UserSettings;
 use App\Models\ArcGroup;
 use App\Models\ArcProduct;
 use App\Models\Product;
@@ -63,18 +64,74 @@ class MigrateFromOld extends Command
                 ];
                 $user_id = DB::table('users')->insertGetId($data);
                 echo "User created: $user_id\n";
+                $user = User::find($user_id);
             } else {
                 $user_id = $user->id;
                 echo "User exists: $user_id\n";
             }
+
             //copy settings
+            //$this->moveSettings($user_id, $old_user->id);
 
-            $this->moveProducts($user_id, $old_user->id);
+            //$this->moveProducts($user_id, $old_user->id);
 
-            //copy menus
+            //copy menus content
+                $menu = DB::connection('old_diacalc')
+                ->table('backup_menus')
+                ->where('iduser', $old_user->id)
+                ->get();
+            if ($menu->count()) {
+                $prepared = [];
+                foreach ($menu as $menu_item) {
+                    $prepared[] = [
+                        'name' => $menu_item->name,
+                        'prot' => $menu_item->prot,
+                        'fat' => $menu_item->fat,
+                        'carb' => $menu_item->carb,
+                        'gi' => $menu_item->gi,
+                        'weight' => $menu_item->weight,
+                        'is_snack' => $menu_item->issnack,
+                    ];
+                }
+                if (!empty($prepared)) {
+                    $user->menus()->createMany($prepared);
+                }
+            }
         }
 
         return true;
+    }
+
+    protected function moveSettings($user_id, $old_user_id)
+    {
+        //copy settings
+        $old_settings = DB::connection('old_diacalc')->table('settings')
+            ->where('iduser', $old_user_id)
+            ->first();
+
+        if (empty($old_settings)) {
+            return;
+        }
+
+        $settings = new UserSettings(User::find($user_id));
+
+        $settings->menu_info = $old_settings->menuinfo;
+        $settings->round_to = $old_settings->roundto;
+        $settings->is_plasma = !(bool)$old_settings->shwhole;
+        $settings->is_mmol = $old_settings->mmol;
+        $settings->target = $old_settings->shtarget;
+        $settings->use_freq = $old_settings->usefreq;
+        $settings->freq_qty = $old_settings->freqcount;
+        $settings->filter_off = $old_settings->filteroff;
+        $settings->k3_factor = $old_settings->k3factor;
+        $settings->weight = $old_settings->weight;
+        $settings->factors_by_time = $old_settings->timedcoefs;
+        $settings->calory_limit = $old_settings->calorlimit;
+        $settings->low_level = $old_settings->shlow;
+        $settings->high_level = $old_settings->shhigh;
+        $settings->period = $old_settings->period;
+
+        $settings->setValues(['stub']);
     }
 
     protected function moveProducts($user_id, $old_user_id)

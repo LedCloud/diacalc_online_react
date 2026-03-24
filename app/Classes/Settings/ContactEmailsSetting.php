@@ -38,7 +38,6 @@ class ContactEmailsSetting extends SettingBase
         $values = array_merge($current, $values);
 
         if (array_key_exists('emails', $values)) {
-            Log::info($values['emails']);
             $values['emails'] = implode(',',
                 array_filter(
                     array_map(
@@ -47,7 +46,6 @@ class ContactEmailsSetting extends SettingBase
                     ),
                     fn($el) => filter_var($el, FILTER_VALIDATE_EMAIL))
             );
-            Log::info($values['emails']);
         }
 
         parent::setValues($values);
