@@ -11,9 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->string('key')->unique()->primary();
+        Schema::create('settings', function(Blueprint $table){
+            $table->uuid('id');
+
+            $table->unsignedBigInteger('user_id');
+            $table->string('key');
+
             $table->json('values');
+
+            $table->unique(['user_id', 'key']);
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });

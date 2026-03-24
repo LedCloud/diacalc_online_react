@@ -125,3 +125,31 @@
     }
 }
 
+.tab-header {
+  display: flex;
+  border-bottom: 2px solid #eee;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: 0.3s;
+}
+/* Стиль активной кнопки */
+.tab-btn.active {
+  border-bottom: 2px solid #007bff;
+  color: #007bff;
+}
+
+/* Логика показа контента */
+.tab-pane {
+  display: none; /* Скрываем всё по умолчанию */
+  padding: 20px;
+}
+
+.tab-pane.active {
+  display: block; /* Показываем только активный */
+}

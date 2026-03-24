@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Classes\Settings\UserSettings;
+use App\Classes\Settings\UserSetting;
 use App\Models\ArcGroup;
 use App\Models\ArcProduct;
 use App\Models\Product;
@@ -113,25 +113,25 @@ class MigrateFromOld extends Command
             return;
         }
 
-        $settings = new UserSettings(User::find($user_id));
-
-        $settings->menu_info = $old_settings->menuinfo;
-        $settings->round_to = $old_settings->roundto;
-        $settings->is_plasma = !(bool)$old_settings->shwhole;
-        $settings->is_mmol = $old_settings->mmol;
-        $settings->target = $old_settings->shtarget;
-        $settings->use_freq = $old_settings->usefreq;
-        $settings->freq_qty = $old_settings->freqcount;
-        $settings->filter_off = $old_settings->filteroff;
-        $settings->k3_factor = $old_settings->k3factor;
-        $settings->weight = $old_settings->weight;
-        $settings->factors_by_time = $old_settings->timedcoefs;
-        $settings->calory_limit = $old_settings->calorlimit;
-        $settings->low_level = $old_settings->shlow;
-        $settings->high_level = $old_settings->shhigh;
-        $settings->period = $old_settings->period;
-
-        $settings->setValues(['stub']);
+//        $settings = new SUser(User::find($user_id));
+//
+//        $settings->menu_info = $old_settings->menuinfo;
+//        $settings->round_to = $old_settings->roundto;
+//        $settings->is_plasma = !(bool)$old_settings->shwhole;
+//        $settings->is_mmol = $old_settings->mmol;
+//        $settings->target = $old_settings->shtarget;
+//        $settings->use_freq = $old_settings->usefreq;
+//        $settings->freq_qty = $old_settings->freqcount;
+//        $settings->filter_off = $old_settings->filteroff;
+//        $settings->k3_factor = $old_settings->k3factor;
+//        $settings->weight = $old_settings->weight;
+//        $settings->factors_by_time = $old_settings->timedcoefs;
+//        $settings->calory_limit = $old_settings->calorlimit;
+//        $settings->low_level = $old_settings->shlow;
+//        $settings->high_level = $old_settings->shhigh;
+//        $settings->period = $old_settings->period;
+//
+//        $settings->setValues(['stub']);
     }
 
     protected function moveProducts($user_id, $old_user_id)

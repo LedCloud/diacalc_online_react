@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Setting extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = 'key';
+    //protected $primaryKey = 'id';
 
     /**
      * Indicates if the model's ID is auto-incrementing.

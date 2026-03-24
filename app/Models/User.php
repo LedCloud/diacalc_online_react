@@ -76,15 +76,53 @@ class User extends Authenticatable
     {
         return $this->hasOne(Eating::class);
     }
-    public function setting(): HasOne
+    public function settings(): HasMany
     {
-        return $this->hasOne(Setting::class);
+        return $this->hasMany(Setting::class);
+    }
+
+    public function getSetting($key)
+    {
+        $default = [];
+        $path = "\\App\\Classes\\Settings\\" . $key . "Setting";
+        if (class_exists($path)) {
+            $default = $path::DEFAULT;
+        }
+
+        // Ищем запись в связанных настройках по полю 'key'
+        $setting = $this->settings()->where('key', $key)->first();
+        if (!empty($setting)) {
+            return json_decode($setting->values, true);
+        }
+
+        return $default;
+    }
+
+    public function putSetting($key, $value = [])
+    {
+        $default = [];
+        $path = "\\App\\Classes\\Settings\\" . $key . "Setting";
+        if (class_exists($path)) {
+            $default = $path::DEFAULT;
+        }
+        $merged = json_encode(array_merge($default, $value));
+
+        $this->settings()->upsert([
+            'key' => $key,
+            'values' => $merged,
+            ],['id', 'key'],
+            ['values']);
     }
 
     public function menus(): HasMany
     {
         return $this->hasMany(Menu::class);
     }
+
+//    public function settings(): HasMany
+//    {
+//        return $this->hasMany(Setting::class);
+//    }
 
     public function productGroups(): HasMany
     {
