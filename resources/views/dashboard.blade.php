@@ -9,5 +9,5 @@
             <x-menu />
             <livewire:menu.toolbar />
         </div>
-
+    <livewire:toast-msg />
 </x-app-layout>

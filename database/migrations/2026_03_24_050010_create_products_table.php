@@ -37,7 +37,8 @@ return new class extends Migration
             //to itself
             $table->foreignId('product_id')
                 ->nullable()
-                ->constrained('products');
+                ->constrained('products')
+                ->onDelete('cascade');
         });
     }
 

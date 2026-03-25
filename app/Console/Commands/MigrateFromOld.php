@@ -71,12 +71,12 @@ class MigrateFromOld extends Command
             }
 
             //copy settings
-            //$this->moveSettings($user_id, $old_user->id);
+            $this->moveSettings($user, $old_user->id);
 
-            //$this->moveProducts($user_id, $old_user->id);
+            $this->moveProducts($user, $old_user->id);
 
             //copy menus content
-                $menu = DB::connection('old_diacalc')
+            $menu = DB::connection('old_diacalc')
                 ->table('backup_menus')
                 ->where('iduser', $old_user->id)
                 ->get();
@@ -102,7 +102,7 @@ class MigrateFromOld extends Command
         return true;
     }
 
-    protected function moveSettings($user_id, $old_user_id)
+    protected function moveSettings($user, $old_user_id)
     {
         //copy settings
         $old_settings = DB::connection('old_diacalc')->table('settings')
@@ -112,6 +112,24 @@ class MigrateFromOld extends Command
         if (empty($old_settings)) {
             return;
         }
+        $settings = [
+            'menu_info' => $old_settings->menuinfo,
+            'round_to' => $old_settings->roundto,
+            'is_plasma' => !(bool)$old_settings->shwhole,
+            'is_mmol' => $old_settings->mmol,
+            'target' => $old_settings->shtarget,
+            'use_freq' => $old_settings->usefreq,
+            'freq_qty' => $old_settings->freqcount,
+            'filter_off' => $old_settings->filteroff,
+            'k3_factor' => $old_settings->k3factor,
+            'weight' => $old_settings->weight,
+            'factors_by_time' => $old_settings->timedcoefs,
+            'calory_limit' => $old_settings->calorlimit,
+            'low_level' => $old_settings->shlow,
+            'high_level' => $old_settings->shhigh,
+            'period' => $old_settings->period,
+        ];
+        $user->putSetting('User', $settings);
 
 //        $settings = new SUser(User::find($user_id));
 //
@@ -134,12 +152,13 @@ class MigrateFromOld extends Command
 //        $settings->setValues(['stub']);
     }
 
-    protected function moveProducts($user_id, $old_user_id)
+    protected function moveProducts($user, $old_user_id)
     {
         //Now we have an id and can insert all other datas
         $groups = DB::connection('old_diacalc')
             ->table('backup_groups')
             ->where('iduser', $old_user_id)
+            //->orderBy('sortind', 'asc')
             ->get();
         $group_ids = $groups->pluck('id');
         $products = DB::connection('old_diacalc')
@@ -148,13 +167,12 @@ class MigrateFromOld extends Command
             ->whereIn('idgroup', $group_ids)
             ->get();
         //create groups and products in it
-        $sort_order = 1;
         foreach($groups as $group) {
 
             $created_gr = ProductGroup::create([
                 'name' => $group->name,
-                'user_id' => $user_id,
-                'sort_order' => $sort_order++,
+                'user_id' => $user->id,
+                'sort_order' => $group->sortind,
             ]);
 
             echo "Group is created " . $created_gr->id . "\n";
