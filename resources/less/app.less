@@ -147,7 +147,7 @@
 /* Логика показа контента */
 .tab-pane {
   display: none; /* Скрываем всё по умолчанию */
-  padding: 20px;
+  padding-top: 20px;
 }
 
 .tab-pane.active {
@@ -157,13 +157,14 @@
     &__form {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
     &__btn-save {
         padding: 3px 5px;
         border: 1px solid #888;
         border-radius: 5px;
         box-shadow: 1px 1px 3px #bbb;
+        align-self: flex-start;
     }
 }
 #tab-menu {
@@ -177,6 +178,10 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 3px;
+        margin-bottom: 10px;
+        border: 1px solid #d8afb5;
+        border-radius: 7px;
+        padding: 3px 5px;
         label {
             font-weight: 400;
             font-size: 0.9em;
@@ -186,8 +191,18 @@
             }
         }
     }
+    .field {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+        margin-bottom: 10px;
+    }
 }
 .alert {
+    /*position: absolute;
+    top: 10px;
+    right: 10px;*/
     color: #333;
     padding: 10px 20px;
     border-radius: 5px;
@@ -199,4 +214,50 @@
 .alert-success {
     background-color: #e9f6eb;
     color: #449f55;
+}
+.menu-panes {
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "first second third"
+        "button notification notification"
+        ;
+    gap: 15px;
+    justify-content: stretch;
+    align-content: stretch;
+    align-items: stretch;
+    &__pane {
+        height: 100%;
+        border: 1px solid #666;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        grid-area: second;
+        &_header {
+            background-color: #f1f1f1;
+            border-top: 1px solid #666;
+            border-left: 1px solid #666;
+            border-right: 1px solid #666;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding: 10px 10px 5px;
+        }
+        &_content {
+            background-color: #fff;
+            border-bottom: 1px solid #666;
+            border-left: 1px solid #666;
+            border-right: 1px solid #666;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding: 5px 10px 5px 10px;
+            color: #333;
+        }
+        &:first-child {
+            grid-area: first;
+        }
+        &:last-child {
+            grid-area: third;
+        }
+    }
 }
