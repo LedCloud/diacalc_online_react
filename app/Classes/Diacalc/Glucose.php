@@ -2,6 +2,8 @@
 
 namespace App\Classes\Diacalc;
 
+use Illuminate\Support\Facades\Log;
+
 class Glucose
 {
     protected static $settings = null;
@@ -42,7 +44,7 @@ class Glucose
         }
 
         return $value / (
-                (static::$settings['is_plasma'] ? 1.12 : 1) * (static::$settings['is_mmol'] ? 1 : 18)
+                ($is_plasma ? 1.12 : 1) * ($is_mmol ? 1 : 18)
             );
     }
 
@@ -51,12 +53,41 @@ class Glucose
         return $this->value;
     }
 
-    public function setGlucose($value)
+    public function setGlucose($value): Glucose
     {
+        static::init();
+
+        $this->initMmol();
+        $this->initPlasma();
+
         //convert to mmol and whole
-        $this->value = $value / (
-            (static::$settings['is_plasma'] ? 1.12 : 1) * (static::$settings['is_mmol'] ? 1 : 18)
-            );
+        $this->value = $value / $this->getFactors();
+
+        Log::info('Set Glucose', [$value, $this->getFactors(), $this->value]);
+
+        return $this;
+    }
+
+    protected function getFactors()
+    {
+        $this->initMmol();
+        $this->initPlasma();
+
+        return($this->is_plasma ? 1.12 : 1) * ($this->is_mmol ? 1 : 18);
+    }
+
+    protected function initMmol()
+    {
+        if (!isset($this->is_mmol)) {
+            $this->is_mmol = static::$settings['is_mmol'];
+        }
+    }
+
+    protected function initPlasma()
+    {
+        if (!isset($this->is_plasma)) {
+            $this->is_plasma = static::$settings['is_plasma'];
+        }
     }
 
     public function getForView($decimal_separator = null)
@@ -65,36 +96,26 @@ class Glucose
             $decimal_separator = '.';
         }
 
-        if (!isset($this->is_mmol)) {
-            $is_mmol = static::$settings['is_mmol'];
-        } else {
-            $is_mmol = $this->is_mmol;
-        }
+        $vl = $this->value * $this->getFactors();
 
-        if (!isset($this->is_plasma)) {
-            $is_plasma = static::$settings['is_plasma'];
-        } else {
-            $is_plasma = $this->is_plasma;
-        }
-
-        $vl = $this->value * ($is_plasma ? 1.12 : 1)
-            *
-            ($is_mmol ? 1 : 18);
-
-        if ($is_mmol) {
+        if ($this->is_mmol) {
             return number_format($vl, 1, $decimal_separator, '');
 
         }
         return number_format($vl, 0, $decimal_separator, '');
     }
 
-    public function setMmol(bool $is_mmol): void
+    public function setMmol(bool $is_mmol): Glucose
     {
         $this->is_mmol = $is_mmol;
+
+        return $this;
     }
 
-    public function setPlasma(bool $is_plasma): void
+    public function setPlasma(bool $is_plasma): Glucose
     {
         $this->is_plasma = $is_plasma;
+
+        return $this;
     }
 }

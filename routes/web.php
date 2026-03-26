@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/settings', fn() => view('settings') )->name('settings');
+
+    Route::get('/threeinputs', fn() => view('threeinputs') )->name('threeinputs');
 });
 
 
