@@ -2,27 +2,28 @@
     <form class="settings__form" wire:submit="save">
         <div class="tabs">
             <button type="button"
-                    wire:click="$set('section', $this::MENU)"
+                    wire:click="$set('section', '{{ $this::MENU }}')"
                     class="tab-btn {{ $section === $this::MENU ? 'active' : '' }}"
-                    data-target="tab-menu">menu
+                    >menu
             </button>
             <button type="button"
-                    wire:click="$set('section', $this::GLUCOSE)"
+                    wire:click="$set('section', '{{ $this::GLUCOSE }}')"
                     class="tab-btn {{ $section === $this::GLUCOSE ? 'active' : '' }}"
-                    data-target="tab-glucose">Glucose
+                    >Glucose
             </button>
             <button type="button"
-                    wire:click="$set('section', $this::PRODUCTS)"
+                    wire:click="$set('section', '{{ $this::PRODUCTS }}')"
                     class="tab-btn {{ $section === $this::PRODUCTS ? 'active' : '' }}"
-                    data-target="tab-products">Products
+                    >Products
             </button>
 
             <!-- Контент вкладок -->
-            <div class="tab-content">
-                <div id="tab-menu" class="tab-pane {{ $section === $this::MENU ? 'active' : '' }}">
+{{--            <div class="tab-content">--}}
+{{--                <div id="tab-menu" class="tab-pane {{ $section === $this::MENU ? 'active' : '' }}">--}}
 
-                    <div class="menu-panes">
-                        <div class="menu-panes__pane">
+                    <div class="tab-content menu-panes">
+                        <div class="tab-pane menu-panes__pane {{ $section === $this::MENU ? 'active' : '' }}">
+
                             <div class="menu-panes__pane_header">Menu information</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
@@ -82,7 +83,8 @@
                             </div>
 
                         </div>
-                        <div class="menu-panes__pane">
+
+                        <div class="menu-panes__pane tab-pane {{ $section === $this::GLUCOSE ? 'active' : '' }}">
                             <div class="menu-panes__pane_header">Glucose</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
@@ -132,7 +134,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="menu-panes__pane">
+
+                        <div class="menu-panes__pane tab-pane {{ $section === $this::PRODUCTS ? 'active' : '' }}">
                             <div class="menu-panes__pane_header">Products</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
@@ -159,15 +162,10 @@
                     </div>
 
                 </div>
-                <div id="tab-glucose" class="tab-pane {{ $section === $this::GLUCOSE ? 'active' : '' }}">
-                    2
-                </div>
-                <div id="tab-products" class="tab-pane {{ $section === $this::PRODUCTS ? 'active' : '' }}">
-                    3
-                </div>
-            </div>
+        <div class="button-horizontal">
+        <button class="btn settings__btn-save default" type="submit">Save</button>
+        <a class="btn settings__btn-calcel" href="{{ route("dashboard") }}">Cancel</a>
         </div>
-        <button class="btn settings__btn-save" type="submit">Save</button>
         @if (session()->has('notification'))
             <div class="alert alert-success"
                  x-data="{ show: false }"

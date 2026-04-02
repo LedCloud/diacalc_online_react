@@ -1,0 +1,167 @@
+.tab-header {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    /** for devices bigger than value */
+    @media screen and (min-width: 1024px) {
+        display: none;
+    }
+}
+
+.tab-btn {
+    /** for devices bigger than value */
+    @media screen and (min-width: 1024px) {
+        display: none;
+    }
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    outline: none;
+    transition: 0.3s;
+}
+/* Стиль активной кнопки */
+.tab-btn.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
+/* Логика показа контента */
+.tab-pane {
+    display: none;
+    padding-top: 20px;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.settings {
+    &__form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    &__btn-save, &__btn-fill {
+        align-self: flex-start;
+    }
+}
+.menu-panes__pane {
+    margin-top: 15px;
+    width: 100%;
+    legend {
+        font-weight: 600;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+        margin-bottom: 10px;
+        border: 1px solid #b3d3f6;
+        border-radius: 7px;
+        padding: 3px 5px;
+        label {
+            font-weight: 400;
+            font-size: 0.9em;
+            input {
+                margin-right: 5px;
+                border-radius: 3px;
+            }
+        }
+    }
+    .field {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+        margin-bottom: 10px;
+    }
+}
+.alert {
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    min-width: 240px;
+    text-align: center;
+    margin: 5px 0;
+    border: 2px solid #d9eed9;
+}
+.alert-success {
+    background-color: #e9f6eb;
+    color: #449f55;
+}
+.menu-panes {
+    display:grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+        "menu glucose products"
+        "button notification notification";
+    @media screen and (max-width: 1024px) {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "content"
+            "button"
+            "notification";
+    }
+    gap: 15px;
+    justify-content: stretch;
+    align-content: stretch;
+    align-items: stretch;
+    &__pane {
+        height: 100%;
+        border: 1px solid #8998a3;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: #f5fcff;
+        grid-area: glucose;
+        @media screen and (max-width: 1024px) {
+            grid-area: content;
+        }
+        &_header {
+            background-color: #e5eff6;
+            border-top: 1px solid #8998a3;
+            border-left: 1px solid #8998a3;
+            border-right: 1px solid #8998a3;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding: 10px 10px 5px;
+        }
+        &_content {
+            background-color: #fff;
+            border-bottom: 1px solid #8998a3;
+            border-left: 1px solid #8998a3;
+            border-right: 1px solid #8998a3;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding: 5px 10px 5px 10px;
+            color: #333;
+        }
+
+        &:first-child {
+            grid-area: menu;
+        }
+        &:last-child {
+            grid-area: products;
+        }
+        @media screen and (max-width: 1024px) {
+            &:first-child {
+                grid-area: content;
+            }
+            &:last-child {
+                grid-area: content;
+            }
+
+        }
+        /*media*/
+        /*&:last-child {
+            grid-area: third;
+        }*/
+    }
+}
+.validation-error {
+    color: #aa1111;
+}

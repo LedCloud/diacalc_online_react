@@ -20,6 +20,7 @@ new class extends Component {
     const MGDL = 'mgdl';
 
     public $section = '';
+
     public $settings = null;
     public array $selectedMasks = [];
     public int $selectRound = 0;

@@ -1,0 +1,48 @@
+.dialog {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% / 2 - 250px);
+    left: calc(100% / 2 - 250px);
+    width: 250px;
+    height: 250px;
+    border-radius: 7px;
+    border: 1px solid @border-color;;
+    box-shadow: #777 3px 3px 6px;
+    background-color: mistyrose;
+    color: #333;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px auto min-content;
+    grid-template-areas: "header"
+                         "content"
+                         "footer";
+
+    &__header {
+        grid-area: header;
+        background-color: #7adeee;
+        padding: 5px 10px;
+    }
+    &__content {
+        grid-area: content;
+        padding: 5px 10px;
+    }
+    &__footer {
+        grid-area: footer;
+        padding: 5px 10px;
+        display: flex;
+        gap: 10px;
+        &__button {
+            background-color: #7adeee;
+            border-radius: @border-radius;
+            border: 1px solid @border-color;
+            padding: 3px 5px;
+            text-shadow: #999 1px 1px 3px;
+            &__ok {
+                background-color: greenyellow;
+            }
+            &__cancel {
+                background-color: sandybrown;
+            }
+        }
+    }
+}
