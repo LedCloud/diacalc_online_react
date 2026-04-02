@@ -25,16 +25,16 @@ new class extends Component {
     public array $selectedMasks = [];
     public int $selectRound = 0;
 
-    #[Validate('integer|min:1000', message: 'This qty is too small')]
+    #[Validate('integer|min:1000')]
     public int $calory_limit = 0;
 
-    #[Validate('numeric|min:3|max:50')]
+    #[Validate('numeric|min:3')]
     public float $target = 0;
 
-    #[Validate('numeric|min:3|max:50')]
+    #[Validate('numeric|min:3')]
     public float $low_level = 0;
 
-    #[Validate('numeric|min:3|max:50')]
+    #[Validate('numeric|min:3')]
     public float $high_level = 0;
 
     public $plasma; //plasma or whole
@@ -42,10 +42,10 @@ new class extends Component {
 
     public $use_freq;
 
-    #[Validate('integer|min:5', message: 'This qty is too small')]
+    #[Validate('integer|min:5')]
     public $freq_qty;
 
-    #[Validate('integer|min:5|max:50', message: 'This qty must be between 5 and 50')]
+    #[Validate('integer|min:5|max:50')]
     public $filter_off;
 
     protected ?Glucose $gl_target;
@@ -70,8 +70,6 @@ new class extends Component {
      */
     public function boot()
     {
-        //$this->settings = Auth::user()->getSetting('User');
-
         $settings = Auth::user()->getSetting('User');
 
         $this->gl_target =
@@ -126,37 +124,41 @@ new class extends Component {
 
     public function updated($property, $value)
     {
-        if (in_array($property, ['plasma', 'mmol', 'target'])
+        if (in_array($property, ['plasma', 'mmol', 'target', 'low_level', 'high_level'])
             && !empty($value)
         ) {
             $this->$property = $value;
 
             Log::info('updated', [$property, $value, gettype($value)]);
 
-            if ($property === 'target') {
-                $this->gl_target->setGlucose((float)$value);
+            switch ($property) {
+                case 'target': $this->gl_target->setGlucose((float)$value); break;
+                case 'low_level': $this->gl_low->setGlucose((float)$value); break;
+                case 'high_level': $this->gl_high->setGlucose((float)$value); break;
             }
 
-            foreach ($this->gls as $key => $gl) {
+            foreach ([$this->gl_target, $this->gl_low, $this->gl_high] as $key => $gl) {
                 $this->gls[$key]
                     ->setPlasma($this->isPlasma())
                     ->setMmol($this->isMmol());
             }
 
-            //$this->target = $this->gl_target->getForView();
-
-
-
             if ($property !== 'target') {
                 $this->target = $this->gl_target->getForView();
+            }
+            if ($property !== 'low_level') {
+                $this->low_level = $this->gl_low->getForView();
+            }
+            if ($property !== 'high_level') {
+                $this->high_level = $this->gl_high->getForView();
             }
 
             $this->settings['is_plasma'] = $this->isPlasma();
             $this->settings['is_mmol'] = $this->isMmol();
             $this->settings['target'] = $this->gl_target->getRawValue();
+            $this->settings['low_level'] = $this->gl_low->getRawValue();
+            $this->settings['high_level'] = $this->gl_high->getRawValue();
 
-            /*$this->gl_target->setGlucose($this->target);
-            $this->settings['target'] = $this->gl_target->getRawValue();*/
             Log::info('Updated', [
                 $this->target,
                 $this->settings['target']
@@ -169,7 +171,7 @@ new class extends Component {
         $params = [
             'callbackOK' => 'fill-confirmed',
             'title' => 'Fill product database with the default products',
-            'message' => 'All current products and groups will be deleted.<br>This action is suitable for the initial filling.',
+            'message' => "All current products and groups will be deleted.<br>This action is suitable for the initial filling, when you don\'t have the products yet" ,
             'ok' => 'Fill',
         ];
         $this->dispatch("fill-products", ['params' => $params]);
@@ -180,15 +182,15 @@ new class extends Component {
         $this->settings['menu_info'] = array_sum($this->selectedMasks);
     }
 
-    public function updatedLowLevel()
+    /*public function updatedLowLevel()
     {
         $this->settings['low_level'] = Glucose::convertToRaw($this->low_level);
-    }
+    }*/
 
-    public function updatedHighLevel()
+    /*public function updatedHighLevel()
     {
         $this->settings['high_level'] = Glucose::convertToRaw($this->high_level);
-    }
+    }*/
 
     public function save()
     {

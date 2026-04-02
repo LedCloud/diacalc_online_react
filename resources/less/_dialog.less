@@ -1,14 +1,15 @@
 .dialog {
     position: absolute;
     z-index: 100;
-    top: calc(100% / 2 - 250px);
-    left: calc(100% / 2 - 250px);
-    width: 250px;
+    top: calc(100vh / 2 - 250px);
+    left: calc(100vw / 2 - 350px/2);
+
+    min-width: 350px;
     height: 250px;
     border-radius: 7px;
     border: 1px solid @border-color;;
     box-shadow: #777 3px 3px 6px;
-    background-color: mistyrose;
+    background-color: #fffefe;
     color: #333;
     display: grid;
     grid-template-columns: 1fr;
@@ -19,7 +20,7 @@
 
     &__header {
         grid-area: header;
-        background-color: #7adeee;
+        background-color: @header-background;
         padding: 5px 10px;
     }
     &__content {
@@ -37,12 +38,12 @@
             border: 1px solid @border-color;
             padding: 3px 5px;
             text-shadow: #999 1px 1px 3px;
-            &__ok {
+            /*&__ok {
                 background-color: greenyellow;
             }
             &__cancel {
                 background-color: sandybrown;
-            }
+            }*/
         }
     }
 }

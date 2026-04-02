@@ -1,14 +1,19 @@
 .btn {
-    padding: 3px 5px;
+    padding: 5px 10px;
     border: 1px solid #888;
     border-radius: 5px;
     box-shadow: 2px 2px 5px #bbb;
+    text-shadow: #eee 1px 1px 3px;
     &:active {
         box-shadow: 1px 1px 1px #bbb;
     }
     &.default {
-        background-color: #1a88ff;
-        color: white;
+        background-color: @button-default-color;
+        color: #333;
+    }
+    &.primary {
+        background-color: @button-primary-color;
+        color: #fff;
     }
 }
 input, select {

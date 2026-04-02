@@ -27,8 +27,8 @@ new class extends Component {
 
     public function mount()
     {
-        $this->header = "I'm a header";
-        $this->content = "Read the information";
+        $this->header = "Header";
+        $this->content = "Content";
         $this->is_confirm = true;
         $this->is_hidden = true;
     }
@@ -108,12 +108,12 @@ new class extends Component {
             {!! $content !!}
         </div>
         <div class="dialog__footer">
-            <button class="dialog__footer__button dialog__footer__button__ok" type="button"
+            <button class="dialog__footer__button btn primary dialog__footer__button__ok" type="button"
                     wire:click="okClicked">{{ $okName }}
             </button>
             @if($is_confirm)
-                <button class="dialog__footer__button dialog__footer__button__cancel" type="button"
-                        wire:click="cancelClicked">{{ $cancelName }}
+                <button class="dialog__footer__button btn default dialog__footer__button__cancel" type="button"
+                    wire:click="cancelClicked">{{ $cancelName }}
                 </button>
             @endif
         </div>
