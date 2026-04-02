@@ -1,5 +1,18 @@
 @border-color: #999;
 @border-radius: 5px;
+button.btn {
+    padding: 3px 5px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #bbb;
+    &:active {
+        box-shadow: 1px 1px 1px #bbb;
+    }
+}
+input, select {
+    border-radius: @border-radius;
+    border: 1px solid #bbb;
+}
 .menu-header {
     border: 1px solid @border-color;
     border-radius: @border-radius;
@@ -60,25 +73,8 @@
         "descr descr descr";
     gap: 2px;
 
-    /*&:first-child {
-        border-top-left-radius: @border-radius;
-        border-top-right-radius: @border-radius;
-        margin-top: 2px;
-    }
-    &:last-child {
-        border-bottom-left-radius: @border-radius;
-        border-bottom-right-radius: @border-radius;
-        margin-bottom: 2px;
-    }*/
     &__name {
         grid-area: name;
-        //grid-column-start: 1;
-        ///*grid-column-end: 3;*/
-        //grid-row-start: 1;
-        /*grid-row-end: 3;*/
-        /*position: relative;
-        top: 3px;
-        left: 0;*/
         font-weight: 600;
         font-size: 1.1em;
         background-color: gainsboro;
@@ -87,12 +83,6 @@
     &__descr {
         grid-area: descr;
         background-color: lightblue;
-        /*display: flex;
-        flex-direction: row;
-        gap: 3px;
-        position: relative;
-        bottom: 3px;
-        right: 0;*/
         justify-self: end;
     }
     &__weight {
@@ -102,8 +92,6 @@
             height: 100%;
             border: #aaa solid thin;
             box-shadow: none;
-            /*outline: none;
-            border: none;*/
             &:focus {
                 border: #888 solid thin;
                 box-shadow: none;
@@ -118,19 +106,24 @@
         justify-self: end;
         grid-area: closer;
         margin-right: 3px;
-        mergin-top: 3px;
-        /*position: absolute;
-        top: 3px;
-        right: 3px;*/
+        margin-top: 3px;
     }
 }
 
 .tab-header {
   display: flex;
   border-bottom: 2px solid #eee;
+    /** for devices bigger than value */
+    /*@media screen and (min-width: 1024px) {
+        display: none;
+    }*/
 }
 
 .tab-btn {
+    /** for devices bigger than value */
+    /*@media screen and (min-width: 1024px) {
+        display: none;
+    }*/
   padding: 10px 20px;
   cursor: pointer;
   border: none;
@@ -153,17 +146,14 @@
 .tab-pane.active {
   display: block; /* Показываем только активный */
 }
+
 .settings {
     &__form {
         display: flex;
         flex-direction: column;
         align-items: stretch;
     }
-    &__btn-save {
-        padding: 3px 5px;
-        border: 1px solid #888;
-        border-radius: 5px;
-        box-shadow: 1px 1px 3px #bbb;
+    &__btn-save, &__btn-fill {
         align-self: flex-start;
     }
 }
@@ -179,7 +169,7 @@
         align-items: flex-start;
         gap: 3px;
         margin-bottom: 10px;
-        border: 1px solid #d8afb5;
+        border: 1px solid #b3d3f6;
         border-radius: 7px;
         padding: 3px 5px;
         label {
@@ -200,9 +190,6 @@
     }
 }
 .alert {
-    /*position: absolute;
-    top: 10px;
-    right: 10px;*/
     color: #333;
     padding: 10px 20px;
     border-radius: 5px;
@@ -229,25 +216,25 @@
     align-items: stretch;
     &__pane {
         height: 100%;
-        border: 1px solid #666;
+        border: 1px solid #8998a3;
         border-radius: 5px;
         padding: 15px;
-        background-color: #f9f9f9;
+        background-color: #f5fcff;
         grid-area: second;
         &_header {
-            background-color: #f1f1f1;
-            border-top: 1px solid #666;
-            border-left: 1px solid #666;
-            border-right: 1px solid #666;
+            background-color: #e5eff6;
+            border-top: 1px solid #8998a3;
+            border-left: 1px solid #8998a3;
+            border-right: 1px solid #8998a3;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             padding: 10px 10px 5px;
         }
         &_content {
             background-color: #fff;
-            border-bottom: 1px solid #666;
-            border-left: 1px solid #666;
-            border-right: 1px solid #666;
+            border-bottom: 1px solid #8998a3;
+            border-left: 1px solid #8998a3;
+            border-right: 1px solid #8998a3;
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
             padding: 5px 10px 5px 10px;
@@ -260,4 +247,55 @@
             grid-area: third;
         }
     }
+}
+.dialog {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% / 2 - 250px);
+    left: calc(100% / 2 - 250px);
+    width: 250px;
+    height: 250px;
+    border-radius: 7px;
+    border: 1px solid @border-color;;
+    box-shadow: #777 3px 3px 6px;
+    background-color: mistyrose;
+    color: #333;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px auto min-content;
+    grid-template-areas: "header"
+                         "content"
+                         "footer";
+
+    &__header {
+        grid-area: header;
+        background-color: #7adeee;
+        padding: 5px 10px;
+    }
+    &__content {
+        grid-area: content;
+        padding: 5px 10px;
+    }
+    &__footer {
+        grid-area: footer;
+        padding: 5px 10px;
+        display: flex;
+        gap: 10px;
+        &__button {
+            background-color: #7adeee;
+            border-radius: @border-radius;
+            border: 1px solid @border-color;
+            padding: 3px 5px;
+            text-shadow: #999 1px 1px 3px;
+            &__ok {
+                background-color: greenyellow;
+            }
+            &__cancel {
+                background-color: sandybrown;
+            }
+        }
+    }
+}
+.validation-error {
+    color: #aa1111;
 }

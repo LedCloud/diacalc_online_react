@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use App\Classes\Settings\MenuInfo;
 use App\Classes\Diacalc\Glucose;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 
 new class extends Component {
     const MENU = 'menu';
@@ -21,14 +23,29 @@ new class extends Component {
     public $settings = null;
     public array $selectedMasks = [];
     public int $selectRound = 0;
+
+    #[Validate('integer|min:1000', message: 'This qty is too small')]
     public int $calory_limit = 0;
 
+    #[Validate('numeric|min:3|max:50')]
     public float $target = 0;
+
+    #[Validate('numeric|min:3|max:50')]
     public float $low_level = 0;
+
+    #[Validate('numeric|min:3|max:50')]
     public float $high_level = 0;
 
     public $plasma; //plasma or whole
     public $mmol; //mmol or mgdl
+
+    public $use_freq;
+
+    #[Validate('integer|min:5', message: 'This qty is too small')]
+    public $freq_qty;
+
+    #[Validate('integer|min:5|max:50', message: 'This qty must be between 5 and 50')]
+    public $filter_off;
 
     protected ?Glucose $gl_target;
     protected ?Glucose $gl_low;
@@ -75,7 +92,7 @@ new class extends Component {
     }
 
     /**
-     * This is called multiple times afterwards
+     * This is called multiple times afterward
      * @return void
      */
     public function mount()
@@ -100,6 +117,10 @@ new class extends Component {
         $this->target = $this->gl_target->getForView();
         $this->low_level = $this->gl_low->getForView();
         $this->high_level = $this->gl_high->getForView();
+
+        $this->use_freq = (bool)$this->settings['use_freq'];
+        $this->freq_qty = $this->settings['freq_qty'];
+        $this->filter_off = $this->settings['filter_off'];
     }
 
     public function updated($property, $value)
@@ -142,25 +163,21 @@ new class extends Component {
         }
     }
 
+    public function fillProducts()
+    {
+        $params = [
+            'callbackOK' => 'fill-confirmed',
+            'title' => 'Fill product database with the default products',
+            'message' => 'All current products and groups will be deleted.<br>This action is suitable for the initial filling.',
+            'ok' => 'Fill',
+        ];
+        $this->dispatch("fill-products", ['params' => $params]);
+    }
+
     public function updatedSelectedMasks()
     {
         $this->settings['menu_info'] = array_sum($this->selectedMasks);
     }
-
-//    public function updatedSelectRound()
-//    {
-//        $this->settings['round_to'] = $this->selectRound;
-//    }
-//
-//    public function updatedCaloryLimit()
-//    {
-//        $this->settings['calory_limit'] = $this->calory_limit;
-//    }
-
-//    public function updatedTarget()
-//    {
-//        $this->settings['target'] = Glucose::convertToRaw($this->target);
-//    }
 
     public function updatedLowLevel()
     {
@@ -174,6 +191,15 @@ new class extends Component {
 
     public function save()
     {
+        $this->validate();
+
+        $this->settings['calory_limit'] = $this->calory_limit;
+        $this->settings['round_to'] = $this->selectRound;
+
+        $this->settings['use_freq'] = (int)$this->use_freq;
+        $this->settings['freq_qty'] = $this->freq_qty;
+        $this->settings['filter_off'] = $this->filter_off;
+
         Log::info('On saving', [$this->settings]);
         Auth::user()->putSetting('User', $this->settings);
         session()->flash('notification', 'Settings saved');
@@ -189,5 +215,12 @@ new class extends Component {
             Log::info('Yes, I set section');
             $this->section = $sectionName;
         }
+    }
+
+    #[On('fill-confirmed')]
+    public function fillConfirmed()
+    {
+        //clear all current products and fill with json DB
+        Log::info('Let us clear and fill');
     }
 };

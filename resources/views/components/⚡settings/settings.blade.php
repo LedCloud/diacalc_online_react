@@ -21,7 +21,6 @@
             <div class="tab-content">
                 <div id="tab-menu" class="tab-pane {{ $section === $this::MENU ? 'active' : '' }}">
 
-{{--                    Divide this panel into three panes--}}
                     <div class="menu-panes">
                         <div class="menu-panes__pane">
                             <div class="menu-panes__pane_header">Menu information</div>
@@ -70,7 +69,6 @@
                                                type="checkbox"/>Calory</label>
                                 </fieldset>
                                 <fieldset>
-                                    {{--                        <legend>Round dose to</legend>--}}
                                     <label for="round-dose">Round</label>
                                     <select id="round-dose" wire:model.live="selectRound">
                                         <option value="0">No fraction</option>
@@ -79,6 +77,7 @@
                                     </select>
                                     <label for="calory_limit">Calories limit</label>
                                     <input id="calory_limit" type="number" min="1" step="1" wire:model="calory_limit"/>
+                                    <div class="validation-error">@error('calory_limit') {{ $message }} @enderror</div>
                                 </fieldset>
                             </div>
 
@@ -87,7 +86,6 @@
                             <div class="menu-panes__pane_header">Glucose</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
-                                    ****{{ $plasma }}
                                     <label for="plasma">
                                         <input type="radio"
                                                name="plasma"
@@ -101,7 +99,6 @@
                                                value="{{ $this::PLASMA }}" />Plasma</label>
                                 </fieldset>
                                 <fieldset>
-                                    +++{{ $mmol }}
                                     <label for="mmol">
                                         <input type="radio" name="mmol"
                                                id="mmol"
@@ -116,23 +113,49 @@
                                 </fieldset>
 
                                 <div class="field" wire:key="target-id-{{ $plasma }}-{{ $mmol }}">
-                                    <label for="target">Target **{{ $plasma }}-{{ $mmol }}++{{ $target }}</label>
-                                    <input id="target" type="number"
+                                    <label for="target">Target</label>
+                                    <input id="target" type="number" step="0.1" min="3"
                                            wire:model.live.blur="target"/>
+                                    <div class="validation-error">@error('target') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="low-level-id-{{ now() }}">
                                     <label for="low_level">Low level</label>
-                                    <input id="low_level" type="number" step="0.1" min="1" wire:model="low_level"/>
+                                    <input id="low_level" type="number" step="0.1" min="3" wire:model="low_level"/>
+                                    <div class="validation-error">@error('low_level') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="high-level-id-{{ now() }}">
                                     <label for="high_level">High level</label>
-                                    <input id="high_level" type="number" step="0.1" min="1" wire:model="high_level"/>
+                                    <input id="high_level" type="number" step="0.1" min="3" wire:model="high_level"/>
+                                    <div class="validation-error">@error('high_level') {{ $message }} @enderror</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="menu-panes__pane">third</div>
+                        <div class="menu-panes__pane">
+                            <div class="menu-panes__pane_header">Products</div>
+                            <div class="menu-panes__pane_content">
+                                <fieldset>
+                                    <legend>Fill with the default products</legend>
+                                    <button class="btn settings__btn-fill" type="button" wire:click="fillProducts">Fill with the default products</button>
+                                </fieldset>
+                                <label for="use_freq">
+                                    <input type="checkbox" id="use_freq" wire:model="use_freq">
+                                    Use freq</label>
+                                <div class="field">
+                                    <label for="freq_qty">Freq qty</label>
+                                    <input id="freq_qty" type="number"
+                                           wire:model="freq_qty"/>
+                                    <div class="validation-error">@error('freq_qty') {{ $message }} @enderror</div>
+                                </div>
+                                <div class="field">
+                                    <label for="filter_off">Filter off</label>
+                                    <input id="filter_off" type="number"
+                                           wire:model="filter_off"/>
+                                    <div class="validation-error">@error('filter_off') {{ $message }} @enderror</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -144,7 +167,7 @@
                 </div>
             </div>
         </div>
-        <button class="settings__btn-save">Save</button>
+        <button class="btn settings__btn-save" type="submit">Save</button>
         @if (session()->has('notification'))
             <div class="alert alert-success"
                  x-data="{ show: false }"
