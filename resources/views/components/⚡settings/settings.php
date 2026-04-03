@@ -125,7 +125,7 @@ new class extends Component {
 
     public function updated($property, $value)
     {
-        if (in_array($property, ['plasma', 'mmol']) //, 'target', 'low_level', 'high_level'])
+        if (in_array($property, ['plasma', 'mmol'])
             && !empty($value)
         ) {
             $this->$property = $value;
@@ -171,9 +171,9 @@ new class extends Component {
     {
         $params = [
             'callbackOK' => 'fill-confirmed',
-            'title' => 'Fill product database with the default products',
-            'message' => "All current products and groups will be deleted.<br>This action is suitable for the initial filling, when you don\'t have the products yet" ,
-            'ok' => 'Fill',
+            'title' => __('settings.fill_msg_title'),
+            'message' => __('settings.fill_msg_desc'),
+            'ok' => __('settings.fill'),
         ];
         $this->dispatch("show-dialog", ['params' => $params]);
     }
@@ -195,7 +195,7 @@ new class extends Component {
         $this->settings['filter_off'] = $this->filter_off;
 
         Auth::user()->putSetting('User', $this->settings);
-        session()->flash('notification', 'Settings saved');
+        session()->flash('notification', __('settings.saved'));
     }
 
     #[On('fill-confirmed')]

@@ -21,14 +21,14 @@ new class extends Component {
 
     public function boot()
     {
-        $this->okName = 'Ok';
-        $this->cancelName = 'Cancel';
+        $this->okName = __('inputs.ok');
+        $this->cancelName = __('inputs.cancel');
     }
 
     public function mount()
     {
-        $this->header = "Header";
-        $this->content = "Content";
+        $this->header = __('dialog.header');
+        $this->content = __('dialog.content');
         $this->is_confirm = true;
         $this->is_hidden = true;
     }
@@ -106,7 +106,8 @@ new class extends Component {
 
 ?>
 
-<div wire:keydown.escape.window="closeDialog">
+<div wire:keydown.escape.window="closeDialog"
+     wire:click.outside="closeDialog">
     <div class="dialog" @if($is_hidden) style="display:none" @endif>
         <div class="dialog__header">
             <div class="dialog__header_header">{{ $header }}</div>

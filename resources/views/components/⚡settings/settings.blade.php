@@ -4,80 +4,76 @@
             <button type="button"
                     wire:click="$set('section', '{{ $this::MENU }}')"
                     class="tab-btn {{ $section === $this::MENU ? 'active' : '' }}"
-                    >menu
+                    >{{ __('settings.menu') }}
             </button>
             <button type="button"
                     wire:click="$set('section', '{{ $this::GLUCOSE }}')"
                     class="tab-btn {{ $section === $this::GLUCOSE ? 'active' : '' }}"
-                    >Glucose
+                    >{{ __('settings.glucose') }}
             </button>
             <button type="button"
                     wire:click="$set('section', '{{ $this::PRODUCTS }}')"
                     class="tab-btn {{ $section === $this::PRODUCTS ? 'active' : '' }}"
-                    >Products
+                    >{{ __('settings.products') }}
             </button>
-
-            <!-- Контент вкладок -->
-{{--            <div class="tab-content">--}}
-{{--                <div id="tab-menu" class="tab-pane {{ $section === $this::MENU ? 'active' : '' }}">--}}
 
                     <div class="tab-content menu-panes">
                         <div class="tab-pane menu-panes__pane {{ $section === $this::MENU ? 'active' : '' }}">
 
-                            <div class="menu-panes__pane_header">Menu information</div>
+                            <div class="menu-panes__pane_header">{{ __('settings.menu_info') }}</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
-                                    <legend>Info in menu</legend>
+                                    <legend>{{ __('settings.shown_info') }}</legend>
                                     <label for="menu-prot">
                                         <input id="menu-prot"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_PROT }}"
-                                               type="checkbox"/>Proteins</label>
+                                               type="checkbox"/>{{ __('settings.proteins') }}</label>
                                     <label for="menu-fat">
                                         <input id="menu-fat"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_FAT }}"
-                                               type="checkbox"/>Fats</label>
+                                               type="checkbox"/>{{ __('settings.fats') }}</label>
                                     <label for="menu-carb">
                                         <input id="menu-carb"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_CARB }}"
-                                               type="checkbox"/>Carbs</label>
+                                               type="checkbox"/>{{ __('settings.carbs') }}</label>
                                     <label for="menu-be">
                                         <input id="menu-be"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_BE }}"
-                                               type="checkbox"/>BE</label>
+                                               type="checkbox"/>{{ __('settings.be') }}</label>
                                     <label for="menu-dose">
                                         <input id="menu-dose"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_DOSE }}"
-                                               type="checkbox"/>Dose</label>
+                                               type="checkbox"/>{{ __('settings.dose') }}</label>
                                     <label for="menu-gi">
                                         <input id="menu-gi"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_GI }}"
-                                               type="checkbox"/>GI</label>
+                                               type="checkbox"/>{{ __('settings.gi') }}</label>
                                     <label for="menu-gl">
                                         <input id="menu-gl"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_GL }}"
-                                               type="checkbox"/>GL</label>
+                                               type="checkbox"/>{{ __('settings.gl') }}</label>
                                     <label for="menu-calory">
                                         <input id="menu-calory"
                                                wire:model.live="selectedMasks"
                                                value="{{ \App\Classes\Settings\MenuInfo::MASK_CALOR }}"
-                                               type="checkbox"/>Calory</label>
+                                               type="checkbox"/>{{ __('settings.calories') }}</label>
                                 </fieldset>
                                 <fieldset>
-                                    <label for="round-dose">Round</label>
+                                    <label for="round-dose">{{ __('settings.round') }}</label>
                                     <select id="round-dose" wire:model.live="selectRound">
-                                        <option value="0">No fraction</option>
-                                        <option value="1">To 1/2</option>
-                                        <option value="2">To 1/4</option>
+                                        <option value="0">{{ __('settings.round_int') }}</option>
+                                        <option value="1">{{ __('settings.round_half') }}</option>
+                                        <option value="2">{{ __('settings.round_quarter') }}</option>
                                     </select>
-                                    <label for="calory_limit">Calories limit</label>
-                                    <input id="calory_limit" type="number" min="1" step="1" wire:model="calory_limit"/>
+                                    <label for="calorie_limit">{{ __('settings.calorie_limit') }}</label>
+                                    <input id="calorie_limit" type="number" min="1" step="1" wire:model="calory_limit"/>
                                     <div class="validation-error">@error('calory_limit') {{ $message }} @enderror</div>
                                 </fieldset>
                             </div>
@@ -85,7 +81,7 @@
                         </div>
 
                         <div class="menu-panes__pane tab-pane {{ $section === $this::GLUCOSE ? 'active' : '' }}">
-                            <div class="menu-panes__pane_header">Glucose</div>
+                            <div class="menu-panes__pane_header">{{ __('settings.glucose') }}</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
                                     <label for="plasma">
@@ -93,43 +89,43 @@
                                                name="plasma"
                                             id="plasma"
                                             wire:model.live="plasma"
-                                           value="{{ $this::WHOLE }}" />Whole</label>
+                                           value="{{ $this::WHOLE }}" />{{ __('settings.plasma') }}</label>
                                     <label for="whole">
                                         <input type="radio" name="plasma"
                                            id="whole"
                                            wire:model.live="plasma"
-                                               value="{{ $this::PLASMA }}" />Plasma</label>
+                                               value="{{ $this::PLASMA }}" />{{ __('settings.whole') }}</label>
                                 </fieldset>
                                 <fieldset>
                                     <label for="mmol">
                                         <input type="radio" name="mmol"
                                                id="mmol"
                                                wire:model.live="mmol"
-                                               value="{{ $this::MMOL }}" />mmol</label>
+                                               value="{{ $this::MMOL }}" />{{ __('settings.mmol') }}</label>
                                     <label for="mgdl">
                                         <input type="radio"
                                                name="mmol"
                                                id="mgdl"
                                                wire:model.live="mmol"
-                                               value="{{ $this::MGDL }}" />mg/dl</label>
+                                               value="{{ $this::MGDL }}" />{{ __('settings.mgdl') }}</label>
                                 </fieldset>
 
                                 <div class="field" wire:key="target-id-{{ $plasma }}-{{ $mmol }}">
-                                    <label for="target">Target</label>
+                                    <label for="target">{{ __('settings.target') }}</label>
                                     <input id="target" type="number" step="0.1" min="3"
                                            wire:model.live.debounce.250ms="target"/>
                                     <div class="validation-error">@error('target') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="low-level-id-{{ $plasma }}-{{ $mmol }}">
-                                    <label for="low_level">Low level</label>
+                                    <label for="low_level">{{ __('settings.low_level') }}</label>
                                     <input id="low_level" type="number" step="0.1" min="3"
                                            wire:model.live.debounce.250ms="low_level"/>
                                     <div class="validation-error">@error('low_level') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="high-level-id-{{ $plasma }}-{{ $mmol }}">
-                                    <label for="high_level">High level</label>
+                                    <label for="high_level">{{ __('settings.high_level') }}</label>
                                     <input id="high_level" type="number" step="0.1" min="3"
                                            wire:model.live.debounce.250ms="high_level"/>
                                     <div class="validation-error">@error('high_level') {{ $message }} @enderror</div>
@@ -138,23 +134,24 @@
                         </div>
 
                         <div class="menu-panes__pane tab-pane {{ $section === $this::PRODUCTS ? 'active' : '' }}">
-                            <div class="menu-panes__pane_header">Products</div>
+                            <div class="menu-panes__pane_header">{{ __('settings.products') }}</div>
                             <div class="menu-panes__pane_content">
                                 <fieldset>
-                                    <legend>Fill with the default products</legend>
-                                    <button class="btn settings__btn-fill default" type="button" wire:click="fillProducts">Fill with the default products</button>
+                                    <legend>{{ __('settings.fill_default') }}</legend>
+                                    <button class="btn settings__btn-fill default" type="button"
+                                            wire:click="fillProducts">{{ __('settings.fill') }}</button>
                                 </fieldset>
                                 <label for="use_freq">
                                     <input type="checkbox" id="use_freq" wire:model="use_freq">
-                                    Use freq</label>
+                                    {{ __('settings.use_freq') }}</label>
                                 <div class="field">
-                                    <label for="freq_qty">Freq qty</label>
+                                    <label for="freq_qty">{{ __('settings.freq_qty') }}</label>
                                     <input id="freq_qty" type="number"
                                            wire:model="freq_qty"/>
                                     <div class="validation-error">@error('freq_qty') {{ $message }} @enderror</div>
                                 </div>
                                 <div class="field">
-                                    <label for="filter_off">Filter off</label>
+                                    <label for="filter_off">{{ __('settings.filter_off') }}</label>
                                     <input id="filter_off" type="number"
                                            wire:model="filter_off"/>
                                     <div class="validation-error">@error('filter_off') {{ $message }} @enderror</div>
@@ -165,8 +162,8 @@
 
                 </div>
         <div class="button-horizontal">
-        <button class="btn settings__btn-save primary" type="submit">Save</button>
-        <a class="btn settings__btn-calcel default" href="{{ route("dashboard") }}">Cancel</a>
+        <button class="btn settings__btn-save primary" type="submit">{{ __('inputs.save') }}</button>
+        <a class="btn settings__btn-calcel default" href="{{ route("dashboard") }}">{{ __('inputs.cancel') }}</a>
         </div>
         @if (session()->has('notification'))
             <div class="alert alert-success"
