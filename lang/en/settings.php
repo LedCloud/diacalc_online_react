@@ -31,7 +31,7 @@ return [
     'use_freq' => 'Use frequently used products',
     'freq_qty' => 'Amount of frequently used products',
     'filter_off' => 'Hide filter if product count is below',
-    'fill_msg_title' => 'Fill your base with the default products',
+    'fill_msg_title' => 'Fill base with the default products',
     'fill_msg_desc' => 'All your current products and groups will be deleted if any exist.<br>This action is suitable for the initial filling, when you don\'t have the products yet.',
     'saved' => 'Settings saved',
 ];
