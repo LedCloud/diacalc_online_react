@@ -86,10 +86,10 @@ class PlatformProvider extends OrchidServiceProvider
                 ->permission('platform.systems.users')
                 ->divider(),
 
-            Menu::make('Listeners')
+            Menu::make('Default products')
                 ->icon('bs.book')
-                ->title('listener')
-                ->route('platform.archive.listeners'),
+                ->title('products_default')
+                ->route('products.default'),
 
             Menu::make(__('Product archive'))
                 ->icon('bs.list-columns')
