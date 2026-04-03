@@ -117,21 +117,21 @@
                                 <div class="field" wire:key="target-id-{{ $plasma }}-{{ $mmol }}">
                                     <label for="target">Target</label>
                                     <input id="target" type="number" step="0.1" min="3"
-                                           wire:model.live.blur="target"/>
+                                           wire:model.live.debounce.250ms="target"/>
                                     <div class="validation-error">@error('target') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="low-level-id-{{ $plasma }}-{{ $mmol }}">
                                     <label for="low_level">Low level</label>
                                     <input id="low_level" type="number" step="0.1" min="3"
-                                           wire:model.live.blur="low_level"/>
+                                           wire:model.live.debounce.250ms="low_level"/>
                                     <div class="validation-error">@error('low_level') {{ $message }} @enderror</div>
                                 </div>
 
                                 <div class="field" wire:key="high-level-id-{{ $plasma }}-{{ $mmol }}">
                                     <label for="high_level">High level</label>
                                     <input id="high_level" type="number" step="0.1" min="3"
-                                           wire:model.live.blur="high_level"/>
+                                           wire:model.live.debounce.250ms="high_level"/>
                                     <div class="validation-error">@error('high_level') {{ $message }} @enderror</div>
                                 </div>
                             </div>

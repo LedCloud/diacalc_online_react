@@ -33,6 +33,11 @@ new class extends Component {
         $this->is_hidden = true;
     }
 
+    public function closeDialog()
+    {
+        $this->is_hidden = true;
+    }
+
     public function okClicked()
     {
         $this->is_hidden = true;
@@ -51,7 +56,7 @@ new class extends Component {
         }
     }
 
-    #[On('fill-products')]
+    #[On('show-dialog')]
     public function showDialog($params)
     {
         $validator = Validator::make($params, [
@@ -101,9 +106,12 @@ new class extends Component {
 
 ?>
 
-<div>
+<div wire:keydown.escape.window="closeDialog">
     <div class="dialog" @if($is_hidden) style="display:none" @endif>
-        <div class="dialog__header">{{ $header }}</div>
+        <div class="dialog__header">
+            <div class="dialog__header_header">{{ $header }}</div>
+            <div class="dialog__header_close" wire:click="closeDialog">X</div>
+        </div>
         <div class="dialog__content">
             {!! $content !!}
         </div>

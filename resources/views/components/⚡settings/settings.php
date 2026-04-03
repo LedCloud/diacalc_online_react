@@ -37,8 +37,8 @@ new class extends Component {
     #[Validate('numeric|min:3')]
     public float $high_level = 0;
 
-    public $plasma; //plasma or whole
-    public $mmol; //mmol or mgdl
+    public $plasma;
+    public $mmol;
 
     public $use_freq;
 
@@ -87,7 +87,10 @@ new class extends Component {
                 ->setMmol($settings['is_mmol'])
                 ->setPlasma($settings['is_plasma']);
 
-        $this->gls = [$this->gl_target, $this->gl_low, $this->gl_high];
+        $this->gls = [
+            'target' => $this->gl_target,
+            'low' => $this->gl_low,
+            'high' => $this->gl_high];
     }
 
     /**
@@ -104,8 +107,6 @@ new class extends Component {
                 $this->selectedMasks[] = (string)$bit;
             }
         }
-
-        Log::info('In mount', $this->settings);
 
         $this->plasma = $this->settings['is_plasma'] ? self::PLASMA : self::WHOLE;
         $this->mmol = $this->settings['is_mmol'] ? self::MMOL : self::MGDL;
@@ -124,45 +125,45 @@ new class extends Component {
 
     public function updated($property, $value)
     {
-        if (in_array($property, ['plasma', 'mmol', 'target', 'low_level', 'high_level'])
+        if (in_array($property, ['plasma', 'mmol']) //, 'target', 'low_level', 'high_level'])
             && !empty($value)
         ) {
             $this->$property = $value;
 
-            Log::info('updated', [$property, $value, gettype($value)]);
-
-            switch ($property) {
-                case 'target': $this->gl_target->setGlucose((float)$value); break;
-                case 'low_level': $this->gl_low->setGlucose((float)$value); break;
-                case 'high_level': $this->gl_high->setGlucose((float)$value); break;
-            }
-
-            foreach ([$this->gl_target, $this->gl_low, $this->gl_high] as $key => $gl) {
+            foreach ($this->gls as $key => $gl) {
+                Log::info('Set gluc', [$key]);
                 $this->gls[$key]
                     ->setPlasma($this->isPlasma())
                     ->setMmol($this->isMmol());
             }
 
-            if ($property !== 'target') {
-                $this->target = $this->gl_target->getForView();
-            }
-            if ($property !== 'low_level') {
-                $this->low_level = $this->gl_low->getForView();
-            }
-            if ($property !== 'high_level') {
-                $this->high_level = $this->gl_high->getForView();
-            }
+            //Recalculate all glucoses
+            $this->target = $this->gl_target->getForView();
+            $this->low_level = $this->gl_low->getForView();
+            $this->high_level = $this->gl_high->getForView();
 
             $this->settings['is_plasma'] = $this->isPlasma();
             $this->settings['is_mmol'] = $this->isMmol();
-            $this->settings['target'] = $this->gl_target->getRawValue();
-            $this->settings['low_level'] = $this->gl_low->getRawValue();
-            $this->settings['high_level'] = $this->gl_high->getRawValue();
 
-            Log::info('Updated', [
-                $this->target,
-                $this->settings['target']
-            ]);
+        } elseif (in_array($property, ['target', 'low_level', 'high_level'])) {
+            //we get mg or whole. it depends on the check boxes, so we need to recalculate to raw value
+            $gl = (new Glucose(5.6))
+                ->setMmol($this->isMmol())
+                ->setPlasma($this->isPlasma())
+                ->setGlucose($value);
+
+            $this->$property = $gl->getRawValue();
+            switch ($property) {
+                case 'target': $this->target = $gl->getForView();
+                    $this->settings['target'] = $gl->getRawValue();
+                break;
+                case 'low_level': $this->low_level = $gl->getForView();
+                    $this->settings['low_level'] = $gl->getRawValue();
+                break;
+                case 'high_level': $this->high_level = $gl->getForView();
+                    $this->settings['high_level'] = $gl->getRawValue();
+                break;
+            }
         }
     }
 
@@ -174,23 +175,13 @@ new class extends Component {
             'message' => "All current products and groups will be deleted.<br>This action is suitable for the initial filling, when you don\'t have the products yet" ,
             'ok' => 'Fill',
         ];
-        $this->dispatch("fill-products", ['params' => $params]);
+        $this->dispatch("show-dialog", ['params' => $params]);
     }
 
     public function updatedSelectedMasks()
     {
         $this->settings['menu_info'] = array_sum($this->selectedMasks);
     }
-
-    /*public function updatedLowLevel()
-    {
-        $this->settings['low_level'] = Glucose::convertToRaw($this->low_level);
-    }*/
-
-    /*public function updatedHighLevel()
-    {
-        $this->settings['high_level'] = Glucose::convertToRaw($this->high_level);
-    }*/
 
     public function save()
     {
@@ -203,21 +194,8 @@ new class extends Component {
         $this->settings['freq_qty'] = $this->freq_qty;
         $this->settings['filter_off'] = $this->filter_off;
 
-        Log::info('On saving', [$this->settings]);
         Auth::user()->putSetting('User', $this->settings);
         session()->flash('notification', 'Settings saved');
-    }
-
-    public function setSection($sectionName)
-    {
-        $available = [
-            self::MENU, self::GLUCOSE, self::PRODUCTS
-        ];
-
-        if (in_array($sectionName, $available)) {
-            Log::info('Yes, I set section');
-            $this->section = $sectionName;
-        }
     }
 
     #[On('fill-confirmed')]
@@ -225,5 +203,6 @@ new class extends Component {
     {
         //clear all current products and fill with json DB
         Log::info('Let us clear and fill');
+        //TODO add actual logic here
     }
 };

@@ -1,5 +1,4 @@
 import './bootstrap';
-import './tabs.js';
 
 import Alpine from 'alpinejs';
 

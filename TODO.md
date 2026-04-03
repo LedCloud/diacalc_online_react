@@ -1,0 +1,3 @@
+- make dialog to adapt its width **done**
+- start usign translations
+- fill user's products with default products
