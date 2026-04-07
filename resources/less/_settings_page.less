@@ -85,19 +85,7 @@
         margin-bottom: 10px;
     }
 }
-.alert {
-    color: #333;
-    padding: 10px 20px;
-    border-radius: 5px;
-    min-width: 240px;
-    text-align: center;
-    margin: 5px 0;
-    border: 2px solid #d9eed9;
-}
-.alert-success {
-    background-color: #e9f6eb;
-    color: #449f55;
-}
+
 .menu-panes {
     display:grid;
     grid-template-rows: auto;
@@ -119,32 +107,38 @@
     align-items: stretch;
     &__pane {
         height: 100%;
-        border: 1px solid #8998a3;
+        border: 1px solid @border-color;
         border-radius: 5px;
         padding: 15px;
-        background-color: #f5fcff;
+        background-color: @background-color-light;
         grid-area: glucose;
         @media screen and (max-width: 1023px) {
             grid-area: content;
         }
         &_header {
+            color: @text-color;
             background-color: @header-background;
-            border-top: 1px solid #8998a3;
-            border-left: 1px solid #8998a3;
-            border-right: 1px solid #8998a3;
+            border-top: 1px solid @border-color;
+            border-left: 1px solid @border-color;
+            border-right: 1px solid @border-color;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             padding: 10px 10px 5px;
         }
         &_content {
             background-color: #fff;
-            border-bottom: 1px solid #8998a3;
-            border-left: 1px solid #8998a3;
-            border-right: 1px solid #8998a3;
+            border-bottom: 1px solid @border-color;
+            border-left: 1px solid @border-color;
+            border-right: 1px solid @border-color;
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
             padding: 5px 10px 5px 10px;
             color: #333;
+            legend {
+                color: @text-color;
+                font-weight: 600;
+                font-size: 0.95em;
+            }
         }
 
         &:first-child {
@@ -162,10 +156,6 @@
             }
 
         }
-        /*media*/
-        /*&:last-child {
-            grid-area: third;
-        }*/
     }
 }
 .validation-error {

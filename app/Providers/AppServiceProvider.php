@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -28,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! $this->app->isProduction());
+
+        Blade::directive('format_time', function (string $expression) {
+//            Log::info('Some info', [$expression]);
+//            $dt = \DateTime::createFromFormat('H:i:s', $expression);
+            return "<?php echo \DateTime::createFromFormat('H:i:s', $expression)->format('H:i'); ?>";
+        });
     }
 }

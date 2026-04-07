@@ -119,13 +119,13 @@ class User extends Authenticatable
         return $this->hasMany(Menu::class);
     }
 
-//    public function settings(): HasMany
-//    {
-//        return $this->hasMany(Setting::class);
-//    }
-
     public function productGroups(): HasMany
     {
         return $this->hasMany(ProductGroup::class)->orderBy('sort_order', 'asc');
+    }
+
+    public function factors(): HasMany
+    {
+        return $this->hasMany(Factors::class)->orderBy('time', 'asc');
     }
 }

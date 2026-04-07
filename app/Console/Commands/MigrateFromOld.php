@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Classes\Settings\UserSetting;
 use App\Models\ArcGroup;
 use App\Models\ArcProduct;
+use App\Models\Factors;
 use App\Models\Product;
 use App\Models\ProductGroup;
 use Illuminate\Console\Command;
@@ -70,6 +71,28 @@ class MigrateFromOld extends Command
                 echo "User exists: $user_id\n";
             }
 
+            //copy factors
+
+            $old_factors = DB::connection('old_diacalc')->table('coefs')
+                ->where('iduser', $old_user->id)
+                ->get();
+
+            $prepared = [];
+            foreach ($old_factors as $old_factor) {
+                $prepared[] = [
+                    'user_id' => $user_id,
+                    'time' => $old_factor->time,
+                    'k1' => $old_factor->k1,
+                    'k2' => $old_factor->k2,
+                    'k3' => $old_factor->k3,
+                ];
+            }
+            if (!empty($prepared)) {
+                $user->factors()->createMany($prepared);
+            }
+
+            continue;
+
             //copy settings
             $this->moveSettings($user, $old_user->id);
 
@@ -130,26 +153,6 @@ class MigrateFromOld extends Command
             'period' => $old_settings->period,
         ];
         $user->putSetting('User', $settings);
-
-//        $settings = new SUser(User::find($user_id));
-//
-//        $settings->menu_info = $old_settings->menuinfo;
-//        $settings->round_to = $old_settings->roundto;
-//        $settings->is_plasma = !(bool)$old_settings->shwhole;
-//        $settings->is_mmol = $old_settings->mmol;
-//        $settings->target = $old_settings->shtarget;
-//        $settings->use_freq = $old_settings->usefreq;
-//        $settings->freq_qty = $old_settings->freqcount;
-//        $settings->filter_off = $old_settings->filteroff;
-//        $settings->k3_factor = $old_settings->k3factor;
-//        $settings->weight = $old_settings->weight;
-//        $settings->factors_by_time = $old_settings->timedcoefs;
-//        $settings->calory_limit = $old_settings->calorlimit;
-//        $settings->low_level = $old_settings->shlow;
-//        $settings->high_level = $old_settings->shhigh;
-//        $settings->period = $old_settings->period;
-//
-//        $settings->setValues(['stub']);
     }
 
     protected function moveProducts($user, $old_user_id)

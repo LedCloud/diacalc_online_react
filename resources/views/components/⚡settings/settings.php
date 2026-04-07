@@ -195,6 +195,7 @@ new class extends Component {
         $this->settings['filter_off'] = $this->filter_off;
 
         Auth::user()->putSetting('User', $this->settings);
+
         session()->flash('notification', __('settings.saved'));
     }
 

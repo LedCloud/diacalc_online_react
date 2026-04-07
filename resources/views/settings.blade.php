@@ -1,8 +1,5 @@
 <x-app-layout>
 
-<div>
-    <livewire:settings  />
-</div>
-    <livewire:toast-msg />
+<livewire:settings  />
 
 </x-app-layout>
