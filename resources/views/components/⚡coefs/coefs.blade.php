@@ -66,7 +66,7 @@
                                     <x-slot name="content">
                                         <button type="button"
                                                 wire:key="delete-factor-{{ $factor->id }}"
-                                                wire:click="$wire.deleteFactor()"
+                                                x-on:click.prevent="@this.call('deleteFactor', {{ $factor->id }})"
                                         >
                                             {{ __('Edit') }}
                                         </button>
