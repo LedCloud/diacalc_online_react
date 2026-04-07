@@ -135,5 +135,5 @@ Route::screen('arc/product/edit', \App\Orchid\Screens\System\ArchiveListScreen::
 Route::screen('listeners', \App\Orchid\Screens\System\SubstractScreen::class)
     ->name('platform.archive.listeners');
 
-Route::screen('products/default', \App\Orchid\Screens\Products\Stub::class)
+Route::screen('products/default/{id}', \App\Orchid\Screens\Products\Defs::class)
     ->name('products.default');

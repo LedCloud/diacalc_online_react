@@ -3,11 +3,6 @@
 namespace App\Orchid\Screens\Products;
 
 use App\Classes\Diacalc\ProductsFromJson;
-use App\Models\ArcGroup;
-use App\Models\ArcProduct;
-use App\Orchid\Layouts\Archive\ArcGroupListLayout;
-use App\Orchid\Layouts\Archive\ArcProductListLayout;
-use App\Orchid\Layouts\Products\ProductListLayout;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -18,8 +13,9 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
 
-class Stub extends Screen
+class Defs extends Screen
 {
+    const ITEMS_PER_PAGE = 25;
     protected ProductsFromJson $product_struct;
     protected $selected_group_id = 0;
 
@@ -44,9 +40,12 @@ class Stub extends Screen
         return []; //Nothing yet
     }
 
-    public function query(): iterable
+    public function query(string $id): iterable
     {
-        $perPage = 10;
+        $group_id = $id;
+
+        $perPage = self::ITEMS_PER_PAGE;
+
         $currentPage = Request::get('page', 1);
 
         $groups = array_map(fn($r) => new Repository([
@@ -54,6 +53,8 @@ class Stub extends Screen
             'id' => $r['id'],
             'count'=> count($r['prods'])
         ]), $this->product_struct->getGroups());
+
+        $this->selected_group_id = $group_id - 1;
 
         $products = array_map(fn($r) => new Repository([
             'name' => $r['name'],
@@ -114,19 +115,22 @@ class Stub extends Screen
         return [
             Layout::split([
                 Layout::table('groups', [
-                    TD::make('name')
+                    TD::make('name', __('admin.name'))
                         ->render(fn ($group) =>
                         Link::make($group['name'] . ':' . $group['id'])
-                            ->asyncRoute('asyncGetProducts', $group['id'])
-                        ),
-                    TD::make('count'),
+                        ->icon(request()->route('id') == ($group['id'] + 1)
+                            ? 'bs.check-circle-fill'
+                            : '')
+                        ->route('products.default', $group['id'] + 1)
+                        )->cantHide(),
+                    //TD::make('count'),
                 ]),
                 Layout::table('products', [
-                    TD::make('name'),
-                    TD::make('prot'),
-                    TD::make('fat'),
-                    TD::make('carb'),
-                    TD::make('gi'),
+                    TD::make('name', __('admin.name'))->cantHide(),
+                    TD::make('prot', __('admin.prot'))->cantHide(),
+                    TD::make('fat', __('admin.fat'))->cantHide(),
+                    TD::make('carb', __('admin.carb'))->cantHide(),
+                    TD::make('gi', __('admin.gi'))->cantHide(),
                 ]),
             ])
                 ->ratio('40/60')

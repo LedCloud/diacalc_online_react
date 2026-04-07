@@ -89,7 +89,7 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make('Default products')
                 ->icon('bs.book')
                 ->title('products_default')
-                ->route('products.default'),
+                ->route('products.default', ['id' => 1]),
 
             Menu::make(__('Product archive'))
                 ->icon('bs.list-columns')
