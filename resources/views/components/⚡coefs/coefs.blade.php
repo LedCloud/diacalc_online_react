@@ -14,7 +14,7 @@
                 </thead>
                 <tbody>
                     @foreach($factors as $factor)
-                        <tr>
+                        <tr wire:key="factor-{{ $factor->id }}">
                             <td>
                                 {{ $factor->time->format('H:i') }}
                             </td>
@@ -27,7 +27,36 @@
                             <td>
                                 {{ $factor->k3 }}
                             </td>
-                            <td>{{ $factor->id }}</td>
+                            <td wire:key="dropdown-td-{{ $factor->id }}">
+
+                                <x-dropdown align="right" width="48" wire:ignore.self
+                                            wire:key="dropdown-{{ $factor->id }}">
+                                    <x-slot name="trigger">
+                                        <button class="text-gray-400 hover:text-gray-600 transition">
+                                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                            </svg>
+                                        </button>
+                                    </x-slot>
+
+                                    <x-slot name="content" >
+                                        <button type="button" wire:click="deleteFactor()"
+                                                wire:key="delete-factor-btn-{{ $factor->id }}"
+                                        >
+                                            {{ __('Edit') }}
+                                        </button>
+
+                                        <!-- Удаление через форму внутри выпадающего списка -->
+                                        <form action="{{ route('dashboard') }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-gray-100 focus:outline-none transition">
+                                                {{ __('Delete') }}
+                                            </button>
+                                        </form>
+                                    </x-slot>
+                                </x-dropdown>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
