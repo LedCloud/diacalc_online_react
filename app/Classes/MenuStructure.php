@@ -10,12 +10,11 @@ class MenuStructure
             'name' => 'Dashboard',
         ],
         [
-            'route' => 'settings',
             'name' => 'Settings',
-        ],
-        [
-            'route' => 'coefs',
-            'name' => 'Coefficients',
+            'submenu' => [
+                ['route' => 'settings', 'name' => 'Settings'],
+                ['route' => 'coefs', 'name' => 'Factors'],
+            ],
         ],
     ];
 

@@ -13,9 +13,37 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @foreach($menu_structure as $menu_item)
-                        <x-nav-link :href="route($menu_item['route'])" :active="request()->routeIs($menu_item['route'])">
-                            {{ __($menu_item['name']) }}
-                        </x-nav-link>
+                        @if (isset($menu_item['submenu']))
+                            <!-- Элемент с выпадающим списком -->
+                            <div class="hidden sm:flex sm:items-center sm:ms-6">
+                                <x-dropdown align="right" width="48">
+                                    <x-slot name="trigger">
+                                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                            <div>{{ __($menu_item['name']) }}</div>
+                                            <div class="ms-1">
+                                                {{--Down arrow--}}
+                                                <svg class="fill-current h-4 w-4" xmlns="http://w3.org" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </button>
+                                    </x-slot>
+
+                                    <x-slot name="content">
+                                        @foreach($menu_item['submenu'] as $sub_item)
+                                            <x-dropdown-link :href="route($sub_item['route'])" :active="request()->routeIs($sub_item['route'])">
+                                                {{ __($sub_item['name']) }}
+                                            </x-dropdown-link>
+                                        @endforeach
+                                    </x-slot>
+                                </x-dropdown>
+                            </div>
+                        @else
+                            <!-- Обычная ссылка -->
+                            <x-nav-link :href="route($menu_item['route'])" :active="request()->routeIs($menu_item['route'])">
+                                {{ __($menu_item['name']) }}
+                            </x-nav-link>
+                        @endif
                     @endforeach
                 </div>
             </div>
@@ -70,9 +98,37 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             @foreach($menu_structure as $menu_item)
-                <x-responsive-nav-link :href="route($menu_item['route'])" :active="request()->routeIs($menu_item['route'])">
-                    {{ __($menu_item['name']) }}
-                </x-responsive-nav-link>
+                @if (isset($menu_item['submenu']))
+                    <!-- Элемент с раскрывающимся списком (Mobile) -->
+                    <div x-data="{ open: false }" class="border-l-4 border-transparent">
+                        <button @click="open = !open" class="flex w-full items-center justify-between ps-3 pe-4 py-2 text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 transition duration-150 ease-in-out">
+                            <div>{{ __($menu_item['name']) }}</div>
+                            <div class="ms-1 shadow-sm">
+                                <!-- Иконка стрелочки, которая вращается при открытии -->
+                                <svg class="h-4 w-4 transform transition-transform duration-200" :class="{ 'rotate-180': open }" xmlns="http://w3.org" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </button>
+
+                        <!-- Контент подменю (раскрывается вниз) -->
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 transform scale-95"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             class="ps-4 space-y-1 bg-gray-50/50">
+                            @foreach($menu_item['submenu'] as $sub_item)
+                                <x-responsive-nav-link :href="route($sub_item['route'])" :active="request()->routeIs($sub_item['route'])">
+                                    {{ __($sub_item['name']) }}
+                                </x-responsive-nav-link>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <x-responsive-nav-link :href="route($menu_item['route'])" :active="request()->routeIs($menu_item['route'])">
+                        {{ __($menu_item['name']) }}
+                    </x-responsive-nav-link>
+                @endif
             @endforeach
         </div>
 

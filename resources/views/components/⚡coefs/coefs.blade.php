@@ -17,7 +17,6 @@
                         <tr>
                             <td>
                                 {{ $factor->time->format('H:i') }}
-{{--                                @format_time($factor->time)--}}
                             </td>
                             <td>
                                 {{ $factor->k1 }}

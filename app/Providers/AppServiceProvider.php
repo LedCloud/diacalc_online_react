@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Livewire::addNamespace('product');
-        Livewire::addNamespace('manu');
+        Livewire::addNamespace('menu');
     }
 
     /**
@@ -30,11 +30,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! $this->app->isProduction());
-
-        Blade::directive('format_time', function (string $expression) {
-//            Log::info('Some info', [$expression]);
-//            $dt = \DateTime::createFromFormat('H:i:s', $expression);
-            return "<?php echo \DateTime::createFromFormat('H:i:s', $expression)->format('H:i'); ?>";
-        });
     }
 }
