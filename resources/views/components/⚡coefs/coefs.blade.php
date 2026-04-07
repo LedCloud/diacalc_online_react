@@ -27,35 +27,79 @@
                             <td>
                                 {{ $factor->k3 }}
                             </td>
-                            <td wire:key="dropdown-td-{{ $factor->id }}">
+                            <td >
+{{--                                <button type="button"--}}
+{{--                                        wire:key="delete-factor1-{{ $factor->id }}"--}}
+{{--                                        wire:click="deleteFactor({{ $factor->id }})">--}}
+{{--                                    {{ __('Edit') }}--}}
+{{--                                </button>--}}
+{{--                                <br>--}}
+{{--                                <div class="row-dropdown relative py-1 bg-white dark:bg-gray-700">--}}
+{{--                                    <!-- Триггер -->--}}
+{{--                                    <button class="trigger" type="button">****</button>--}}
+{{--                                    <button class="trigger text-gray-400 hover:text-gray-600 transition">--}}
+{{--                                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">--}}
+{{--                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />--}}
+{{--                                        </svg>--}}
+{{--                                    </button>--}}
 
-                                <x-dropdown align="right" width="48" wire:ignore.self
-                                            wire:key="dropdown-{{ $factor->id }}">
+{{--                                    <!-- Меню -->--}}
+{{--                                    <div class="dropdown-menu bg-white absolute z-50 mt-2 w-48 rounded-md shadow-lg ltr:origin-top-right rtl:origin-top-left end-0 hidden">--}}
+{{--                                        <div class="rounded-md ring-1 ring-black ring-opacity-5 p-2">--}}
+{{--                                            <button type="button"--}}
+{{--                                                    wire:key="delete-fly-{{ $factor->id }}"--}}
+{{--                                                    wire:click="deleteFactor({{ $factor->id }})"--}}
+{{--                                                    > <!-- Закрываем меню после клика -->--}}
+{{--                                                {{ __('Edit') }}--}}
+{{--                                            </button>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+                                <x-row_menu.dropdown>
                                     <x-slot name="trigger">
                                         <button class="text-gray-400 hover:text-gray-600 transition">
                                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                                             </svg>
-                                        </button>
+                                       </button>
                                     </x-slot>
-
-                                    <x-slot name="content" >
-                                        <button type="button" wire:click="deleteFactor()"
-                                                wire:key="delete-factor-btn-{{ $factor->id }}"
+                                    <x-slot name="content">
+                                        <button type="button"
+                                                wire:key="delete-factor-{{ $factor->id }}"
+                                                wire:click="$wire.deleteFactor()"
                                         >
                                             {{ __('Edit') }}
                                         </button>
-
-                                        <!-- Удаление через форму внутри выпадающего списка -->
-                                        <form action="{{ route('dashboard') }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-gray-100 focus:outline-none transition">
-                                                {{ __('Delete') }}
-                                            </button>
-                                        </form>
                                     </x-slot>
-                                </x-dropdown>
+                                </x-row_menu.dropdown>
+
+{{--                                <x-dropdown align="right" width="48" wire:ignore.self--}}
+{{--                                            wire:key="dropdown-{{ $factor->id }}">--}}
+{{--                                    <x-slot name="trigger">--}}
+{{--                                        <button class="text-gray-400 hover:text-gray-600 transition">--}}
+{{--                                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">--}}
+{{--                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />--}}
+{{--                                            </svg>--}}
+{{--                                        </button>--}}
+{{--                                    </x-slot>--}}
+
+{{--                                    <x-slot name="content" >--}}
+{{--                                        <button type="button" wire:click="deleteFactor()"--}}
+{{--                                                wire:key="delete-factor-btn-{{ $factor->id }}"--}}
+{{--                                        >--}}
+{{--                                            {{ __('Edit') }}--}}
+{{--                                        </button>--}}
+
+{{--                                        <!-- Удаление через форму внутри выпадающего списка -->--}}
+{{--                                        <form action="{{ route('dashboard') }}" method="POST">--}}
+{{--                                            @csrf--}}
+{{--                                            @method('DELETE')--}}
+{{--                                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-gray-100 focus:outline-none transition">--}}
+{{--                                                {{ __('Delete') }}--}}
+{{--                                            </button>--}}
+{{--                                        </form>--}}
+{{--                                    </x-slot>--}}
+{{--                                </x-dropdown>--}}
                             </td>
                         </tr>
                     @endforeach

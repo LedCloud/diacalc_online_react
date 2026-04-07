@@ -67,8 +67,8 @@ new class extends Component
         session()->flash('notification', __('coefs.factors_calculated'));
     }
 
-    public function deleteFactor($id)
+    public function deleteFactor()
     {
-        Log::info('Deleting', [$id]);
+        Log::info('Deleting');
     }
 };
