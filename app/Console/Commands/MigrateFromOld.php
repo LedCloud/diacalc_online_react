@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Classes\Settings\UserSetting;
 use App\Models\ArcGroup;
 use App\Models\ArcProduct;
-use App\Models\Factors;
+use App\Models\Factor;
 use App\Models\Product;
 use App\Models\ProductGroup;
 use Illuminate\Console\Command;

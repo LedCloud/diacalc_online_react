@@ -11,4 +11,5 @@ return [
     'k2' => 'k2',
     'k3' => 'OUV',
     'factors_calculated' => 'The factors are calculated',
+    'calculate_factors_by_time' => 'Calculate factors by time',
 ];

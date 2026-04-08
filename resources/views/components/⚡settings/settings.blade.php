@@ -133,7 +133,8 @@
                                 </fieldset>
                                 <label for="use_freq">
                                     <input type="checkbox" id="use_freq" wire:model="use_freq">
-                                    {{ __('settings.use_freq') }}</label>
+                                    {{ __('settings.use_freq') }}
+                                </label>
                                 <div class="field">
                                     <label for="freq_qty">{{ __('settings.freq_qty') }}</label>
                                     <input id="freq_qty" type="number"

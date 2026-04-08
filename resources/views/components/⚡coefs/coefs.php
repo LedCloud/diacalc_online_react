@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Diacalc\Glucose;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,22 +15,13 @@ new class extends Component
     #[Validate('integer|min:1')]
     public $weight;
 
+    public $factors_by_time;
+
     #[Validate('numeric|min:1')]
     public $k3_factor;
 
     public Collection $factors;
 
-    #[Computed]
-    public function factors()
-    {
-        return Auth::user()->factors;
-    }
-
-    public function boot()
-    {
-       // $settings = Auth::user()->getSetting('User');
-
-    }
     public function mount()
     {
         $this->settings = Auth::user()->getSetting('User');
@@ -38,28 +30,7 @@ new class extends Component
 
         $this->weight = $this->settings['weight'];
         $this->k3_factor = $this->settings['k3_factor'];
-    }
-
-    public function updatedK3Factor($value)
-    {
-        $this->k3_factor = $value;
-        $this->settings['k3_factor'] = $this->k3_factor;
-        Auth::user()->putSetting('User', $this->settings);
-    }
-
-    public function updatedWeight($value)
-    {
-        if ($value <= 0) {
-            $value = 1;
-
-        }
-        $this->weight = $value;
-        $this->dispatch('weight-updated');
-
-        Log::info('Updated', [$value, $this->weight]);
-
-        $this->settings['weight'] = $this->weight;
-        Auth::user()->putSetting('User', $this->settings);
+        $this->factors_by_time = (bool)$this->settings['factors_by_time'];
     }
 
     public function calculateFactors()
@@ -69,6 +40,25 @@ new class extends Component
 
     public function deleteFactor($id)
     {
-        Log::info('Deleting', [$id]);
+        if (\App\Models\Factor::destroy($id)) {
+            session()->flash('notification', __('coefs.deleted'));
+        }
+    }
+
+    public function addFactor()
+    {
+        Log::info('Add factor');
+    }
+
+    public function save()
+    {
+        $this->validate();
+        $this->settings['factors_by_time'] = (int)$this->factors_by_time;
+        $this->settings['k3_factor'] = $this->k3_factor;
+        $this->settings['weight'] = $this->weight;
+
+        Auth::user()->putSetting('User', $this->settings);
+
+        session()->flash('notification', __('coefs.saved'));
     }
 };

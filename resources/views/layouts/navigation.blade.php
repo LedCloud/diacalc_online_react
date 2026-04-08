@@ -12,6 +12,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(isset($menu_structure))
                     @foreach($menu_structure as $menu_item)
                         @if (isset($menu_item['submenu']))
                             <!-- Элемент с выпадающим списком -->
@@ -45,6 +46,7 @@
                             </x-nav-link>
                         @endif
                     @endforeach
+                    @endif
                 </div>
             </div>
 
@@ -97,6 +99,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            @if(isset($menu_structure))
             @foreach($menu_structure as $menu_item)
                 @if (isset($menu_item['submenu']))
                     <!-- Элемент с раскрывающимся списком (Mobile) -->
@@ -130,6 +133,7 @@
                     </x-responsive-nav-link>
                 @endif
             @endforeach
+                @endif
         </div>
 
         <!-- Responsive Settings Options -->

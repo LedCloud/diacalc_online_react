@@ -63,8 +63,6 @@ class Glucose
         //convert to mmol and whole
         $this->value = $value / $this->getFactors();
 
-        Log::info('Set Glucose', [$value, $this->getFactors(), $this->value]);
-
         return $this;
     }
 

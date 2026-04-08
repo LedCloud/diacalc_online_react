@@ -126,6 +126,6 @@ class User extends Authenticatable
 
     public function factors(): HasMany
     {
-        return $this->hasMany(Factors::class)->orderBy('time', 'asc');
+        return $this->hasMany(Factor::class)->orderBy('time', 'asc');
     }
 }

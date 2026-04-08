@@ -1,7 +1,20 @@
 
 <div>
+    <form class="factors__form" wire:submit="save">
     <div class="coefs-panes">
         <x-pane :header="__('coefs.coefficients')" prefix="coefs">
+            <div class="horizontal">
+                <div class="field">
+                    <label for="factors_by_time">
+                        <input type="checkbox"
+                               id="factors_by_time"
+                               wire:model="factors_by_time" />
+                        {{ __('coefs.calculate_factors_by_time') }}
+                    </label>
+                </div>
+                <a class="btn" href="{{ route('coefs.create') }}"
+                >+</a>
+            </div>
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -19,43 +32,16 @@
                                 {{ $factor->time->format('H:i') }}
                             </td>
                             <td>
-                                {{ $factor->k1 }}
+                                {{ $factor->k1formatted }}
                             </td>
                             <td>
-                                {{ $factor->k2 }}
+                                {{ $factor->k2formatted }}
                             </td>
                             <td>
-                                {{ $factor->k3 }}
+                                {{ $factor->k3formatted }}
                             </td>
                             <td >
-{{--                                <button type="button"--}}
-{{--                                        wire:key="delete-factor1-{{ $factor->id }}"--}}
-{{--                                        wire:click="deleteFactor({{ $factor->id }})">--}}
-{{--                                    {{ __('Edit') }}--}}
-{{--                                </button>--}}
-{{--                                <br>--}}
-{{--                                <div class="row-dropdown relative py-1 bg-white dark:bg-gray-700">--}}
-{{--                                    <!-- Триггер -->--}}
-{{--                                    <button class="trigger" type="button">****</button>--}}
-{{--                                    <button class="trigger text-gray-400 hover:text-gray-600 transition">--}}
-{{--                                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">--}}
-{{--                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />--}}
-{{--                                        </svg>--}}
-{{--                                    </button>--}}
-
-{{--                                    <!-- Меню -->--}}
-{{--                                    <div class="dropdown-menu bg-white absolute z-50 mt-2 w-48 rounded-md shadow-lg ltr:origin-top-right rtl:origin-top-left end-0 hidden">--}}
-{{--                                        <div class="rounded-md ring-1 ring-black ring-opacity-5 p-2">--}}
-{{--                                            <button type="button"--}}
-{{--                                                    wire:key="delete-fly-{{ $factor->id }}"--}}
-{{--                                                    wire:click="deleteFactor({{ $factor->id }})"--}}
-{{--                                                    > <!-- Закрываем меню после клика -->--}}
-{{--                                                {{ __('Edit') }}--}}
-{{--                                            </button>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-                                <x-row_menu.dropdown>
+                                <x-dropdown contentClasses="flex flex-col py-1 bg-white dark:bg-gray-700">
                                     <x-slot name="trigger">
                                         <button class="text-gray-400 hover:text-gray-600 transition">
                                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -63,43 +49,23 @@
                                             </svg>
                                        </button>
                                     </x-slot>
-                                    <x-slot name="content">
+                                    <x-slot name="content" >
                                         <button type="button"
-                                                wire:key="delete-factor-{{ $factor->id }}"
-                                                x-on:click.prevent="@this.call('deleteFactor', {{ $factor->id }})"
+                                                class="hover:bg-slate-100"
+                                                wire:key="edit-factor-{{ $factor->id }}"
+                                                x-on:click.prevent="@this.call('editFactor', {{ $factor->id }})"
                                         >
                                             {{ __('Edit') }}
                                         </button>
+                                        <button type="button"
+                                                class="hover:bg-slate-100"
+                                                wire:key="delete-factor-{{ $factor->id }}"
+                                                x-on:click.prevent="@this.call('deleteFactor', {{ $factor->id }})"
+                                        >
+                                            {{ __('Delete') }}
+                                        </button>
                                     </x-slot>
-                                </x-row_menu.dropdown>
-
-{{--                                <x-dropdown align="right" width="48" wire:ignore.self--}}
-{{--                                            wire:key="dropdown-{{ $factor->id }}">--}}
-{{--                                    <x-slot name="trigger">--}}
-{{--                                        <button class="text-gray-400 hover:text-gray-600 transition">--}}
-{{--                                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">--}}
-{{--                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />--}}
-{{--                                            </svg>--}}
-{{--                                        </button>--}}
-{{--                                    </x-slot>--}}
-
-{{--                                    <x-slot name="content" >--}}
-{{--                                        <button type="button" wire:click="deleteFactor()"--}}
-{{--                                                wire:key="delete-factor-btn-{{ $factor->id }}"--}}
-{{--                                        >--}}
-{{--                                            {{ __('Edit') }}--}}
-{{--                                        </button>--}}
-
-{{--                                        <!-- Удаление через форму внутри выпадающего списка -->--}}
-{{--                                        <form action="{{ route('dashboard') }}" method="POST">--}}
-{{--                                            @csrf--}}
-{{--                                            @method('DELETE')--}}
-{{--                                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm leading-5 text-red-600 hover:bg-gray-100 focus:outline-none transition">--}}
-{{--                                                {{ __('Delete') }}--}}
-{{--                                            </button>--}}
-{{--                                        </form>--}}
-{{--                                    </x-slot>--}}
-{{--                                </x-dropdown>--}}
+                                </x-dropdown>
                             </td>
                         </tr>
                     @endforeach
@@ -109,16 +75,21 @@
         <x-pane :header="__('coefs.coefficients')" prefix="coefs">
             <fieldset>
                 <div class="field">
-                    <label for="weight">{{ __('coefs.weight') }} {{ $weight }}</label>
-                    <input type="number" min="1" step="1"
+                    <label for="weight">{{ __('coefs.weight') }}</label>
+                    <input type="number"
                            key="weight-field-{{ $weight }}"
+                           min="1" step="1"
                            value="{{ $weight }}"
-                           wire:model.live.debounce.250ms.number="weight" />
+                           wire:model="weight" />
+                    <div class="validation-error">@error('weight') {{ $message }} @enderror</div>
                 </div>
 
                 <div class="field">
                     <label for="k3_factor">{{ __('coefs.k3_factor') }}</label>
-                    <input type="number" min="1" step="1" wire:model.live.debounce.250ms="k3_factor" />
+                    <input type="number"
+                           min="1" step="1"
+                           wire:model="k3_factor" />
+                    <div class="validation-error">@error('k3_factor') {{ $message }} @enderror</div>
                 </div>
                 <button class="btn"
                         type="button"
@@ -127,7 +98,11 @@
                 <div class="notice">{{ __('coefs.calculate_explain') }}</div>
             </fieldset>
         </x-pane>
-
     </div>
+        <div class="button-horizontal">
+            <button class="btn settings__btn-save primary" type="submit">{{ __('inputs.save') }}</button>
+            <a class="btn settings__btn-calcel default" href="{{ route("dashboard") }}">{{ __('inputs.cancel') }}</a>
+        </div>
     <x-notice />
+    </form>
 </div>

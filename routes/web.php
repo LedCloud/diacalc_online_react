@@ -18,13 +18,15 @@ Route::get('/dashboard', function () {
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware('auth')->middleware([MenuStructure::class])->group(function () {
+Route::middleware(['auth', MenuStructure::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/settings', fn() => view('settings') )->name('settings');
     Route::get('/coefs', fn() => view('coefs') )->name('coefs');
+
+    Route::get('/coefs/create', fn() => view('coefs.create'))->name('coefs.create');
 });
 
 
