@@ -51,7 +51,7 @@
                                     </x-slot>
                                     <x-slot name="content" >
                                         <a type="button"
-                                           href="#"
+                                           href="{{ route('factors.edit', ['id' => $factor->id]) }}"
                                            {{-- "  --}}
                                                 class="hover:bg-slate-100"
                                         >
