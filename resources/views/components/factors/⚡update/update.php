@@ -1,9 +1,12 @@
 <?php
 
 use App\Classes\Diacalc\Glucose;
+use App\Models\Factor;
+
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
+use Illuminate\Http\Request;
 
 new class extends Component
 {
@@ -21,11 +24,23 @@ new class extends Component
 
     public $factors;
 
-    public function boot()
+    protected $factor = null;
+
+    public function boot(Request $request)
     {
-        $this->k1 = 1;
-        $this->k2 = 0;
-        $this->k3 = 2;
+        dd($request);
+        if (!empty($id)) {
+            $this->factor = Factor::findOrFail($id);
+
+            $this->time = $this->factor->time;
+            $this->k1 = $this->factor->k1;
+            $this->k2 = $this->factor->k2;
+            $this->k3 = (new Glucose($this->k3))->getForView();
+        } else {
+            $this->k1 = 1;
+            $this->k2 = 0;
+            $this->k3 = 2;
+        }
     }
 
     public function mount()

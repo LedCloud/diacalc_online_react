@@ -12,7 +12,7 @@
                         {{ __('coefs.calculate_factors_by_time') }}
                     </label>
                 </div>
-                <a class="btn" href="{{ route('coefs.create') }}"
+                <a class="btn" href="{{ route('factors.create') }}"
                 >+</a>
             </div>
             <table class="table table-responsive">
@@ -50,13 +50,12 @@
                                        </button>
                                     </x-slot>
                                     <x-slot name="content" >
-                                        <button type="button"
+                                        <a type="button"
+                                           href="{{ route('factors.update', ['id' => $factor->id]) }}"
                                                 class="hover:bg-slate-100"
-                                                wire:key="edit-factor-{{ $factor->id }}"
-                                                x-on:click.prevent="@this.call('editFactor', {{ $factor->id }})"
                                         >
                                             {{ __('Edit') }}
-                                        </button>
+                                        </a>
                                         <button type="button"
                                                 class="hover:bg-slate-100"
                                                 wire:key="delete-factor-{{ $factor->id }}"

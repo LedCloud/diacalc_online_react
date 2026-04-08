@@ -13,7 +13,7 @@ class MenuStructure
             'name' => 'Settings',
             'submenu' => [
                 ['route' => 'settings', 'name' => 'Settings'],
-                ['route' => 'coefs', 'name' => 'Factors'],
+                ['route' => 'factors', 'name' => 'Factors'],
             ],
         ],
     ];

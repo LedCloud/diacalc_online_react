@@ -24,9 +24,10 @@ Route::middleware(['auth', MenuStructure::class])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/settings', fn() => view('settings') )->name('settings');
-    Route::get('/coefs', fn() => view('coefs') )->name('coefs');
+    Route::get('/factors', fn() => view('factors') )->name('factors');
 
-    Route::get('/coefs/create', fn() => view('coefs.create'))->name('coefs.create');
+    Route::get('/factors/update/{$id}', fn() => view('factor.update'))->name('factors.update');
+    Route::get('/factors/create', fn() => view('factor.create'))->name('factors.create');
 });
 
 

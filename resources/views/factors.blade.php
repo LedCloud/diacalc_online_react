@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div>
-        <livewire:coefs.create />
+        <livewire:factors />
     </div>
     <livewire:toast-msg />
 
