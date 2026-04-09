@@ -2,4 +2,4 @@
 - start using translations **done**
 - fill user's products with default products
 - adjustable menu **done**
-  
+- make pane as separate blade component with its styles

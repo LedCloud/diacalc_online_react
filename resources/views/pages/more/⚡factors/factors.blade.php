@@ -52,8 +52,7 @@
                                     <x-slot name="content" >
                                         <a type="button"
                                            href="{{ route('factors.edit', ['id' => $factor->id]) }}"
-                                           {{-- "  --}}
-                                                class="hover:bg-slate-100"
+                                           class="hover:bg-slate-100"
                                         >
                                             {{ __('Edit') }}
                                         </a>
@@ -95,7 +94,7 @@
                         type="button"
                         wire:click="calculateFactors"
                 >{{ __('coefs.calc_factors') }}</button>
-                <div class="notice">{{ __('coefs.calculate_explain') }}</div>
+                <x-panes.notice>{{ __('coefs.calculate_explain') }}</x-panes.notice>
             </fieldset>
         </x-pane>
     </div>
@@ -103,6 +102,8 @@
             <button class="btn settings__btn-save primary" type="submit">{{ __('inputs.save') }}</button>
             <a class="btn settings__btn-calcel default" href="{{ route("dashboard") }}">{{ __('inputs.cancel') }}</a>
         </div>
-    <x-notice />
     </form>
+
+    <livewire:toast-msg  />
+
 </div>

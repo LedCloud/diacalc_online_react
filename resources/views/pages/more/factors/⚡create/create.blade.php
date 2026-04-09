@@ -8,7 +8,7 @@
                     <div class="field">
                         <label class="required" for="time">{{ __('coefs.time') }}</label>
                         <input wire:model="time"
-                               type="text" name="time"  />
+                               type="time" name="time"  />
                         <div class="validation-error">@error('time') {{ $message }} @enderror</div>
                     </div>
                     <div class="field">

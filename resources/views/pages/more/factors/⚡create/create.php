@@ -30,15 +30,16 @@ new class extends Component
 
     public function boot()
     {
-        Auth::user()->factors()->where('id', $this->id)->firstOrFail();
-
         if (!empty($this->id)) {
+
+            Auth::user()->factors()->where('id', $this->id)->firstOrFail();
+
             $this->factor = Factor::findOrFail($this->id);
 
             $this->time = $this->factor->time->format('H:i');
             $this->k1 = $this->factor->k1;
             $this->k2 = $this->factor->k2;
-            $this->k3 = (new Glucose($this->k3))->getForView();
+            $this->k3 = (new Glucose($this->factor->k3))->getForView();
         } else {
             $this->k1 = 1;
             $this->k2 = 0;
@@ -67,7 +68,11 @@ new class extends Component
 
         Auth::user()->factors()->create($data);
 
-        session()->flash('notification', __('coefs.created'));
+        if ($this->id) {
+            session()->flash('notification', __('coefs.updated'));
+        } else {
+            session()->flash('notification', __('coefs.created'));
+        }
 
         redirect()->route('factors');
     }
