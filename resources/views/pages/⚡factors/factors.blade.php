@@ -104,6 +104,6 @@
         </div>
     </form>
 
-    <livewire:toast-msg  />
+    <x-toast-msg />
 
 </div>

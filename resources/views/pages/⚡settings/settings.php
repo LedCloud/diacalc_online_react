@@ -131,7 +131,6 @@ new class extends Component {
             $this->$property = $value;
 
             foreach ($this->gls as $key => $gl) {
-                Log::info('Set gluc', [$key]);
                 $this->gls[$key]
                     ->setPlasma($this->isPlasma())
                     ->setMmol($this->isMmol());
@@ -146,7 +145,7 @@ new class extends Component {
             $this->settings['is_mmol'] = $this->isMmol();
 
         } elseif (in_array($property, ['target', 'low_level', 'high_level'])) {
-            //we get mg or whole. it depends on the check boxes, so we need to recalculate to raw value
+            //we get mg or whole. it depends on the check-boxes, so we need to recalculate to raw value
             $gl = (new Glucose(5.6))
                 ->setMmol($this->isMmol())
                 ->setPlasma($this->isPlasma())
@@ -196,7 +195,10 @@ new class extends Component {
 
         Auth::user()->putSetting('User', $this->settings);
 
-        session()->flash('notification', __('settings.saved'));
+        $this->dispatch('notify',
+            message: __('settings.saved'),
+            type: 'info'
+        );
     }
 
     #[On('fill-confirmed')]

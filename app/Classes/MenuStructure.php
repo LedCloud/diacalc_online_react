@@ -14,6 +14,7 @@ class MenuStructure
             'submenu' => [
                 ['route' => 'settings', 'name' => 'Settings'],
                 ['route' => 'factors', 'name' => 'Factors'],
+                ['route' => 'calculations', 'name' => 'Calculations'],
             ],
         ],
     ];

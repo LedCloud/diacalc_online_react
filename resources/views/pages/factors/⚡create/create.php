@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Illuminate\Http\Request;
+use Livewire\Attributes\Locked;
 
 new class extends Component
 {
+    #[Locked]
     public $id;
 
     #[Validate('required|string')]
@@ -66,14 +68,29 @@ new class extends Component
                 ->getRawValue(),
         ];
 
-        Auth::user()->factors()->create($data);
+        $res = false;
 
         if ($this->id) {
-            session()->flash('notification', __('coefs.updated'));
+
+            Factor::where('id', $this->id)->where('user_id', Auth::id())->update($data);
+
+
+            $this->dispatch('notify',
+                message: __('coefs.updated'),
+                type: 'info'
+            );
+
         } else {
-            session()->flash('notification', __('coefs.created'));
+            Auth::user()->factors()->create($data);
+
+            $this->dispatch('notify',
+                message: __('coefs.created'),
+                type: 'info'
+            );
         }
 
-        redirect()->route('factors');
+        redirect()->route('factors', [
+
+        ]);
     }
 };

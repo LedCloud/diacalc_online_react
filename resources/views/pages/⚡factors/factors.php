@@ -35,23 +35,19 @@ new class extends Component
 
     public function calculateFactors()
     {
-        $this->dispatch('newToastMessage', [
-            'title' => 'Some Title',
-            'message' => 'Some Message',
-            'success' => true,
-        ]);
+        $this->dispatch('notify',
+            message: __('coefs.factors_calculated'),
+            type: 'info'
+        );
     }
 
     public function deleteFactor($id)
     {
         if (\App\Models\Factor::destroy($id)) {
-            //session()->flash('notification', __('coefs.deleted'));
-
-            $this->dispatch('newToastMessage', [
-                'title' => __('coefs.coefs'),
-                'message' => __('coefs.deleted'),
-                'success' => false,
-            ]);
+            $this->dispatch('notify',
+                message: __('coefs.deleted'),
+                type: 'error'
+            );
         }
     }
 
@@ -64,10 +60,9 @@ new class extends Component
 
         Auth::user()->putSetting('User', $this->settings);
 
-        $this->dispatch('newToastMessage', [
-            'title' => __('coefs.coefs'),
-            'message' => __('coefs.saved'),
-            'success' => true,
-        ]);
+        $this->dispatch('notify',
+            message: __('coefs.saved'),
+            type: 'info'
+        );
     }
 };

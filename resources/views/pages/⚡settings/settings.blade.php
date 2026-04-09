@@ -155,6 +155,7 @@
             <button class="btn settings__btn-save primary" type="submit">{{ __('inputs.save') }}</button>
             <a class="btn settings__btn-calcel default" href="{{ route("dashboard") }}">{{ __('inputs.cancel') }}</a>
         </div>
-        <x-notice />
     </form>
+
+    <x-toast-msg />
 </div>

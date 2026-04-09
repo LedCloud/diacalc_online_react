@@ -1,0 +1,33 @@
+.calculations-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    &__top {
+        display: grid;
+        grid-template-columns: 2fr 4fr;
+        gap: 10px;
+    }
+}
+.horizontal-group {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    /*border-radius: @border-radius;*/
+    align-items: center;
+    background-color: #eee;
+    label {
+        &:first-child, &:last-child {
+            padding: 5px 10px;
+        }
+    }
+    input {
+        width: 90px;
+    }
+    &:first-child {
+        border-top-right-radius: @border-radius;
+        border-top-left-radius: @border-radius;;
+    }
+    &:last-child {
+        border-bottom-left-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+    }
+}
