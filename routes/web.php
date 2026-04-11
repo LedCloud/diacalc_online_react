@@ -28,7 +28,14 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Settings');
     })->name('settings.react');
 
+    Route::get('/calculations', function () {
+        return Inertia::render('Calculations');
+    })->name('calculations');
+
     Route::livewire('/settings', 'pages::settings')->name('settings');
+    Route::livewire('/factors', 'pages::more.factors')->name('factors');
+    Route::livewire('/factors/create', 'pages::more.factors.create')->name('factors.create');
+    Route::livewire('/factors/{id}/edit', 'pages::more.factors.create')->name('factors.edit');
 });
 
 require __DIR__.'/auth.php';
