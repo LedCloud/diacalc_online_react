@@ -10,14 +10,11 @@
 }
 .horizontal-group {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    /*border-radius: @border-radius;*/
+    grid-template-columns: 3fr 2fr 1fr;
     align-items: center;
-    background-color: #eee;
-    label {
-        &:first-child, &:last-child {
+    background-color: #f4f4f4;
+    .label-pre, .label-post{
             padding: 5px 10px;
-        }
     }
     input {
         width: 90px;
