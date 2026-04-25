@@ -16,12 +16,46 @@ const GlucoseInput = ({ label, value, onChange, onBlur }) => (
 );
 
 export default function Calculations({ auth }) {
-    const gl = new Glucose(5.6);
-    const initialMmolWhole = gl.getView({mmol:true, plasma:false});
-    const initialMmolPlasma = gl.getView({mmol:true, plasma:true});
+    // We store the underlying class instance and a "source" to track what's being typed
+    const [glucose, setGlucose] = useState(new Glucose(5.6));
+    const [activeField, setActiveField] = useState({ id: null, val: '' });
 
-    const [mmolwhole, setMmolWhole] = useState(initialMmolWhole);
-    const [mmolplasma, setMmolPlasma] = useState(initialMmolPlasma);
+    // Helper to update the glucose object
+    const updateGlucose = (val, config) => {
+        const fieldId = config.plasma ? 'plasma' : 'whole';
+        setActiveField({ id: fieldId, val: val });
+
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const newGl = new Glucose();
+            newGl.setVal(val, config);
+            setGlucose(newGl);
+            //setActiveField({ id: null, val: '' }); // Reset draft after valid update
+        } else {
+            // Keep the "raw" string (like "5.") while typing
+            //setActiveField({ id: config.plasma ? 'plasma' : 'whole', val });
+        }
+    };
+
+    // Helper to format on blur
+    const formatField = (val, config) => {
+        // 3. When leaving the field, finally sync everything and clear the draft
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed)) {
+            const newGl = new Glucose();
+            newGl.setVal(parsed.toFixed(1), config);
+            setGlucose(newGl);
+            setActiveField({ id: null, val: '' });
+        }
+        setActiveField({ id: null, val: '' }); // Now it's safe to reset
+    };
+
+    // Get display values: use draft if typing, otherwise calculate from class
+    const valWhole = activeField.id === 'whole'
+        ? activeField.val : glucose.getView({mmol:true, plasma:false});
+    const valPlasma = activeField.id === 'plasma'
+        ? activeField.val : glucose.getView({mmol:true, plasma:true});
+
 
     const handleMmolWhole = (e) => {
         const val = e.target.value;
@@ -79,24 +113,19 @@ export default function Calculations({ auth }) {
                                 <div className="panes__pane_header">Glucose</div>
                                 <div className="panes__pane_content">
 
-                                    <div className="horizontal-group">
-                                        <label htmlFor="fieldMmolWhole">Mmol whole</label>
-                                        <input id="fieldMmolWhole"
-                                            onFocus={(e) => e.target.select()}
-                                            value={mmolwhole}
-                                            onChange={handleMmolWhole}
-                                            onBlur={formatMmolWhole}
-                                        />
-                                    </div>
-                                    <div className="horizontal-group">
-                                        <label htmlFor="fieldMmolPlasma">Mmol plasma</label>
-                                        <input id="fieldMmolPlasma"
-                                            onFocus={(e) => e.target.select()}
-                                            value={mmolplasma}
-                                            onChange={handleMmolPlasma}
-                                            onBlur={formatMmolPlasma}
-                                        />
-                                    </div>
+            <GlucoseInput
+                label="Mmol whole"
+                value={valWhole}
+                onChange={(v) => updateGlucose(v, {mmol:true, plasma:false})}
+                onBlur={(v) => formatField(v, {mmol:true, plasma:false})}
+            />
+
+            <GlucoseInput
+                label="Mmol plasma"
+                value={valPlasma}
+                onChange={(v) => updateGlucose(v, {mmol:true, plasma:true})}
+                onBlur={(v) => formatField(v, {mmol:true, plasma:true})}
+            />
 
 
                                 </div>
