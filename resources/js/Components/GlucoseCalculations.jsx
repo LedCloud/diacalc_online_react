@@ -2,7 +2,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import React, { useState } from "react";
 import Glucose from "@/Classes/Glucose.js";
-import GlucoseCalculations from "@/Components/GlucoseCalculations.jsx";
 
 const GlucoseInput = ({ label, value, onChange, onBlur }) => (
     <div className="horizontal-group">
@@ -28,8 +27,7 @@ const findName = ({mmol = true, plasma = false, hba1c = false}) => {
     return "mgdlPlasma";
 }
 
-export default function Calculations({ auth }) {
-    // We store the underlying class instance and a "source" to track what's being typed
+const GlucoseCalculations = ({ auth }) => {
     const [glucose, setGlucose] = useState(new Glucose(5.6));
     const [activeField, setActiveField] = useState({ id: null, val: '' });
 
@@ -72,7 +70,6 @@ export default function Calculations({ auth }) {
         setActiveField({ id: null, val: '' }); // Now it's safe to reset
     };
 
-    // Get display values: use draft if typing, otherwise calculate from class
     const valMmolWhole = activeField.id === 'mmolWhole'
         ? activeField.val : glucose.getView({mmol:true, plasma:false});
     const valMmolPlasma = activeField.id === 'mmolPlasma'
@@ -83,29 +80,43 @@ export default function Calculations({ auth }) {
         ? activeField.val : glucose.getView({mmol:false, plasma:true});
     const valHbA1c = activeField.id === 'hba1c' ? activeField.val : glucose.getHbA1c();
 
-    return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Расчёты</h2>}
-        >
-            <Head title="Settings" />
+    return (<>
+                <GlucoseInput
+                    label="Mmol whole"
+                    value={valMmolWhole}
+                    onChange={(v) => updateGlucose(v, {mmol:true, plasma:false})}
+                    onBlur={(v) => formatField(v, {mmol:true, plasma:false})}
+                />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <GlucoseInput
+                    label="Mmol plasma"
+                    value={valMmolPlasma}
+                    onChange={(v) => updateGlucose(v, {mmol:true, plasma:true})}
+                    onBlur={(v) => formatField(v, {mmol:true, plasma:true})}
+                />
 
-                        <div className="panes">
-                            <div className="panes__pane">
-                                <div className="panes__pane_header">Glucose</div>
-                                <div className="panes__pane_content">
-                                    <GlucoseCalculations auth={auth} />
-                                </div>
-                            </div>
-                        </div>
+                <GlucoseInput
+                    label="Mgdl whole"
+                    value={valMgdlWhole}
+                    onChange={(v) => updateGlucose(v, {mmol:false, plasma:false})}
+                    onBlur={(v) => formatField(v, {mmol:false, plasma:false})}
+                />
 
-                    </div>
-                </div>
-            </div>
-        </AuthenticatedLayout>
+                <GlucoseInput
+                    label="Mgdl plasma"
+                    value={valMgdlPlasma}
+                    onChange={(v) => updateGlucose(v, {mmol:false, plasma:true})}
+                    onBlur={(v) => formatField(v, {mmol:false, plasma:true})}
+                />
+
+                <GlucoseInput
+                    label="HbA1c"
+                    value={valHbA1c}
+                    onChange={(v) => updateGlucose(v, {hba1c: true})}
+                    onBlur={(v) => formatField(v, {hba1c: true})}
+                />
+        </>
     );
-}
+};
+
+export default GlucoseCalculations;
