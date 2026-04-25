@@ -8,9 +8,10 @@ export default class Glucose {
         }
         this.val = parsed / this.getFactor({mmol:mmol, plasma:plasma});
     }
-    getView({mmol = true, plasma = false}) {
+    getView({mmol = true, plasma = false, precision = null}) {
         if (this.val === 0) return '';
-        return '' + (this.val * this.getFactor({mmol:mmol, plasma:plasma})).toFixed(mmol?1:0);
+        return '' + (this.val * this.getFactor({mmol:mmol, plasma:plasma}))
+            .toFixed(precision ? precision : (mmol?1:0));
     }
     getFactor({mmol = true, plasma = false}){ return (plasma?1.12:1) * (mmol ? 1 : 18);};
     getHbA1c(){

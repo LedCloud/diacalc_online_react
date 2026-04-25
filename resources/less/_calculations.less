@@ -28,3 +28,80 @@
         border-bottom-right-radius: @border-radius;
     }
 }
+.vertical-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    /*align-items: ;*/
+    background-color: #f4f4f4;
+    .label-pre, .label-post{
+        padding: 5px 10px;
+    }
+    input {
+        width: 110px;
+    }
+    &:first-child {
+        border-top-right-radius: @border-radius;
+        border-top-left-radius: @border-radius;;
+    }
+    &:last-child {
+        border-bottom-left-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+    }
+}
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.three-columns {
+    display: grid;
+    grid-template-columns: 2fr 2fr 3fr;
+    gap: 15px;
+    .weight-section {
+        display: grid;
+        grid-template-columns: 2fr 3fr;
+        grid-template-areas: "bmi-label bmi-value"
+                        "weight-label weight-input"
+                        "height-label height-input"
+                        "note note";
+        gap: 5px;
+        &__bmi-label {
+            grid-area: bmi-label;
+        }
+        &__bmi-value {
+            grid-area: bmi-value;
+        }
+        &__weight-label {
+            grid-area: weight-label;
+        }
+        &__weight-input {
+            grid-area: weight-input;
+        }
+        &__height-label {
+            grid-area: height-label;
+        }
+        &__height-input {
+            grid-area: height-input;
+        }
+        &__note {
+            grid-area: note;
+            font-size: 0.8em;
+            font-weight: 600;
+            a {
+                text-wrap: pretty;
+                color: darkblue;
+                &:visited {
+                    color: #5836ad;
+                }
+                &:hover {
+                    color: #1a1ae4;
+                }
+            }
+        }
+    }
+    .target-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-content: start;
+    }
+}
+

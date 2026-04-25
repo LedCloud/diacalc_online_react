@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -29,7 +30,16 @@ Route::middleware('auth')->group(function () {
     })->name('settings.react');
 
     Route::get('/calculations', function () {
-        return Inertia::render('Calculations');
+        if (auth()) {
+            $be = Auth::user()->eating->be;
+        } else {
+            $be = 123;
+        }
+        return Inertia::render('Calculations', [
+            'user' => [
+                'be' => $be,
+            ],
+        ]);
     })->name('calculations');
 
     Route::livewire('/settings', 'pages::settings')->name('settings');

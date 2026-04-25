@@ -1,5 +1,3 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
 import React, { useState } from "react";
 import Glucose from "@/Classes/Glucose.js";
 
@@ -27,7 +25,7 @@ const findName = ({mmol = true, plasma = false, hba1c = false}) => {
     return "mgdlPlasma";
 }
 
-const GlucoseCalculations = ({ auth }) => {
+const GlucoseCalculations = () => {
     const [glucose, setGlucose] = useState(new Glucose(5.6));
     const [activeField, setActiveField] = useState({ id: null, val: '' });
 
@@ -50,8 +48,6 @@ const GlucoseCalculations = ({ auth }) => {
             setGlucose(newGl);
             //setActiveField({ id: null, val: '' }); // Reset draft after valid update
         }
-        // Keep the "raw" string (like "5.") while typing
-        //setActiveField({ id: config.plasma ? 'plasma' : 'whole', val });
     };
 
     // Helper to format on blur
@@ -65,7 +61,7 @@ const GlucoseCalculations = ({ auth }) => {
             else
                 newGl.setVal(parsed.toFixed(1), config);
             setGlucose(newGl);
-            setActiveField({ id: null, val: '' });
+            //setActiveField({ id: null, val: '' });
         }
         setActiveField({ id: null, val: '' }); // Now it's safe to reset
     };

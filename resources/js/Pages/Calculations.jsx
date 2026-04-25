@@ -1,87 +1,28 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import React, { useState } from "react";
-import Glucose from "@/Classes/Glucose.js";
 import GlucoseCalculations from "@/Components/GlucoseCalculations.jsx";
+import Pane from "@/Components/Pane.jsx";
+import GlycemicInfluence from "@/Components/GlycemicInfluence.jsx";
+import React, {useState} from "react";
+import InputTwoLines from "@/Components/InputTwoLines.jsx";
 
-const GlucoseInput = ({ label, value, onChange, onBlur }) => (
-    <div className="horizontal-group">
-        <label>{label}</label>
-        <input
-            onFocus={(e) => e.target.select()}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onBlur={(e) => onBlur(e.target.value)}
-        />
-    </div>
-);
+export default function Calculations({ auth, user }) {
+    const [weight, setWeight] = useState('60');
+    const [height, setHeight] = useState('170');
+    const [age, setAge] = useState('40');
+    const [targetWeight, setTargetWeight] = useState('60');
+    const [period, setPeriod] = useState('12');
 
-const findName = ({mmol = true, plasma = false, hba1c = false}) => {
-    if (hba1c)
-        return 'hba1c';
-    if (mmol && !plasma)
-        return "mmolWhole";
-    if (mmol && plasma)
-        return "mmolPlasma";
-    if (!mmol && !plasma)
-        return "mgdlWhole";
-    return "mgdlPlasma";
-}
-
-export default function Calculations({ auth }) {
-    // We store the underlying class instance and a "source" to track what's being typed
-    const [glucose, setGlucose] = useState(new Glucose(5.6));
-    const [activeField, setActiveField] = useState({ id: null, val: '' });
-
-    // Helper to update the glucose object
-    const updateGlucose = (val, config) => {
-        let fieldId;
-        if (config.hba1c)
-            fieldId = 'hba1c';
-        else
-            fieldId = findName(config);
-        setActiveField({ id: fieldId, val: val });
-
-        const parsed = parseFloat(val);
-        if (!isNaN(parsed) && !val.endsWith('.')) {
-            const newGl = new Glucose();
-            if (config.hba1c)
-                newGl.setHbA1c(val);
-            else
-                newGl.setVal(val, config);
-            setGlucose(newGl);
-            //setActiveField({ id: null, val: '' }); // Reset draft after valid update
+    const calcBmi = () => {
+        const parsedW = parseFloat(weight);
+        const parsedH = parseFloat(height);
+        if (isNaN(parsedW) || isNaN(parsedH)) {
+            return '---';
         }
-        // Keep the "raw" string (like "5.") while typing
-        //setActiveField({ id: config.plasma ? 'plasma' : 'whole', val });
+        return (10000 * parsedW /( parsedH * parsedH)).toFixed(1);
     };
 
-    // Helper to format on blur
-    const formatField = (val, config) => {
-        // 3. When leaving the field, finally sync everything and clear the draft
-        const parsed = parseFloat(val);
-        if (!isNaN(parsed)) {
-            const newGl = new Glucose();
-            if (config.hba1c)
-                newGl.setHbA1c(val);
-            else
-                newGl.setVal(parsed.toFixed(1), config);
-            setGlucose(newGl);
-            setActiveField({ id: null, val: '' });
-        }
-        setActiveField({ id: null, val: '' }); // Now it's safe to reset
-    };
-
-    // Get display values: use draft if typing, otherwise calculate from class
-    const valMmolWhole = activeField.id === 'mmolWhole'
-        ? activeField.val : glucose.getView({mmol:true, plasma:false});
-    const valMmolPlasma = activeField.id === 'mmolPlasma'
-        ? activeField.val : glucose.getView({mmol:true, plasma:true});
-    const valMgdlWhole = activeField.id === 'mgdlWhole'
-        ? activeField.val : glucose.getView({mmol:false, plasma:false});
-    const valMgdlPlasma = activeField.id === 'mgdlPlasma'
-        ? activeField.val : glucose.getView({mmol:false, plasma:true});
-    const valHbA1c = activeField.id === 'hba1c' ? activeField.val : glucose.getHbA1c();
+    const bmi = calcBmi();
 
     return (
         <AuthenticatedLayout
@@ -95,13 +36,52 @@ export default function Calculations({ auth }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
                         <div className="panes">
-                            <div className="panes__pane">
-                                <div className="panes__pane_header">Glucose</div>
-                                <div className="panes__pane_content">
-                                    <GlucoseCalculations auth={auth} />
+                            <Pane header="Glucose">
+                                <GlucoseCalculations />
+                            </Pane>
+
+                           <Pane header="Glycemic factors">
+                                <GlycemicInfluence user={user} />
+                           </Pane>
+                        </div>
+                        <Pane header="ИМТ и коррекция веса">
+                            <div className="three-columns">
+                                <div className="weight-section">
+                                    <div className="weight-section__bmi-label">ИМТ</div>
+                                    <div className="weight-section__bmi-value">{bmi}</div>
+                                    <div className="weight-section__weight-label">Вес кг:</div>
+                                    <input
+                                        className="weight-section__weight-input"
+                                        value={weight} onChange={(e) => setWeight(e.target.value)}/>
+                                    <div className="weight-section__height-label">Рост см:</div>
+                                    <input
+                                        className="weight-section__height-input"
+                                        value={height} onChange={(e) => setHeight(e.target.value)}/>
+                                    <div className="weight-section__note">Внимание! ИМТ рассчитанный у детей (до 18
+                                        лет), должен интерпретироваться специальным образом!
+                                        Подробнее <a href="https://diacalc.ru/BMIchildren.html">тут</a></div>
+                                </div>
+                                <div className="target-section">
+                                    <InputTwoLines value={age} label="Возраст"/>
+                                    <InputTwoLines value={targetWeight} label="Целевой вес"/>
+                                    <div className="vertical-group">
+                                        <label>Период коррекции</label>
+                                        {/* add calculation based on age, targetWeight, sex and activity
+                                        <select value={period} onChange={(e) => setPeriod(e.target.value)} >*/}
+                                        {/*    {[1, 2, 5, 10].map((value) => (*/}
+                                        {/*        <tr key={value}>*/}
+                                        {/*            <td>{value}</td>*/}
+                                        {/*            <td>{calcCarboInfluence(value)}</td>*/}
+                                        {/*        </tr>*/}
+                                        {/*    ))}*/}
+                                        {/*</select>*/}
+                                    </div>
+                                </div>
+                                <div className="results-section">
+                                    Results
                                 </div>
                             </div>
-                        </div>
+                        </Pane>
 
                     </div>
                 </div>
