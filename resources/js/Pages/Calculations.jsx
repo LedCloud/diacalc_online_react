@@ -47,7 +47,6 @@ export default function Calculations({ auth, user }) {
                         <Pane header="ИМТ и коррекция веса">
                             <BMICorrection />
                         </Pane>
-
                     </div>
                 </div>
             </div>

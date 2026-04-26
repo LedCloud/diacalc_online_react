@@ -143,15 +143,16 @@ const GlycemicInfluence = ({user}) => {
                         <table className="table-auto md:table-fixed">
                             <thead>
                             <tr>
-                                <th className="center">инс.ед</th>
-                                <th>{mmol === 'mmol' ? 'mmol' : 'mgdl'}:{plasma === 'plasma' ? 'plasma' : 'whole'}</th>
+                                <th className="text-center pr-2 pl-2">инс.ед</th>
+                                <th className="text-center pr-2 pl-2">
+                                    {mmol === 'mmol' ? 'Ммоль' : 'мг.дл.'}:{plasma === 'plasma' ? 'плазма' : 'цельная'}</th>
                             </tr>
                             </thead>
                             <tbody>
                             {[0.1, 0.2, 0.25, 0.5].map((value) => (
-                                <tr key={value}>
-                                    <td>{value}</td>
-                                    <td>{calcInsulinInfluence(value)}</td>
+                                <tr key={value} className="even:bg-slate-50">
+                                    <td className="text-center">{value}</td>
+                                    <td className="text-center">{calcInsulinInfluence(value)}</td>
                                 </tr>
                             ))}
                             </tbody>
@@ -161,15 +162,17 @@ const GlycemicInfluence = ({user}) => {
                         <table className="table-auto">
                             <thead>
                             <tr>
-                                <th>Угл.гр.</th>
-                                <th>{mmol === 'mmol' ? 'mmol' : 'mgdl'}:{plasma === 'plasma' ? 'plasma' : 'whole'}</th>
+                                <th className="text-center pr-2 pl-2">Угл.гр.</th>
+                                <th className="text-center pr-2 pl-2">
+                                    {mmol === 'mmol' ? 'Ммоль' : 'мг.дл.'}:{plasma === 'plasma' ? 'плазма' : 'цельная'}
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             {[1, 2, 5, 10].map((value) => (
-                                <tr key={value}>
-                                    <td>{value}</td>
-                                    <td>{calcCarboInfluence(value)}</td>
+                                <tr key={value} className="even:bg-slate-50">
+                                    <td className="text-center">{value}</td>
+                                    <td className="text-center">{calcCarboInfluence(value)}</td>
                                 </tr>
                             ))}
                             </tbody>

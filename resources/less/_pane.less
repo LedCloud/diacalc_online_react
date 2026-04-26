@@ -3,10 +3,12 @@
     grid-template-columns: 2fr 4fr;
     @media screen and (max-width: 1023px) {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: auto auto;
     }
     gap: 10px;
     &__pane {
+        margin-top:7px;
+        margin-bottom: 7px;;
         border: 1px solid @border-color;
         border-radius: 5px;
         padding: 15px;

@@ -225,7 +225,7 @@ export default function BMICorrection() {
                     </div>
                     <div className="activity-group__results">
                         <div className="activity-group__results__header">Норма потребления ккал/сут.</div>
-                        <div className="activity-group__results__result">
+                        <div className="activity-group__results__result ">
                             <div>Для текущего веса</div>
                             <div>{caloryCurrent}</div>
                         </div>
