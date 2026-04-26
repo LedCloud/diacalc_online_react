@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
+import InputOneLine from "@/Components/InputOneLine.jsx";
 
 
 export default function BMICorrection() {
-    const [weight, setWeight] = useState('92');
-    const [height, setHeight] = useState('182');
-    const [age, setAge] = useState('52');
-    const [targetWeight, setTargetWeight] = useState('85');
+    const [weight, setWeight] = useState('60');
+    const [height, setHeight] = useState('170');
+    const [age, setAge] = useState('40');
+    const [targetWeight, setTargetWeight] = useState('60');
     const [period, setPeriod] = useState('12');
     const [sex, setSex] = useState('male');
     const [steps, setSteps] = useState('7000');
@@ -140,38 +141,41 @@ export default function BMICorrection() {
     const periods = months_range;
 
     return (
-        <div className="three-columns">
-            <div className="weight-section">
-                <div className="weight-section__bmi-label">ИМТ</div>
-                <div className="weight-section__bmi-value">{bmi}</div>
-                <div className="weight-section__weight-label">Вес кг:</div>
+        <div className="bmi-correction__panel">
+            <div className="bmi_panel">
+                <div className="bmi_panel__bmi-label">ИМТ</div>
+                <div className="bmi_panel__bmi-result">{bmi}</div>
+                <div className="bmi_panel__weight-label">Вес кг:</div>
                 <input
-                    className="weight-section__weight-input"
+                    className="bmi_panel__weight-input"
                     value={weight}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => setWeight(e.target.value)}/>
-                <div className="weight-section__height-label">Рост см:</div>
+                <div className="bmi_panel__height-label">Рост см:</div>
                 <input
-                    className="weight-section__height-input"
+                    className="bmi_panel__height-input"
                     value={height}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => setHeight(e.target.value)}/>
-                <div className="weight-section__note">Внимание! ИМТ рассчитанный у детей (до 18
+                <div className="bmi_panel__note">Внимание! ИМТ рассчитанный у детей (до 18
                     лет), должен интерпретироваться специальным образом!
                     Подробнее <a href="https://diacalc.ru/BMIchildren.html">тут</a></div>
             </div>
-            <div className="target-section">
-                <InputTwoLines value={age}
+            <div className="target_panel">
+                <InputOneLine value={age}
                     onChange={setAge}
                     onBlur={setAge}
                     label="Возраст"
+                    className="target_panel__age-input"
                 />
-                <InputTwoLines
+                <InputOneLine
                     value={targetWeight}
                     onChange={setTargetWeight}
                     onBlur={setTargetWeight}
-                    label="Целевой вес"/>
-                <div className="vertical-group">
+                    label="Целевой вес"
+                    className="target_panel__weight-input"
+                />
+                <div className="target_panel__period">
                     <label>Период коррекции</label>
                     {/* add calculation based on age, targetWeight, sex and activity */}
                     <select value={period} onChange={(e) => setPeriod(e.target.value)}>
@@ -180,12 +184,11 @@ export default function BMICorrection() {
                         ))}
                     </select>
                 </div>
-
             </div>
-            <div className="results-section">
-                <fieldset className="sex-group">
-                    <legend>Ваш пол</legend>
-                    <div className="sex-group__horizontal-group">
+            <div className="results_panel">
+                <fieldset className="results_panel__sex-input">
+                    <div>Ваш пол</div>
+                    <div className="">
                         <div className="sex-group__radio checkbox-group">
                             <label htmlFor="sexMale">
                                 <input id="sexMale"
@@ -210,30 +213,27 @@ export default function BMICorrection() {
                         </div>
                     </div>
                 </fieldset>
-                <fieldset className="activity-group">
-                    <div>
-
-                    </div>
+                <fieldset className="results_panel__activity">
                     <div>
                         <label htmlFor="activity-selector">
-                            Активность: <span className="activity-group__type">{activity_type}</span> &bull; Количество шагов: ≈<span className="activity-group__steps">{steps}</span>
+                            Активность: <span className="activity__type">{activity_type}</span> &bull; Количество шагов: ≈<span className="activity__steps">{steps}</span>
                         </label>
                         <input id="activity-selector"
                                 className="activity-selector"
                                type="range" min="5000" max="33000" step="2000" value={steps}
                                onChange={(e) => setSteps(e.target.value)}/>
                     </div>
-                    <div className="activity-group__results">
-                        <div className="activity-group__results__header">Норма потребления ккал/сут.</div>
-                        <div className="activity-group__results__result ">
+                    <div className="results_panel__results">
+                        <div className="results_panel__results__header">Норма потребления ккал/сут.</div>
+                        <div className="results_panel__results__result">
                             <div>Для текущего веса</div>
                             <div>{caloryCurrent}</div>
                         </div>
-                        <div className="activity-group__results__result">
+                        <div className="results_panel__results__result">
                             <div>Для целевого веса</div>
                             <div>{caloryTarget}</div>
                         </div>
-                        <div className="activity-group__results__result">
+                        <div className="results_panel__results__result">
                             <div>Для достижения целевого веса</div>
                             <div>{caloryToGetTarget}</div>
                         </div>

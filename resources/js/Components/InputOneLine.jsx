@@ -1,5 +1,5 @@
-const InputOneLine = ({ label, value, onChange, onBlur, id }) => (
-    <div className="horizontal-group">
+const InputOneLine = ({ label, value, onChange, onBlur, id, className = '' }) => (
+    <div className={`horizontal-group ${className}`}>
         <label htmlFor={id}>{label}</label>
         <input
             id={id}

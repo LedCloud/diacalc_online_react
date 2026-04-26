@@ -1,5 +1,5 @@
-const InputTwoLines = ({ label, value, onChange, onBlur, id }) => (
-    <div className="vertical-group">
+const InputTwoLines = ({ label, value, onChange, onBlur, id, className = '' }) => (
+    <div className={`"vertical-group ${className}`}>
         <label htmlFor={id}>{label}</label>
         <input
             id={id}

@@ -72,20 +72,22 @@ const GlycemicInfluence = ({user}) => {
     const ouv = activeField.id === 'ouv' ? activeField.val : ouvGl.getView(buildConfig());
 
     return (
-        <div className="two-column">
-            <div>
-                <InputOneLine id='ouv'
-                              label='ouv'
-                              value={ouv}
-                              onChange={updateOuv}
-                              onBlur={formatOuv}/>
+        <div className="influence__panel">
+            <div className="influence__panel__inputs">
+                <div className="influence__panel__inputs_top">
+                    <InputOneLine id='ouv'
+                                  label='ouv'
+                                  value={ouv}
+                                  onChange={updateOuv}
+                                  onBlur={formatOuv}/>
 
-                <InputOneLine id='k1'
-                              label='k1'
-                              value={k1}
-                              onChange={setK1}
-                              onBlur={formatK1}/>
-                <div className="two-column">
+                    <InputOneLine id='k1'
+                                  label='k1'
+                                  value={k1}
+                                  onChange={setK1}
+                                  onBlur={formatK1}/>
+                </div>
+                <div className="influence__panel__inputs_bottom">
                     <div>
                         <div className="horizontal-group checkbox-group">
                             <label htmlFor="mmol">
@@ -136,7 +138,7 @@ const GlycemicInfluence = ({user}) => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className="influence__panel__results">
                 {/* results */}
                 <div className="two-column">
                     <div>

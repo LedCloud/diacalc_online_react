@@ -29,24 +29,26 @@ export default function Calculations({ auth, user }) {
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Расчёты</h2>}
         >
-            <Head title="Settings" />
+
+            <Head  title="Settings" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
-                        <div className="panes">
-                            <Pane header="Glucose">
+                        <div className="calculations-layout">
+                            <Pane header="Glucose" className="calculations-layout__pane glucose">
                                 <GlucoseCalculations />
                             </Pane>
 
-                           <Pane header="Glycemic factors">
+                           <Pane header="Infuence to glycemy" className="calculations-layout__pane influence">
                                 <GlycemicInfluence user={user} />
                            </Pane>
+
+                            <Pane header="ИМТ и коррекция веса" className="calculations-layout__pane bmi-correction">
+                                <BMICorrection />
+                            </Pane>
                         </div>
-                        <Pane header="ИМТ и коррекция веса">
-                            <BMICorrection />
-                        </Pane>
                     </div>
                 </div>
             </div>

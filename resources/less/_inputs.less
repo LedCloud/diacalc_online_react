@@ -35,3 +35,43 @@ input, select {
         }
     }
 }
+.horizontal-group {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    align-items: center;
+    background-color: #f4f4f4;
+    .label-pre, .label-post{
+        padding: 5px 10px;
+    }
+    input {
+        width: 100%;
+    }
+    &:first-child {
+        border-top-right-radius: @border-radius;
+        border-top-left-radius: @border-radius;;
+    }
+    &:last-child {
+        border-bottom-left-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+    }
+}
+.vertical-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    /*!*align-items: ;*!
+    !*background-color: #f4f4f4;*!*/
+    .label-pre, .label-post{
+        padding: 5px 10px;
+    }
+    input {
+        width: 110px;
+    }
+    &:first-child {
+        border-top-right-radius: @border-radius;
+        border-top-left-radius: @border-radius;;
+    }
+    &:last-child {
+        border-bottom-left-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+    }
+}
