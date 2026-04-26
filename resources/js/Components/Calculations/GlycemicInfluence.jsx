@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Glucose from "@/Classes/Glucose.js";
 import InputOneLine from "@/Components/InputOneLine.jsx";
-import GlucoseCalculations from "@/Components/GlucoseCalculations.jsx";
+import GlucoseCalculations from "@/Components/Calculations/GlucoseCalculations.jsx";
 
 const GlycemicInfluence = ({user}) => {
     const [activeField, setActiveField] = useState({ id: null, val: '' });
