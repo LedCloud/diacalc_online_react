@@ -163,10 +163,10 @@ export default function BMICorrection() {
             </div>
             <div className="target_panel">
                 <InputOneLine value={age}
-                    onChange={setAge}
-                    onBlur={setAge}
-                    label="Возраст"
-                    className="target_panel__age-input"
+                              onChange={setAge}
+                              onBlur={setAge}
+                              label="Возраст"
+                              className="target_panel__age-input"
                 />
                 <InputOneLine
                     value={targetWeight}
@@ -200,7 +200,7 @@ export default function BMICorrection() {
                                 />
                                 Male</label>
                         </div>
-                        <div className="horizontal-group checkbox-group">
+                        <div className="sex-group__radio checkbox-group">
                             <label htmlFor="sexFemale">
                                 <input id="sexFemale"
                                        name="sex"
@@ -216,10 +216,11 @@ export default function BMICorrection() {
                 <fieldset className="results_panel__activity">
                     <div>
                         <label htmlFor="activity-selector">
-                            Активность: <span className="activity__type">{activity_type}</span> &bull; Количество шагов: ≈<span className="activity__steps">{steps}</span>
+                            Активность: <span className="activity__type">{activity_type}</span> &bull; Количество шагов:
+                            ≈<span className="activity__steps">{steps}</span>
                         </label>
                         <input id="activity-selector"
-                                className="activity-selector"
+                               className="activity-selector"
                                type="range" min="5000" max="33000" step="2000" value={steps}
                                onChange={(e) => setSteps(e.target.value)}/>
                     </div>
