@@ -140,7 +140,7 @@ const GlycemicInfluence = ({user}) => {
             </div>
             <div className="influence__panel__results">
                 {/* results */}
-                <div className="two-column">
+                {/*<div className="two-column">*/}
                     <div>
                         <table className="table-auto md:table-fixed">
                             <thead>
@@ -180,7 +180,7 @@ const GlycemicInfluence = ({user}) => {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                {/*</div>*/}
             </div>
         </div>
     );

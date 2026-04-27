@@ -27,6 +27,9 @@ input, select {
 }
 .checkbox-group {
     margin: 3px 0;
+    @media screen and (min-width: 768px) {
+        margin: 10px 5px;
+    }
     label {
         input {
             width: 15px;
@@ -39,7 +42,7 @@ input, select {
     display: grid;
     grid-template-columns: 3fr 2fr;
     align-items: center;
-    background-color: #f4f4f4;
+    /*background-color: #f4f4f4;*/
     .label-pre, .label-post{
         padding: 5px 10px;
     }
