@@ -2,10 +2,10 @@
     padding: 5px 10px;
     border: 1px solid #888;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px #bbb;
+    box-shadow: 2px 2px 5px @input-border-color;
     text-shadow: #eee 1px 1px 3px;
     &:active {
-        box-shadow: 1px 1px 1px #bbb;
+        box-shadow: 1px 1px 1px @input-border-color;
     }
     &.default {
         background-color: @button-default-color;
@@ -18,7 +18,7 @@
 }
 input, select {
     border-radius: @border-radius;
-    border: 1px solid #bbb;
+    border: 1px solid @input-border-color;
 }
 .button-horizontal {
     display: flex;
