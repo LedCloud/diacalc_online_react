@@ -123,6 +123,7 @@
         grid-template-areas: "bmi-label bmi-result"
                         "weight-label weight-input"
                         "height-label height-input"
+                        "sex-label sex-input"
                         "note note";
         &__bmi-label {
             grid-area: bmi-label;
@@ -141,6 +142,16 @@
         }
         &__height_input {
             grid-area: height_input;
+        }
+        &__sex-label {
+            grid-area: sex-label;
+        }
+        &__sex-input {
+            grid-area: sex-input;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+            align-items: start;
         }
         &__note {
             grid-area: note;

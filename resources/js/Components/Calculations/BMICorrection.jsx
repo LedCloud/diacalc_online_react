@@ -157,6 +157,33 @@ export default function BMICorrection() {
                     value={height}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => setHeight(e.target.value)}/>
+
+                <div className="bmi_panel__sex-label bmi_panel__height-label">Ваш пол</div>
+                <div className="bmi_panel__sex-input bmi_panel__height-input">
+                    <div className="sex-group__radio checkbox-group">
+                        <label htmlFor="sexMale">
+                            <input id="sexMale"
+                                   name="sex"
+                                   value="male"
+                                   type="radio"
+                                   checked={sex === 'male'}
+                                   onChange={(e) => setSex(e.target.value)}
+                            />
+                            Male</label>
+                    </div>
+                    <div className="sex-group__radio checkbox-group">
+                        <label htmlFor="sexFemale">
+                            <input id="sexFemale"
+                                   name="sex"
+                                   value="female"
+                                   type="radio"
+                                   checked={sex === 'female'}
+                                   onChange={(e) => setSex(e.target.value)}
+                            />
+                            Female</label>
+                    </div>
+                </div>
+
                 <div className="bmi_panel__note">Внимание! ИМТ рассчитанный у детей (до 18
                     лет), должен интерпретироваться специальным образом!
                     Подробнее <a href="https://diacalc.ru/BMIchildren.html">тут</a></div>
@@ -186,33 +213,7 @@ export default function BMICorrection() {
                 </div>
             </div>
             <div className="results_panel">
-                <fieldset className="results_panel__sex-input">
-                    <div>Ваш пол</div>
-                    <div className="">
-                        <div className="sex-group__radio checkbox-group">
-                            <label htmlFor="sexMale">
-                                <input id="sexMale"
-                                       name="sex"
-                                       value="male"
-                                       type="radio"
-                                       checked={sex === 'male'}
-                                       onChange={(e) => setSex(e.target.value)}
-                                />
-                                Male</label>
-                        </div>
-                        <div className="sex-group__radio checkbox-group">
-                            <label htmlFor="sexFemale">
-                                <input id="sexFemale"
-                                       name="sex"
-                                       value="female"
-                                       type="radio"
-                                       checked={sex === 'female'}
-                                       onChange={(e) => setSex(e.target.value)}
-                                />
-                                Female</label>
-                        </div>
-                    </div>
-                </fieldset>
+
                 <fieldset className="results_panel__activity">
                     <div>
                         <label htmlFor="activity-selector">
