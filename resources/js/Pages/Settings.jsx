@@ -1,8 +1,8 @@
-import TabbedPane from '@/Components/TabbedPage';
+import SettingsTabbedPage from '@/Components/SettingsTabbedPage';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Settings({ auth }) {
+export default function Settings({ auth, settings }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -13,7 +13,7 @@ export default function Settings({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <TabbedPane />
+                        <SettingsTabbedPage settings={settings}/>
                     </div>
                 </div>
             </div>

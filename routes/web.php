@@ -26,14 +26,21 @@ Route::middleware('auth')->group(function () {
 
     // Твой новый роут
     Route::get('/settings_react', function () {
-        return Inertia::render('Settings');
+        if (auth()) {
+            $settings = Auth::user()->getSetting('User');
+        } else {
+            $settings = \App\Classes\Settings\UserSetting::DEFAULT;
+        }
+        return Inertia::render('Settings',[
+            'settings' => $settings,
+        ]);
     })->name('settings.react');
 
     Route::get('/calculations', function () {
         if (auth()) {
             $be = Auth::user()->eating->be;
         } else {
-            $be = 123;
+            $be = 10;
         }
         return Inertia::render('Calculations', [
             'user' => [
