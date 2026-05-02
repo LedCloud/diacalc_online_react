@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Твой новый роут
-    Route::get('/settings_react', function () {
+    /*Route::get('/settings_react', function () {
         if (auth()) {
             $settings = Auth::user()->getSetting('User');
         } else {
@@ -34,7 +34,11 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Settings',[
             'settings' => $settings,
         ]);
-    })->name('settings.react');
+    })->name('settings.react');*/
+
+    Route::get('/settings_react', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.react');
+    Route::patch('/settings_react', [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.react');
+
 
     Route::get('/calculations', function () {
         if (auth()) {

@@ -13,6 +13,22 @@ class MenuInfo
     const MASK_GL = 64;
     const MASK_CALOR = 128;
 
+    public static function getAllNamed()
+    {
+        return [
+            'prot' => self::MASK_PROT,
+            'fat' => self::MASK_FAT,
+            'carb' => self::MASK_CARB,
+            'be' => self::MASK_BE,
+            'dose' => self::MASK_DOSE,
+            'gi' => self::MASK_GI,
+            'gl' => self::MASK_GL,
+            'calory' => self::MASK_CALOR,
+            'true' => 0xFF,
+            'false' => 0,
+        ];
+    }
+
     public static function getAll()
     {
         return [
