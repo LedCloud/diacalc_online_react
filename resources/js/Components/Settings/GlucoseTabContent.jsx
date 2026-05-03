@@ -1,0 +1,173 @@
+import InputTwoLines from "@/Components/InputTwoLines.jsx";
+import Pane from "@/Components/Pane.jsx";
+import React, {useState} from "react";
+import Glucose from "@/Classes/Glucose.js";
+
+export default function GlucoseTabContent(
+    {allSettings, setAllSettings, activeTab, menuMasks, errors}
+) {
+
+    const [activeField, setActiveField] = useState({ id: null, val: '' });
+    const [targetGl, setTargetGl] = useState(new Glucose(allSettings.target));
+    const [lowGl, setLowGl] = useState(new Glucose(allSettings.low_level));
+    const [highGl, setHighGl] = useState(new Glucose(allSettings.high_level));
+
+    const setMmol = (val) => {
+        setAllSettings({...allSettings, is_mmol: val === '1'});
+    };
+
+    const setPlasma = (val) => {
+        setAllSettings({...allSettings, is_plasma: val === '1'});
+    };
+
+    const isMmol = () => {
+        return Boolean(+allSettings.is_mmol);
+    }
+
+    const isPlasma = () => {
+        return Boolean(+allSettings.is_plasma);
+    }
+
+    const formGlConfig = () => {
+        return {
+            mmol: isMmol(),
+            plasma: isPlasma()
+        }
+    };
+
+    const updateTarget = (val, field) => {
+        setActiveField({ id: field, val: val });
+
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const newGl = new Glucose();
+            const config = formGlConfig();
+            newGl.setVal(val, config);
+            if (field) {
+                switch (field) {
+                    case 'target_gl':setTargetGl(newGl);
+                        break;
+                    case 'low_level_gl': setLowGl(newGl);
+                        break;
+                    case 'high_level_gl': setHighGl(newGl);
+                        break;
+                }
+            }
+        }
+    };
+
+    const formatTarget = (val, field) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const newGl = new Glucose();
+            newGl.setVal(val, formGlConfig());
+            if (field) {
+                switch (field) {
+                    case 'target_gl':setTargetGl(newGl);
+                        break;
+                    case 'low_level_gl': setLowGl(newGl);
+                        break;
+                    case 'high_level_gl': setHighGl(newGl);
+                        break;
+                }
+            }
+        }
+        setActiveField({ id: null, val: '' });
+    };
+
+    const valTarget = activeField.id === 'target_gl' ? activeField.val : targetGl.getView(formGlConfig());
+    const valLow = activeField.id === 'low_level_gl' ? activeField.val : lowGl.getView(formGlConfig());
+    const valHigh = activeField.id === 'high_level_gl' ? activeField.val : highGl.getView(formGlConfig());
+
+    return (
+        <Pane header="Glucose"
+              className={`glucose_pane tab-pane panes__pane ${activeTab === 'glucose' ? 'active' : ''}`}>
+            <fieldset>
+                <div className="horizontal-group checkbox-group">
+                    <label htmlFor="whole">
+                        <input id="whole"
+                               name="is_plasma"
+                               value="0"
+                               type="radio"
+                               checked={Boolean(!(+allSettings.is_plasma))}
+                               onChange={(e) => setPlasma(e.target.value)}
+                        />
+                        Whole</label>
+                </div>
+                <div className="horizontal-group checkbox-group">
+                    <label htmlFor="plasma">
+                        <input id="plasma"
+                               name="is_plasma"
+                               value="1"
+                               type="radio"
+                               checked={Boolean(+allSettings.is_plasma)}
+                               onChange={(e) => setPlasma(e.target.value)}
+                        />
+                        Plasma</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <div className="horizontal-group checkbox-group">
+                    <label htmlFor="mmol">
+                        <input id="mmol"
+                               name="is_mmol"
+                               value="1"
+                               type="radio"
+                               checked={Boolean(+allSettings.is_mmol)}
+                               onChange={(e) => setMmol(e.target.value)}
+                        />
+                        mmol</label>
+                </div>
+                <div className="horizontal-group checkbox-group">
+                    <label htmlFor="mgdl">
+                        <input id="mgdl"
+                               name="is_mmol"
+                               value="0"
+                               type="radio"
+                               checked={Boolean(!(+allSettings.is_mmol))}
+                               onChange={(e) => setMmol(e.target.value)}
+                        />
+                        mgdl</label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Glucose levels</legend>
+                {/* here we will have raw values but the names should correspond the settings names */}
+                <input type="hidden" name="target" value={targetGl.val}/>
+                <input type="hidden" name="low_level" value={lowGl.val}/>
+                <input type="hidden" name="high_level" value={highGl.val}/>
+                <div className="field">
+                    <InputTwoLines value={valTarget}
+                                   name="target_gl"
+                                   id="target"
+                                   label="Target GL"
+                                   onChange={updateTarget}
+                                   onBlur={formatTarget}
+                    />
+                    {errors.target && <div className="validation-error">{errors.target}</div>}
+                </div>
+                <div className="field">
+                    <InputTwoLines value={valLow}
+                                   name="low_level_gl"
+                                   id="low_level"
+                                   label="Low GL level"
+                                   onChange={updateTarget}
+                                   onBlur={formatTarget}
+                    />
+                    {errors.low_level && <div className="validation-error">{errors.low_level}</div>}
+                </div>
+                <div className="field">
+                    <InputTwoLines value={valHigh}
+                                   name="high_level_gl"
+                                   id="high_level"
+                                   label="High GL level"
+                                   onChange={updateTarget}
+                                   onBlur={formatTarget}
+                    />
+                    {errors.high_level && <div className="validation-error">{errors.high_level}</div>}
+                </div>
+            </fieldset>
+        </Pane>
+);
+};

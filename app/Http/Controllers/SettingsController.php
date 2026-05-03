@@ -37,12 +37,27 @@ class SettingsController extends Controller
             'round_to' => ['numeric', Rule::in(['1', '2', '3']),],
             'is_mmol' => ['numeric', Rule::in(['1', '0'])],
             'is_plasma' => ['numeric', Rule::in(['1', '0'])],
+            'target' => ['numeric', 'min:3'],
+            'low_level' => ['numeric', 'min:3'],
+            'high_level' => ['numeric', 'min:3'],
         ]);
 
         Log::info('validated', $validated);
         $settings = Auth::user()->getSetting('User');
 
-        $settings = array_merge($settings, $validated);
+        $formatted = [
+            'menu_info' => $validated['menu_info'],
+            'calory_limit' => $validated['calory_limit'],
+            'round_to' => $validated['round_to'],
+            'is_mmol' => intval($validated['is_mmol']),
+            'is_plasma' => intval($validated['is_plasma']),
+            'target' => $validated['target'],
+            'low_level' => $validated['low_level'],
+            'high_level' => $validated['high_level'],
+        ];
+
+        $settings = array_merge($settings, $formatted);
+
         Log::info('Merged', $settings);
 
         Auth::user()->putSetting('User', $settings);
