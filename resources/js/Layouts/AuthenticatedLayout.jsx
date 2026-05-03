@@ -2,14 +2,15 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import MainMenu from '@/Components/MainMenu';
+import ToastContainer from "@/Components/ToastContainer.jsx";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const { menu } = usePage().props;
 
-    menu.forEach((item) => {
+    /*menu.forEach((item) => {
         console.log(item.route, item.name);
-    });
+    });*/
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -113,6 +114,8 @@ export default function AuthenticatedLayout({ header, children }) {
             )}
 
             <main>{children}</main>
+
+            <ToastContainer />
         </div>
     );
 }

@@ -21,6 +21,10 @@ class SettingsController extends Controller
             $settings = UserSetting::DEFAULT;
         }
 
+        session()->flash('notification', 'Catch me');
+        session()->flash('error', 'Catch an error');
+        session()->flash('warning', 'Catch a warning too');
+
         return Inertia::render('Settings',[
             'settings' => $settings,
             'menuMasks' => MenuInfo::getAllNamed(),
