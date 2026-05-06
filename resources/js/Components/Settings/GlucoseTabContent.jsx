@@ -4,13 +4,15 @@ import React, {useState} from "react";
 import Glucose from "@/Classes/Glucose.js";
 
 export default function GlucoseTabContent(
-    {allSettings, setAllSettings, activeTab, menuMasks, errors}
+    {allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''}
 ) {
 
     const [activeField, setActiveField] = useState({ id: null, val: '' });
     const [targetGl, setTargetGl] = useState(new Glucose(allSettings.target));
     const [lowGl, setLowGl] = useState(new Glucose(allSettings.low_level));
     const [highGl, setHighGl] = useState(new Glucose(allSettings.high_level));
+
+    const tabId = 'glucose';
 
     const setMmol = (val) => {
         setAllSettings({...allSettings, is_mmol: val === '1'});
@@ -80,94 +82,96 @@ export default function GlucoseTabContent(
     const valHigh = activeField.id === 'high_level_gl' ? activeField.val : highGl.getView(formGlConfig());
 
     return (
-        <Pane header="Glucose"
-              className={`glucose_pane tab-pane panes__pane ${activeTab === 'glucose' ? 'active' : ''}`}>
-            <fieldset>
-                <div className="horizontal-group checkbox-group">
-                    <label htmlFor="whole">
-                        <input id="whole"
-                               name="is_plasma"
-                               value="0"
-                               type="radio"
-                               checked={Boolean(!(+allSettings.is_plasma))}
-                               onChange={(e) => setPlasma(e.target.value)}
-                        />
-                        Whole</label>
-                </div>
-                <div className="horizontal-group checkbox-group">
-                    <label htmlFor="plasma">
-                        <input id="plasma"
-                               name="is_plasma"
-                               value="1"
-                               type="radio"
-                               checked={Boolean(+allSettings.is_plasma)}
-                               onChange={(e) => setPlasma(e.target.value)}
-                        />
-                        Plasma</label>
-                </div>
-            </fieldset>
+        <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
+            <Pane header="Glucose"
+                  className={`glucose_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
+                <fieldset>
+                    <div className="horizontal-group checkbox-group">
+                        <label htmlFor="whole">
+                            <input id="whole"
+                                   name="is_plasma"
+                                   value="0"
+                                   type="radio"
+                                   checked={Boolean(!(+allSettings.is_plasma))}
+                                   onChange={(e) => setPlasma(e.target.value)}
+                            />
+                            Whole</label>
+                    </div>
+                    <div className="horizontal-group checkbox-group">
+                        <label htmlFor="plasma">
+                            <input id="plasma"
+                                   name="is_plasma"
+                                   value="1"
+                                   type="radio"
+                                   checked={Boolean(+allSettings.is_plasma)}
+                                   onChange={(e) => setPlasma(e.target.value)}
+                            />
+                            Plasma</label>
+                    </div>
+                </fieldset>
 
-            <fieldset>
-                <div className="horizontal-group checkbox-group">
-                    <label htmlFor="mmol">
-                        <input id="mmol"
-                               name="is_mmol"
-                               value="1"
-                               type="radio"
-                               checked={Boolean(+allSettings.is_mmol)}
-                               onChange={(e) => setMmol(e.target.value)}
+                <fieldset>
+                    <div className="horizontal-group checkbox-group">
+                        <label htmlFor="mmol">
+                            <input id="mmol"
+                                   name="is_mmol"
+                                   value="1"
+                                   type="radio"
+                                   checked={Boolean(+allSettings.is_mmol)}
+                                   onChange={(e) => setMmol(e.target.value)}
+                            />
+                            mmol</label>
+                    </div>
+                    <div className="horizontal-group checkbox-group">
+                        <label htmlFor="mgdl">
+                            <input id="mgdl"
+                                   name="is_mmol"
+                                   value="0"
+                                   type="radio"
+                                   checked={Boolean(!(+allSettings.is_mmol))}
+                                   onChange={(e) => setMmol(e.target.value)}
+                            />
+                            mgdl</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Glucose levels</legend>
+                    {/* here we will have raw values but the names should correspond the settings names */}
+                    <input type="hidden" name="target" value={targetGl.val}/>
+                    <input type="hidden" name="low_level" value={lowGl.val}/>
+                    <input type="hidden" name="high_level" value={highGl.val}/>
+                    <div className="field">
+                        <InputTwoLines value={valTarget}
+                                       name="target_gl"
+                                       id="target"
+                                       label="Target GL"
+                                       onChange={updateTarget}
+                                       onBlur={formatTarget}
                         />
-                        mmol</label>
-                </div>
-                <div className="horizontal-group checkbox-group">
-                    <label htmlFor="mgdl">
-                        <input id="mgdl"
-                               name="is_mmol"
-                               value="0"
-                               type="radio"
-                               checked={Boolean(!(+allSettings.is_mmol))}
-                               onChange={(e) => setMmol(e.target.value)}
+                        {errors.target && <div className="validation-error">{errors.target}</div>}
+                    </div>
+                    <div className="field">
+                        <InputTwoLines value={valLow}
+                                       name="low_level_gl"
+                                       id="low_level"
+                                       label="Low GL level"
+                                       onChange={updateTarget}
+                                       onBlur={formatTarget}
                         />
-                        mgdl</label>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>Glucose levels</legend>
-                {/* here we will have raw values but the names should correspond the settings names */}
-                <input type="hidden" name="target" value={targetGl.val}/>
-                <input type="hidden" name="low_level" value={lowGl.val}/>
-                <input type="hidden" name="high_level" value={highGl.val}/>
-                <div className="field">
-                    <InputTwoLines value={valTarget}
-                                   name="target_gl"
-                                   id="target"
-                                   label="Target GL"
-                                   onChange={updateTarget}
-                                   onBlur={formatTarget}
-                    />
-                    {errors.target && <div className="validation-error">{errors.target}</div>}
-                </div>
-                <div className="field">
-                    <InputTwoLines value={valLow}
-                                   name="low_level_gl"
-                                   id="low_level"
-                                   label="Low GL level"
-                                   onChange={updateTarget}
-                                   onBlur={formatTarget}
-                    />
-                    {errors.low_level && <div className="validation-error">{errors.low_level}</div>}
-                </div>
-                <div className="field">
-                    <InputTwoLines value={valHigh}
-                                   name="high_level_gl"
-                                   id="high_level"
-                                   label="High GL level"
-                                   onChange={updateTarget}
-                                   onBlur={formatTarget}
-                    />
-                    {errors.high_level && <div className="validation-error">{errors.high_level}</div>}
-                </div>
-            </fieldset>
-        </Pane>
-);
+                        {errors.low_level && <div className="validation-error">{errors.low_level}</div>}
+                    </div>
+                    <div className="field">
+                        <InputTwoLines value={valHigh}
+                                       name="high_level_gl"
+                                       id="high_level"
+                                       label="High GL level"
+                                       onChange={updateTarget}
+                                       onBlur={formatTarget}
+                        />
+                        {errors.high_level && <div className="validation-error">{errors.high_level}</div>}
+                    </div>
+                </fieldset>
+            </Pane>
+        </div>
+    );
 };
