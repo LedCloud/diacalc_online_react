@@ -16,12 +16,22 @@ export default function SettingsTabbedPane() {
         setAllSettings(settings);
     }, [settings]);
 
+    const tags = [
+        {
+            tag: <Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />,
+            content: "",
+        },
+        { tag: <Tag id="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />},
+        { tag: <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />}
+    ];
+
     return (<>
         <div className="tabs">
 
-            <Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />
+            {tags.map((tag) => tag.tag)}
+            {/*<Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />
             <Tag id="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />
-            <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />
+            <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />*/}
 
         </div>
         <div className="tab-content">
