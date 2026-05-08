@@ -1,5 +1,5 @@
 import Pane from "@/Components/Pane.jsx";
-import {use, useState} from "react";
+import {useState} from "react";
 import Dialog from "@/Components/Dialog.jsx";
 
 export default function ProductsTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
@@ -24,26 +24,35 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                        setFillDefault(e.target.checked);
                                        if (e.target.checked) {
                                            setShowDialog(true);
-                                       }/* else {
-
-                                       }*/
-                                       //setFillDefault(e.target.checked);
+                                       }
                                    }}
                                    type="checkbox"/>Fill product base with default</label>
                     </div>
                 </fieldset>
             </Pane>
-            <Dialog header='Test Header'
-                    showInitial={showDialog}
+            <Dialog
+                    className="warning"
+                    header='Test Header'
+                    showDlg={showDialog}
                     okText='Okay'
-                    okHandler={() => {setFillDefault(true);}}
+                    okHandler={() => {
+                        setFillDefault(true);
+                        setShowDialog(false);
+                    }}
                     cancelText="Cancel"
-                    cancelHandler={() => {setFillDefault(false);}}
-                    closeHandler={() => {setFillDefault(false);}}
+                    cancelHandler={() => {
+                        setFillDefault(false);
+                        setShowDialog(false);
+                    }}
+                    closeHandler={() => {
+                        setFillDefault(false);
+                        setShowDialog(false);
+                    }}
+                    className="alert alert-warning"
                     >
-                <p>After you save settings your database will be filled with the default products.</p>
+                    <p>After you save settings your database will be filled with the default products</p>
                 <p>All exisiting products will be removed.</p>
-                <p>This action is suitable for the first time filling an empty product base.</p>
+                <p>This action is suitable for the first time filling of an empty product base.</p>
             </Dialog>
         </div>
     </>);
