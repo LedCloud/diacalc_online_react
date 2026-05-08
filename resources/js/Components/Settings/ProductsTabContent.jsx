@@ -48,7 +48,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                         setFillDefault(false);
                         setShowDialog(false);
                     }}
-                    className="alert alert-warning"
+                    className="success"
                     >
                     <p>After you save settings your database will be filled with the default products</p>
                 <p>All exisiting products will be removed.</p>

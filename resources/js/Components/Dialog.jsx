@@ -14,7 +14,7 @@ export default function Dialog({children,
     if (!showDlg) return null;
 
     const Wrapper = className ? 'div' : React.Fragment;
-    const wrapperProps = className ? { className } : {};
+    const wrapperProps = className ? { className: `alert alert-${className}` } : {};
 
     return (
             <div className="dialog">
