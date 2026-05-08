@@ -19,7 +19,7 @@ export default function ToastContainer()
                 setTimeout(() => {
                     setStack((prev) => prev.filter((t) => t.id !== id));
                 }, 3000);
-
+                console.log('Key', key);
                 return {
                     id,
                     text: value,
@@ -32,35 +32,13 @@ export default function ToastContainer()
         if (newToasts.length > 0) {
             setStack((prev) => [...prev, ...newToasts]);
         }
-
-        return;
-
-        const stack_cp = [...stack];
-
-        Object.keys(flash).forEach(key => {
-            console.log('Work', key)
-            const id = Date.now();
-            const oFlash = {
-                id: id,
-                text: flash[key],
-                class: key === 'notification' ? 'border-green-500' : (key === 'warning' ? 'border-amber-500' : 'border-red-500')
-            };
-            stack_cp.push(oFlash);
-            setStack(stack_cp);
-
-            setTimeout(() => {
-                const cp = stack.filter(t => t.id !== id);
-                setStack(cp);
-            }, 3000);
-        });
-
     }, [flash]);
 
     return (
         <div className="fixed top-5 right-5 space-y-2 z-50">
             {stack.map((value) => (
                 <div key={value.id}
-                     className={`bg-white shadow-lg border-l-4 p-4 rounded ${value.class}`}
+                     className={`bg-white shadow-lg border-l-4 p-4 rounded ${value.className}`}
                 >
                     <span>{value.text}</span>
                 </div>

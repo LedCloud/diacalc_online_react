@@ -21,9 +21,9 @@ class SettingsController extends Controller
             $settings = UserSetting::DEFAULT;
         }
 
-        session()->flash('notification', 'Catch me');
+        /*session()->flash('notification', 'Catch me');
         session()->flash('error', 'Catch an error');
-        session()->flash('warning', 'Catch a warning too');
+        session()->flash('warning', 'Catch a warning too')*/;
 
         return Inertia::render('Settings',[
             'settings' => $settings,
@@ -65,6 +65,8 @@ class SettingsController extends Controller
         Log::info('Merged', $settings);
 
         Auth::user()->putSetting('User', $settings);
+
+        session()->flash('notification', 'Settings saved');
 
         return Redirect::route('settings.react');
     }

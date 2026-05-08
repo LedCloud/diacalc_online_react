@@ -7,7 +7,7 @@ import ProductsTabContect from "@/Components/Settings/ProductsTabContent.jsx";
 
 export default function SettingsTabbedPane() {
 
-    const [activeTab, setActiveTab] = useState('glucose');
+    const [activeTab, setActiveTab] = useState('products');
     const {settings, menuMasks, errors} = usePage().props;
 
     const [allSettings, setAllSettings] = useState(settings ?? null);
@@ -18,11 +18,15 @@ export default function SettingsTabbedPane() {
 
     const tags = [
         {
-            tag: <Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />,
+            tag: <Tag id="menu" key="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />,
             content: "",
         },
-        { tag: <Tag id="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />},
-        { tag: <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />}
+        {
+            tag: <Tag id="glucose" key="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />
+        },
+        {
+            tag: <Tag id="products" key="products" active={activeTab} name="Products" clickHandler={setActiveTab} />
+        }
     ];
 
     return (<>
