@@ -7,6 +7,8 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
     const [fillDefault, setFillDefault] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
 
+    const [useFreq, setUseFreq] = useState(false);
+
     const tabId = 'products';
 
     console.log('Show dlg', showDialog);
@@ -20,6 +22,8 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                         <label className="checkbox-group" htmlFor="fillDefault">
                             <input id="fillDefault"
                                    checked={fillDefault}
+                                   name="fillDefault"
+                                   value="fill"
                                    onChange={(e) => {
                                        setFillDefault(e.target.checked);
                                        if (e.target.checked) {
@@ -28,25 +32,35 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                    }}
                                    type="checkbox"/>Fill product base with default</label>
                     </div>
+
+                    <div className="field">
+                        <label className="checkbox-group" htmlFor="useFreq">
+                            <input id="useFreq"
+                                   checked={useFreq}
+                                   name="useFreq"
+                                   value="use"
+                                   onChange={(e) => setUseFreq(e.target.checked)}
+                                   type="checkbox"/>Use frequenty used products</label>
+                    </div>
                 </fieldset>
             </Pane>
             <Dialog
-                    className="warning"
-                    header='Test Header'
-                    showDlg={showDialog}
-                    okText='Okay'
-                    okHandler={() => {
-                        setFillDefault(true);
-                        setShowDialog(false);
-                    }}
-                    cancelText="Cancel"
-                    cancelHandler={() => {
-                        setFillDefault(false);
-                        setShowDialog(false);
-                    }}
-                    closeHandler={() => {
-                        setFillDefault(false);
-                        setShowDialog(false);
+                className="warning"
+                header='Test Header'
+                showDlg={showDialog}
+                okText='Okay'
+                okHandler={() => {
+                    setFillDefault(true);
+                    setShowDialog(false);
+                }}
+                cancelText="Cancel"
+                cancelHandler={() => {
+                    setFillDefault(false);
+                    setShowDialog(false);
+                }}
+                closeHandler={() => {
+                    setFillDefault(false);
+                    setShowDialog(false);
                     }}
                     className="success"
                     >
