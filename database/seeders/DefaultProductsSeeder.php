@@ -14,7 +14,12 @@ class DefaultProductsSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = collect(Storage::disk('local')->json('base.json'));
+        $raw = Storage::disk('local')->json('base.json');
+        if (!isset($raw)) {
+            throw new \Exception("Data file is not present");
+        }
+
+        $data = collect($raw);
         foreach($data['groups'] as $group){
             $gr = DefaultGroup::create([
                 'name' => $group['gr_name'],
