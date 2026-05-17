@@ -1,42 +1,35 @@
-.tab-header {
-    display: flex;
-    border-bottom: 2px solid #eee;
-    /** for devices bigger than value */
-    /*@media screen and (min-width: 1023px) {
-        display: none;
-    }*/
+.tabs {
+    &__tags {
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: none;
+            outline: none;
+            transition: 0.2s;
+            &.active {
+                border-bottom: 4px solid @border-color;
+                color: #007bff;
+            }
+            @media screen and (min-width: 768px) {
+                display: none;
+            }
+        }
+    }
+    &__content {
+        .tab-pane {
+            display: none;
+            /*padding-top: 20px; this one is for bigger devices*/
+            &.active {
+                display: block;
+            }
+            @media screen and (min-width: 768px) {
+                display: block;
+                height: 100%;
+            }
+        }
+    }
 }
 
-
-.tab-btn {
-    /** for devices bigger than value */
-    /*@media screen and (min-width: 1023px) {
-        display: none;
-    }*/
-    padding: 10px 20px;
-    cursor: pointer;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    background: none;
-    outline: none;
-    transition: 0.3s;
-}
-/* Стиль активной кнопки */
-.tab-btn.active {
-    border-bottom: 4px solid @border-color;
-    color: #007bff;
-}
-
-/* Логика показа контента */
-.tab-pane {
-    display: none;
-    /*@media screen and (max-width: 1023px) {
-        display: none;
-    }*/
-    padding-top: 20px;
-}
-
-.tab-pane.active {
-    display: block;
-}

@@ -24,7 +24,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
     return (<>
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
             <Pane header="Products"
-                  className={`menu_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
+                  className={`products_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
                 <fieldset>
                     <div className="field">
                         <label className="checkbox-group" htmlFor="fillDefault">
@@ -47,7 +47,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                    checked={Boolean(allSettings.use_freq)}
                                    name="use_freq"
                                    value="use"
-                                   onChange={(e) =>setAllSettings({...allSettings, use_freq: e.target.checked})}
+                                   onChange={(e) => setAllSettings({...allSettings, use_freq: e.target.checked})}
                                    type="checkbox"/>Use frequenty used products</label>
                     </div>
                     {Boolean(allSettings.use_freq) && (<div className="field">
@@ -59,17 +59,20 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                         />
                         {errors.freq_qty && <div className="validation-error">{errors.freq_qty}</div>}
                     </div>)}
+
+                    <div className="field">
+                        <InputTwoLines value={allSettings.filter_off}
+                                       name="filter_off"
+                                       id="filter_off"
+                                       label="Filter off"
+                                       onChange={changeFilterOff}
+                        />
+                        {errors.filter_off && <div className="validation-error">{errors.filter_off}</div>}
+                    </div>
+
                 </fieldset>
 
-                <div className="field">
-                    <InputTwoLines value={allSettings.filter_off}
-                                   name="filter_off"
-                                   id="filter_off"
-                                   label="Filter off"
-                                   onChange={changeFilterOff}
-                    />
-                    {errors.filter_off && <div className="validation-error">{errors.filter_off}</div>}
-                </div>
+
             </Pane>
             <Dialog
                 className="warning"

@@ -7,7 +7,7 @@ import ProductsTabContect from "@/Components/Settings/ProductsTabContent.jsx";
 
 export default function SettingsTabbedPane() {
 
-    const [activeTab, setActiveTab] = useState('products');
+    const [activeTab, setActiveTab] = useState('menu');
     const {settings, menuMasks, errors} = usePage().props;
 
     const [allSettings, setAllSettings] = useState(settings ?? null);
@@ -16,37 +16,37 @@ export default function SettingsTabbedPane() {
         setAllSettings(settings);
     }, [settings]);
 
-    return (<>
-        <div className="tabs">
+    return (<div className="tabs">
+        <div className="tabs__tags">
 
             <Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />
             <Tag id="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />
             <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />
 
         </div>
-        <div className="tab-content">
-            <Form action="/settings_react" method="patch">
+        <div className="tabs__content">
+            <Form action="/settings_react" className="settings-layout" method="patch">
 
                 <MenuTabContect allSettings={allSettings}
                                 setAllSettings={setAllSettings}
                                 activeTab={activeTab}
                                 menuMasks={menuMasks}
                                 errors={errors}
-                                className="settings-layout"
+                                className="settings-layout__menu"
                 />
 
                 <GlucoseTabContent allSettings={allSettings}
                                    setAllSettings={setAllSettings}
                                    activeTab={activeTab}
                                    errors={errors}
-                                   className="settings-layout"
+                                   className="settings-layout__glucose"
                 />
 
                 <ProductsTabContect allSettings={allSettings}
                                     setAllSettings={setAllSettings}
                                     activeTab={activeTab}
                                     errors={errors}
-                                    className="settings-layout"
+                                    className="settings-layout__products"
                                     />
 
                 <div className="button-horizontal">
@@ -60,5 +60,5 @@ export default function SettingsTabbedPane() {
 
             </Form>
         </div>
-    </>);
+    </div>);
 };
