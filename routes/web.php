@@ -36,8 +36,13 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('settings.react');*/
 
-    Route::get('/settings_react', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.react');
-    Route::patch('/settings_react', [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.react');
+    Route::get('/settings_react', [\App\Http\Controllers\SettingsController::class, 'index'])
+        ->name('settings.react');
+    Route::patch('/settings_react', [\App\Http\Controllers\SettingsController::class, 'update'])
+        ->name('settings.react');
+
+    Route::get('/factors', [App\Http\Controllers\FactorsController::class, 'index'])
+        ->name('factors_react');
 
 
     Route::get('/calculations', function () {
@@ -54,9 +59,9 @@ Route::middleware('auth')->group(function () {
     })->name('calculations');
 
     Route::livewire('/settings', 'pages::settings')->name('settings');
-    Route::livewire('/factors', 'pages::more.factors')->name('factors');
-    Route::livewire('/factors/create', 'pages::more.factors.create')->name('factors.create');
-    Route::livewire('/factors/{id}/edit', 'pages::more.factors.create')->name('factors.edit');
+    //Route::livewire('/factors', 'pages::more.factors')->name('factors');
+    //Route::livewire('/factors/create', 'pages::more.factors.create')->name('factors.create');
+    //Route::livewire('/factors/{id}/edit', 'pages::more.factors.create')->name('factors.edit');
 });
 
 require __DIR__.'/auth.php';

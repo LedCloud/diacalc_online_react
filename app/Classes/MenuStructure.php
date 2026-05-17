@@ -10,11 +10,11 @@ class MenuStructure
             'name' => 'Dashboard',
             'livewire' => false,
         ],
-        [
+        /*[
             'name' => 'Settings',
             'route' => 'settings',
             'livewire' => true,
-        ],
+        ],*/
         [
             'name' => 'Settings React',
             'route' => 'settings.react',
@@ -24,9 +24,9 @@ class MenuStructure
             'name' => 'Settings Sub',
             'submenu' => [
                 ['route' => 'settings.react', 'name' => 'Settings', 'livewire' => false, ],
-                ['route' => 'factors', 'name' => 'Factors', 'livewire' => true,],
+                ['route' => 'factors_react', 'name' => 'Factors',],
                 ['route' => 'calculations', 'name' => 'CalcReact'],
-                ['route' => 'factors', 'name' => 'Calculations', 'livewire' => true,],
+                //['route' => 'factors', 'name' => 'Calculations', 'livewire' => true,],
             ],
         ],
     ];
