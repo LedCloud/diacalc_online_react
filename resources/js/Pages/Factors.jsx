@@ -16,7 +16,7 @@ export default function Factors({ auth }) {
     const [rFactors, setRFactors] = useState(factors ?? null);
     const [showDialog, setShowDialog] = useState(false);
     const [dialogType, setDialogType] = useState('add'); //add|edit
-    const defaultFactors = {k1:1,k2:0,k3:new Glucose(2), time:"08:00"};
+    const defaultFactors = {k1:1,k2:0,k3:2, time:"08:00"};
     const [dialogData, setDialogData] = useState(defaultFactors);
 
     useEffect(() => {
@@ -31,14 +31,6 @@ export default function Factors({ auth }) {
         plasma: Boolean(settings.is_plasma),
         precision: 2
     };
-
-    const getConfig = () => {
-        return {
-            mmol: Boolean(settings.is_mmol),
-            plasma: Boolean(settings.is_plasma),
-            precision: 2
-        };
-    }
 
     const setTime = (id, value) => {
         setRFactors(latest =>
@@ -106,14 +98,12 @@ export default function Factors({ auth }) {
         }
     };
 
-    const addRow = () => {
+    const addRowOpenDialog = () => {
         const min = factors.length > 0 ? Math.min(...factors.map(e => e.id)) : 0;
         const nextId = min >= 0 ? -1 : (min - 1);
 
         setDialogType('add');
-        //const newGl = new Glucose(5.6);
-        //newGl.setVal(defaultFactors.k3, config);
-        setDialogData({...defaultFactors});
+        setDialogData({...defaultFactors, id:nextId});
         setShowDialog(true);
     };
 
@@ -136,15 +126,25 @@ export default function Factors({ auth }) {
         }
     }
 
-    const addDialogResult = () => {
+    const useDialogResult = () => {
         setRFactors(latest => {
-            const min = latest.length > 0 ? Math.min(...latest.map(e => e.id)) : 0;
-            const nextId = min >= 0 ? -1 : (min - 1);
+            //const min = latest.length > 0 ? Math.min(...latest.map(e => e.id)) : 0;
+            //const nextId = min >= 0 ? -1 : (min - 1);
 
             // 2. Create the new item with the ID
-            const copy = { ...dialogData, id: nextId };
+            const copy = { ...dialogData};
+            const newGl = new Glucose(2);
+            newGl.setVal(dialogK3, config);
+            copy.k3 = newGl.val;
 
-            const updated = [...latest, copy];
+            let updated;
+            if (copy.id < 0 && latest.find(e => e.id === copy.id) === undefined) {
+                updated = [...latest, copy];
+            } else {
+                updated = latest.map(e => e.id === copy.id ? copy : e);
+            }
+
+            //const updated = [...latest, copy];
             updated.sort((a, b) => a.time.localeCompare(b.time));
 
             return updated;
@@ -155,14 +155,33 @@ export default function Factors({ auth }) {
         setRFactors(latest => latest.filter(e => e.id !== id));
     };
 
+    const dialogGl = new Glucose(2);
+    const [dialogK3, setK3Dialog] = useState(dialogGl.getView(config));
+
     const editRow = (id) => {
         const row = factors.find(e => e.id === id);
+        console.log('Row edit', row);
         setDialogType('edit');
-        //const newGl = new Glucose(5.6);
+        const newGl = new Glucose(row.k3);
         //newGl.setVal(defaultFactors.k3, config);
+        setK3Dialog(newGl.getView(config));
         setDialogData({...row});
         setShowDialog(true);
     };
+
+    const updateK3Dialog = (val) => {
+        setK3Dialog(val);
+    };
+
+    const formatK3Dialog = (val) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const newGl = new Glucose(5.6);
+            newGl.setVal(val, config);
+            setK3Dialog(newGl.getView(config));
+            setDialogData({...dialogData, k3: val});
+        }
+    }
 
     const gl = new Glucose(5.6);
 
@@ -260,7 +279,7 @@ export default function Factors({ auth }) {
                                 </table>
                             </fieldset>
                             <div>
-                                <button type="button" className="btn" onClick={addRow}>Add</button>
+                                <button type="button" className="btn" onClick={addRowOpenDialog}>Add</button>
                             </div>
                             <fieldset>
                                 <legend>Params</legend>
@@ -288,7 +307,7 @@ export default function Factors({ auth }) {
                             okText={dialogType === 'add' ? 'Add' : 'Edit'}
                             okHandler={() => {
                                 //setFillDefault(true);
-                                addDialogResult();
+                                useDialogResult();
                                 setShowDialog(false);
                             }}
                             cancelText="Cancel"
@@ -319,11 +338,11 @@ export default function Factors({ auth }) {
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
-                                {/*<InputOneLine value={dialogData.k3.getView(config)}
+                                <InputOneLine value={dialogK3}
                                               name="k3" label="OUV"
-                                              onChange={updateDialog}
-                                              onBlur={formatDialog}
-                                />*/}
+                                              onChange={updateK3Dialog}
+                                              onBlur={formatK3Dialog}
+                                />
                             </div>
                         </Dialog>
                     </div>

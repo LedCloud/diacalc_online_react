@@ -10,10 +10,14 @@ export default class Glucose {
     }
     getView({mmol = true, plasma = false, precision = null}) {
         if (this.val === 0) return '';
-        return '' + (this.val * this.getFactor({mmol:mmol, plasma:plasma}))
-            .toFixed(precision ? precision : (mmol?1:0));
+        return ''+(this.val * this.getFactor({mmol:mmol, plasma:plasma}))
+            .toFixed(precision ? precision : (mmol?1:0))
+            ;
     }
-    getFactor({mmol = true, plasma = false}){ return (plasma?1.12:1) * (mmol ? 1 : 18);};
+    getFactor({mmol = true, plasma = false}){
+        //console.log('In get factor', plasma, (plasma?1.12:1), mmol, (mmol ? 1 : 18), (plasma?1.12:1) * (mmol ? 1 : 18));
+        return (plasma?1.12:1) * (mmol ? 1 : 18);
+    };
     getHbA1c(){
         return ((this.val * 1.12 + 2.59) / 1.59).toFixed(1);
     }
