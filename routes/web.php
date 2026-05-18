@@ -42,7 +42,9 @@ Route::middleware('auth')->group(function () {
         ->name('settings.react');
 
     Route::get('/factors', [App\Http\Controllers\FactorsController::class, 'index'])
-        ->name('factors_react');
+        ->name('factors.react');
+    Route::patch('/factors', [App\Http\Controllers\FactorsController::class, 'update'])
+        ->name('factors.react');
 
 
     Route::get('/calculations', function () {

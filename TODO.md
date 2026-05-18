@@ -2,9 +2,8 @@
 - start using translations **done**
 - fill user's products with default products
 - adjustable menu **done**
-- make pane as separate blade component with its styles **not needed anymore**
-- move sex input to inputs
-
+- move sex input to inputs **done**
+- factors react page
 
 
 ---

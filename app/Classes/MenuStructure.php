@@ -24,8 +24,8 @@ class MenuStructure
             'name' => 'Settings Sub',
             'submenu' => [
                 ['route' => 'settings.react', 'name' => 'Settings', 'livewire' => false, ],
-                ['route' => 'factors_react', 'name' => 'Factors',],
-                ['route' => 'calculations', 'name' => 'CalcReact'],
+                ['route' => 'factors.react', 'name' => 'Factors', 'livewire' => false, ],
+                ['route' => 'calculations', 'name' => 'CalcReact', 'livewire' => false, ],
                 //['route' => 'factors', 'name' => 'Calculations', 'livewire' => true,],
             ],
         ],

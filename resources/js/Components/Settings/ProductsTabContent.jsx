@@ -71,8 +71,6 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                     </div>
 
                 </fieldset>
-
-
             </Pane>
             <Dialog
                 className="warning"

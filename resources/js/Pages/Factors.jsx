@@ -2,11 +2,30 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Pane from "@/Components/Pane.jsx";
 import Glucose from "@/Classes/Glucose.js";
-import { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {usePage, Form} from '@inertiajs/react'
+import InputTwoLines from "@/Components/InputTwoLines.jsx";
+import Dialog from "@/Components/Dialog.jsx";
+import InputOneLine from "@/Components/InputOneLine.jsx";
 
-export default function Settings({ auth, factors, settings }) {
-    const [factorsByTime, setFactorsByTime] = useState(Boolean(settings.factors_by_time));
-    console.log(factors,   settings);
+export default function Factors({ auth }) {
+
+    const [activeField, setActiveField] = useState({ id: null, val: '' });
+    const {settings, factors, errors} = usePage().props;
+    const [allSettings, setAllSettings] = useState(settings ?? null);
+    const [rFactors, setRFactors] = useState(factors ?? null);
+    const [showDialog, setShowDialog] = useState(false);
+    const [dialogType, setDialogType] = useState('add'); //add|edit
+    const defaultFactors = {k1:1,k2:0,k3:new Glucose(2),
+        time:"08:00"};
+    const [dialogData, setDialogData] = useState(defaultFactors);
+
+    useEffect(() => {
+        setAllSettings(settings);
+        setRFactors(factors);
+    }, [settings, factors]);
+
+    console.log(factors, settings);
 
     const config = {
         mmol: Boolean(settings.is_mmol),
@@ -14,7 +33,106 @@ export default function Settings({ auth, factors, settings }) {
         precision: 2
     };
 
-    console.log(config);
+    const getConfig = () => {
+        return {
+            mmol: Boolean(settings.is_mmol),
+            plasma: Boolean(settings.is_plasma),
+            precision: 2
+        };
+    }
+
+    const setTime = (id, value) => {
+        setRFactors(latest =>
+            latest.map(el =>
+                el.id === id
+                    ? {...el, time: value}
+                    : el));
+    };
+
+    const setFactor = (id, name, value) => {
+        setRFactors(latest =>
+            latest.map(el =>
+                el.id === id
+                    ? {...el, [name]: value}
+                    : el));
+    };
+
+    const formatFactor = (id, name, value) => {
+        const parsed = parseFloat(value);
+        if (!isNaN(parsed) && !value.endsWith('.')) {
+            setRFactors(latest =>
+                latest.map(el =>
+                    el.id === id
+                        ? {...el, [name]: String(parsed.toFixed(2))}
+                        : el));
+        }
+    };
+
+    const updateOUV = (id, value) => {
+        setActiveField({ id: id, val: value });
+
+        const parsed = parseFloat(value);
+        if (!isNaN(parsed) && !value.endsWith('.')) {
+            const newGl = new Glucose();
+            newGl.setVal(value, config);
+            setRFactors(latest =>
+                latest.map(el =>
+                    el.id === id
+                        ? {...el, k3: newGl.val}
+                        : el));
+        }
+    };
+
+    const formatOUV = (id, value) => {
+        const parsed = parseFloat(value);
+        if (!isNaN(parsed) && !value.endsWith('.')) {
+            const newGl = new Glucose();
+            newGl.setVal(value, config);
+            setRFactors(latest =>
+                latest.map(el =>
+                    el.id === id
+                        ? {...el, k3: newGl.val}
+                        : el));
+        }
+        setActiveField({ id: null, val: '' });
+    };
+
+    const setWeight = (val) => {
+        setAllSettings({...allSettings, weight: val});
+    };
+    const formatWeight = (val) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            setAllSettings({...allSettings, weight: parsed.toFixed(0)});
+        }
+    };
+
+    const addRow = () => {
+        setDialogType('add');
+        const newGl = new Glucose(5.6);
+        newGl.setVal(defaultFactors.k3, config);
+        setDialogData({...defaultFactors, k3:newGl.getView(config)});
+        setShowDialog(true);
+    };
+
+    const updateDialog = (val, field) => {
+        if ('k3' === field) {
+            const newGl =
+        }
+        setDialogData({...dialogData, [field]: val});
+    }
+    const formatDialog = (val, field) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            if ('k3' === field) {
+                const newGl = new Glucose(5.6);
+                newGl.setVal(parsed, config);
+                setDialogData({...dialogData, k3: newGl.val});
+            } else
+                setDialogData({...dialogData, [field]: parsed.toFixed(2)});
+        }
+    }
+
     const gl = new Glucose(5.6);
 
     return (
@@ -27,43 +145,136 @@ export default function Settings({ auth, factors, settings }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <Form action="/factors_react" method="patch">
                         <Pane header="Factors" className="factors-layout__pane factors">
+                            <fieldset>
+                                <legend>Factors</legend>
+
                             <div className="field">
                                 <label className="checkbox-group" htmlFor="timedFactors">
                             <input id="timedFactors"
-                                   checked={factorsByTime}
+                                   checked={Boolean(allSettings.factors_by_time)}
                                    name="timedFactors"
                                    value="timed"
-                                   onChange={(e) => setFactorsByTime(e.target.checked)}
+                                   onChange={(e) => {
+                                       setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
+                                   }}
                                    type="checkbox"/>Factors by time</label>
                             </div>
-                            <fieldset>
-                                <legend>Factors</legend>
-                                <table>
-                                    <tr>
-                                        <th></th>
-                                        <th>Time</th>
-                                        <th>K1</th>
-                                        <th>K2</th>
-                                        <th>OUV</th>
-                                    </tr>
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>K1</th>
+                                            <th>K2</th>
+                                            <th>OUV</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        {factors.map(row => {
-                                            gl.val = row.k3;
-                                            return (
-                                                <tr key={row.id}>
-                                                    <td>INPUT</td>
-                                                    <td>{row.time}</td>
-                                                    <td>{row.k1}</td>
-                                                    <td>{row.k2}</td>
-                                                    <td>{gl.getView(config)}</td>
-                                                </tr>
-                                            )})}
+                                    {rFactors.map(row => {
+                                        gl.val = row.k3;
+                                        return (
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <input type="hidden" name={`factors[${row.id}][id]`}
+                                                           value={row.id}/>
+                                                    <input type="time"
+                                                           name={`factors[${row.id}][time]`} value={row.time}
+                                                           onChange={(e) => setTime(row.id, e.target.value)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                <input type="number"
+                                                           name={`factors[${row.id}][k1]`} value={row.k1}
+                                                           onFocus={(e) => e.target.select()}
+                                                           onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
+                                                           onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input type="number"
+                                                           name={`factors[${row.id}][k2]`} value={row.k2}
+                                                           onFocus={(e) => e.target.select()}
+                                                           onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
+                                                           onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {/*{gl.getView(config)}*/}
+                                                    <input
+                                                        name={`factors[${row.id}][ouv]`}
+                                                        value={activeField.id === row.id ? activeField.val : gl.getView(config)}
+                                                        onFocus={(e) => e.target.select()}
+                                                        onChange={(e) => updateOUV(row.id, e.target.value)}
+                                                        onBlur={(e) => formatOUV(row.id, e.target.value)}
+                                                        />
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
                                     </tbody>
                                 </table>
-                                            Buttons row
                             </fieldset>
+                            <div>
+                                <button type="button" className="btn" onClick={addRow}>Add</button>
+                            </div>
+                            <fieldset>
+                                <legend>Params</legend>
+                                <InputTwoLines value={allSettings.weight}
+                                               name="weight"
+                                               id="weight"
+                                               label="Your weight"
+                                               onChange={setWeight}
+                                               onBlur={formatWeight}
+                                />
+                                {errors.filter_off && <div className="validation-error">{errors.filter_off}</div>}
+                            </fieldset>
+                                <div className="button-horizontal">
+                                    <button className="btn settings__btn-save primary"
+                                            type="submit">Save
+                                    </button>
+
+                                </div>
                         </Pane>
+                        </Form>
+
+                        <Dialog
+                            header={dialogType === 'add' ? 'Add factor' : 'Edit factor'}
+                            showDlg={showDialog}
+                            okText={dialogType === 'add' ? 'Add' : 'Edit'}
+                            okHandler={() => {
+                                //setFillDefault(true);
+                                setShowDialog(false);
+                            }}
+                            cancelText="Cancel"
+                            cancelHandler={() => {
+                                //setFillDefault(false);
+                                setShowDialog(false);
+                            }}
+                            closeHandler={() => {
+                                //setFillDefault(false);
+                                setShowDialog(false);
+                            }}
+                        >
+                            <div>
+                                <InputOneLine value={dialogData.k1}
+                                              focused={true}
+                                      name="k1" label="k1"
+                                     onChange={updateDialog}
+                                     onBlur={formatDialog}
+                                />
+                                <InputOneLine value={dialogData.k2}
+                                              name="k2" label="k2"
+                                              onChange={updateDialog}
+                                              onBlur={formatDialog}
+                                />
+                                <InputOneLine value={dialogData.k3.getView(config)}
+                                              name="k3" label="OUV"
+                                              onChange={updateDialog}
+                                              onBlur={formatDialog}
+                                />
+                            </div>
+                        </Dialog>
                     </div>
                 </div>
             </div>

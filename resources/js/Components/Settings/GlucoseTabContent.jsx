@@ -37,7 +37,7 @@ export default function GlucoseTabContent(
         }
     };
 
-    const updateTarget = (val, field) => {
+    const updateGlucoseLevel = (val, field) => {
         setActiveField({ id: field, val: val });
 
         const parsed = parseFloat(val);
@@ -58,7 +58,7 @@ export default function GlucoseTabContent(
         }
     };
 
-    const formatTarget = (val, field) => {
+    const formatGlucoseLevel = (val, field) => {
         const parsed = parseFloat(val);
         if (!isNaN(parsed) && !val.endsWith('.')) {
             const newGl = new Glucose();
@@ -145,8 +145,8 @@ export default function GlucoseTabContent(
                                        name="target_gl"
                                        id="target"
                                        label="Target GL"
-                                       onChange={updateTarget}
-                                       onBlur={formatTarget}
+                                       onChange={updateGlucoseLevel}
+                                       onBlur={formatGlucoseLevel}
                         />
                         {errors.target && <div className="validation-error">{errors.target}</div>}
                     </div>
@@ -155,8 +155,8 @@ export default function GlucoseTabContent(
                                        name="low_level_gl"
                                        id="low_level"
                                        label="Low GL level"
-                                       onChange={updateTarget}
-                                       onBlur={formatTarget}
+                                       onChange={updateGlucoseLevel}
+                                       onBlur={formatGlucoseLevel}
                         />
                         {errors.low_level && <div className="validation-error">{errors.low_level}</div>}
                     </div>
@@ -165,8 +165,8 @@ export default function GlucoseTabContent(
                                        name="high_level_gl"
                                        id="high_level"
                                        label="High GL level"
-                                       onChange={updateTarget}
-                                       onBlur={formatTarget}
+                                       onChange={updateGlucoseLevel}
+                                       onBlur={formatGlucoseLevel}
                         />
                         {errors.high_level && <div className="validation-error">{errors.high_level}</div>}
                     </div>
