@@ -16,8 +16,7 @@ export default function Factors({ auth }) {
     const [rFactors, setRFactors] = useState(factors ?? null);
     const [showDialog, setShowDialog] = useState(false);
     const [dialogType, setDialogType] = useState('add'); //add|edit
-    const defaultFactors = {k1:1,k2:0,k3:new Glucose(2),
-        time:"08:00"};
+    const defaultFactors = {k1:1,k2:0,k3:new Glucose(2), time:"08:00"};
     const [dialogData, setDialogData] = useState(defaultFactors);
 
     useEffect(() => {
@@ -108,20 +107,24 @@ export default function Factors({ auth }) {
     };
 
     const addRow = () => {
+        const min = factors.length > 0 ? Math.min(...factors.map(e => e.id)) : 0;
+        const nextId = min >= 0 ? -1 : (min - 1);
+
         setDialogType('add');
-        const newGl = new Glucose(5.6);
-        newGl.setVal(defaultFactors.k3, config);
-        setDialogData({...defaultFactors, k3:newGl.getView(config)});
+        //const newGl = new Glucose(5.6);
+        //newGl.setVal(defaultFactors.k3, config);
+        setDialogData({...defaultFactors});
         setShowDialog(true);
     };
 
     const updateDialog = (val, field) => {
-        if ('k3' === field) {
+        /*if ('k3' === field) {
             const newGl =
-        }
+        }*/
         setDialogData({...dialogData, [field]: val});
     }
     const formatDialog = (val, field) => {
+        return;
         const parsed = parseFloat(val);
         if (!isNaN(parsed) && !val.endsWith('.')) {
             if ('k3' === field) {
@@ -132,6 +135,34 @@ export default function Factors({ auth }) {
                 setDialogData({...dialogData, [field]: parsed.toFixed(2)});
         }
     }
+
+    const addDialogResult = () => {
+        setRFactors(latest => {
+            const min = latest.length > 0 ? Math.min(...latest.map(e => e.id)) : 0;
+            const nextId = min >= 0 ? -1 : (min - 1);
+
+            // 2. Create the new item with the ID
+            const copy = { ...dialogData, id: nextId };
+
+            const updated = [...latest, copy];
+            updated.sort((a, b) => a.time.localeCompare(b.time));
+
+            return updated;
+        });
+    };
+
+    const delRow = (id) => {
+        setRFactors(latest => latest.filter(e => e.id !== id));
+    };
+
+    const editRow = (id) => {
+        const row = factors.find(e => e.id === id);
+        setDialogType('edit');
+        //const newGl = new Glucose(5.6);
+        //newGl.setVal(defaultFactors.k3, config);
+        setDialogData({...row});
+        setShowDialog(true);
+    };
 
     const gl = new Glucose(5.6);
 
@@ -168,6 +199,7 @@ export default function Factors({ auth }) {
                                             <th>K1</th>
                                             <th>K2</th>
                                             <th>OUV</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -209,6 +241,18 @@ export default function Factors({ auth }) {
                                                         onBlur={(e) => formatOUV(row.id, e.target.value)}
                                                         />
                                                 </td>
+                                                <td>
+                                                    <div className='button-horizontal'>
+                                                        <button className="btn"
+                                                        type="button"
+                                                            onClick={() => delRow(row.id)}
+                                                            >Del</button>
+                                                        <button className="btn"
+                                                        type="button"
+                                                            onClick={() => editRow(row.id)}
+                                                            >Edit</button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         )
                                     })}
@@ -244,6 +288,7 @@ export default function Factors({ auth }) {
                             okText={dialogType === 'add' ? 'Add' : 'Edit'}
                             okHandler={() => {
                                 //setFillDefault(true);
+                                addDialogResult();
                                 setShowDialog(false);
                             }}
                             cancelText="Cancel"
@@ -257,8 +302,14 @@ export default function Factors({ auth }) {
                             }}
                         >
                             <div>
-                                <InputOneLine value={dialogData.k1}
+                                <InputOneLine value={dialogData.time}
                                               focused={true}
+                                      name="time" label="time"
+                                      type="time"
+                                     onChange={updateDialog}
+                                     onBlur={formatDialog}
+                                />
+                                <InputOneLine value={dialogData.k1}
                                       name="k1" label="k1"
                                      onChange={updateDialog}
                                      onBlur={formatDialog}
@@ -268,11 +319,11 @@ export default function Factors({ auth }) {
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
-                                <InputOneLine value={dialogData.k3.getView(config)}
+                                {/*<InputOneLine value={dialogData.k3.getView(config)}
                                               name="k3" label="OUV"
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
-                                />
+                                />*/}
                             </div>
                         </Dialog>
                     </div>
