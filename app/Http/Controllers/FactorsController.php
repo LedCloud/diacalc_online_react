@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Classes\Settings\MenuInfo;
 use App\Classes\Settings\UserSetting;
+use App\Http\Requests\FactorsPatchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -31,17 +33,28 @@ class FactorsController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(FactorsPatchRequest $request)
     {
-        $validated = $request->validate([
-            'timedFactors' => ['string', Rule::in('timed')],
-        ]);
+        $validated = $request->validated();
+        //split the result to factors and settings
+        $factors = $validated['factors'];
+        $settings = $validated;
+        unset($settings['factors']);
 
-        $settings = array_merge(Auth::user()->getSetting('User'), $validated);
-
+        $settings = array_merge(Auth::user()->getSetting('User'), $settings);
         Auth::user()->putSetting('User', $settings);
 
-        session()->flash('notification', 'Settings saved');
+        $old_factors = array_filter($factors, fn($e) => $e['id'] > 0);
+        $old_update_ids = !empty($old_factors) ? array_column($old_factors, 'id') : [];
+        Auth::user()->factors()->whereNotIn('id', $old_update_ids)->delete();
+        Auth::user()->factors()->upsert($old_factors,
+            uniqueBy: ['id']
+        );
+
+        $new_factors = array_filter($factors, fn($e) => $e['id'] < 0);
+        Auth::user()->factors()->createMany($new_factors);
+
+        session()->flash('notification', 'Updated');
 
         return Redirect::route('factors.react');
     }

@@ -20,5 +20,6 @@ class UserSetting
         'low_level' => 4.0,
         'high_level' => 8,
         'period' => 7,
+        'be' => 10,
     ];
 }

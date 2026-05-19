@@ -32,8 +32,6 @@ export default function Factors({ auth }) {
         setRFactors(factors);
     }, [settings, factors]);
 
-    console.log(settings);
-
     const setTime = (id, value) => {
         setRFactors(latest =>
             latest.map(el =>
@@ -110,12 +108,24 @@ export default function Factors({ auth }) {
         }
     };
 
-    const openAddFactorsDialog = () => {
-        const min = factors.length > 0 ? Math.min(...factors.map(e => e.id)) : 0;
-        const nextId = min >= 0 ? -1 : (min - 1);
+    const setBE = (val) => {
+        setAllSettings({...allSettings, be: val});
+    };
+    const formatBE = (val) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            setAllSettings({...allSettings, be: parsed.toFixed(0)});
+        }
+    };
 
+    const openAddFactorsDialog = () => {
+        const min = rFactors.length > 0 ? Math.min(...rFactors.map(e => e.id)) : 0;
+        const nextId = min >= 0 ? -1 : (min - 1);
+        console.log('neg ID', nextId);
         setDialogData({...defaultFactors, id:nextId});
         setShowDialog(true);
+           /* {...defaultFactors, id:nextId});
+        */
     };
 
     const updateDialog = (val, field) => {
@@ -170,7 +180,21 @@ export default function Factors({ auth }) {
     }
 
     const calculateOUV = () => {
+        //if (!$base->query("UPDATE `coefs` SET `k3`=".
+        //             $k3factor."/(".$weight."*`k1`*10/".$be.") WHERE `iduser`='".$user_id."';")){
+        setRFactors(latest => {
+            latest = latest.map(row => {
+                const copy = {
+                    id: row.id,
+                    time: row.time,
+                    k1: row.k1,
+                    k2: row.k2,
+                    k3: +allSettings.k3_factor / (weight * row.k1 *10),
+                };
 
+                return latest.map(e => e.id === copy.id ? copy : e);
+            });
+        });
     };
 
     const gl = new Glucose(5.6);
@@ -185,7 +209,7 @@ export default function Factors({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <Form action="/factors_react" method="patch">
+                        <Form action="/factors" method="patch">
                             <Pane header="Factors" className="factors-layout__pane factors">
                                 <fieldset>
                                     <legend>Factors</legend>
@@ -194,7 +218,7 @@ export default function Factors({ auth }) {
                                         <label className="checkbox-group" htmlFor="timedFactors">
                                     <input id="timedFactors"
                                            checked={Boolean(allSettings.factors_by_time)}
-                                           name="timedFactors"
+                                           name="factors_by_time"
                                            value="timed"
                                            onChange={(e) => {
                                                setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
@@ -218,6 +242,16 @@ export default function Factors({ auth }) {
                                                    onBlur={formatK3Factor}
                                     />
                                     {errors.k3_factor && <div className="validation-error">{errors.k3_factor}</div>}
+
+                                    <InputTwoLines value={allSettings.be}
+                                                   name="be"
+                                                   id="be"
+                                                   label="BE"
+                                                   onChange={setBE}
+                                                   onBlur={formatBE}
+                                    />
+                                    {errors.be && <div className="validation-error">{errors.be}</div>}
+
                                     <button type="button" className="btn" onClick={calculateOUV}>Calculate OUV</button>
                                     <div className="alert alert-well">Коэффициенты будут рассчитаны только в таблице на этой странице!</div>
                                 </fieldset>
@@ -243,14 +277,24 @@ export default function Factors({ auth }) {
                                                                name={`factors[${row.id}][time]`} value={row.time}
                                                                onChange={(e) => setTime(row.id, e.target.value)}
                                                         />
+                                                        {errors[`factors.${row.id}.time`] && (
+                                                            <div className="validation-error">
+                                                                {errors[`factors.${row.id}.time`]}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td>
-                                                    <input type="number"
+                                                        <input type="number"
                                                                name={`factors[${row.id}][k1]`} value={row.k1}
                                                                onFocus={(e) => e.target.select()}
                                                                onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
                                                                onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
                                                         />
+                                                        {errors[`factors.${row.id}.k1`] && (
+                                                            <div className="validation-error">
+                                                                {errors[`factors.${row.id}.k1`]}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td>
                                                         <input type="number"
@@ -259,8 +303,17 @@ export default function Factors({ auth }) {
                                                                onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
                                                                onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
                                                         />
+                                                        {errors[`factors.${row.id}.k2`] && (
+                                                            <div className="validation-error">
+                                                                {errors[`factors.${row.id}.k2`]}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td>
+                                                        <input type="hidden"
+                                                               name={`factors[${row.id}][k3]`}
+                                                               value={row.k3}
+                                                               />
                                                         <input
                                                             name={`factors[${row.id}][ouv]`}
                                                             value={activeField.id === row.id ? activeField.val : gl.getView(config)}
@@ -268,6 +321,11 @@ export default function Factors({ auth }) {
                                                             onChange={(e) => updateOUV(row.id, e.target.value)}
                                                             onBlur={(e) => formatOUV(row.id, e.target.value)}
                                                             />
+                                                        {errors[`factors.${row.id}.ouv`] && (
+                                                            <div className="validation-error">
+                                                                {errors[`factors.${row.id}.ouv`]}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td>
                                                         <button className="btn"
