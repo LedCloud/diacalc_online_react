@@ -5,6 +5,12 @@
 - move sex input to inputs **done**
 - factors react page
 
+---
+- layout for factors
+- calc OUV fatal
+- test all three on mobile, tablet, desktop
+- langvars for all three from back
+- close dialog on ESC, click outside
 
 ---
 

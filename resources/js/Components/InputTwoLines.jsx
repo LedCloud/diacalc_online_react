@@ -1,4 +1,4 @@
-const InputTwoLines = ({ label, value, onChange, onBlur, id, name='', className = '' }) => (
+const InputTwoLines = ({ label, value, onChange, onBlur, id, name='', field, className = '' }) => (
     <div className={`vertical-group ${className}`}>
         <label htmlFor={id}>{label}</label>
         <input
@@ -6,8 +6,8 @@ const InputTwoLines = ({ label, value, onChange, onBlur, id, name='', className 
             id={id}
             onFocus={(e) => e.target.select()}
             value={value}
-            onChange={(e) => (onChange ? onChange(e.target.value, name ?? null) : () => {})}
-            onBlur={(e) => ( onBlur? onBlur(e.target.value, name ?? null) : () => {})}
+            onChange={(e) => (onChange ? onChange(e.target.value, field ?? null) : () => {})}
+            onBlur={(e) => ( onBlur? onBlur(e.target.value, field ?? null) : () => {})}
         />
     </div>
 );

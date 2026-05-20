@@ -124,8 +124,6 @@ export default function Factors({ auth }) {
         console.log('neg ID', nextId);
         setDialogData({...defaultFactors, id:nextId});
         setShowDialog(true);
-           /* {...defaultFactors, id:nextId});
-        */
     };
 
     const updateDialog = (val, field) => {
@@ -183,16 +181,14 @@ export default function Factors({ auth }) {
         //if (!$base->query("UPDATE `coefs` SET `k3`=".
         //             $k3factor."/(".$weight."*`k1`*10/".$be.") WHERE `iduser`='".$user_id."';")){
         setRFactors(latest => {
-            latest = latest.map(row => {
-                const copy = {
+            return latest.map(row => {
+                return {
                     id: row.id,
                     time: row.time,
                     k1: row.k1,
                     k2: row.k2,
-                    k3: +allSettings.k3_factor / (weight * row.k1 *10),
+                    k3: +allSettings.k3_factor / (allSettings.weight * row.k1 * 10 / allSettings.be),
                 };
-
-                return latest.map(e => e.id === copy.id ? copy : e);
             });
         });
     };
@@ -208,11 +204,11 @@ export default function Factors({ auth }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 factors-layout">
                         <Form action="/factors" method="patch">
                             <Pane header="Factors" className="factors-layout__pane factors">
                                 <fieldset>
-                                    <legend>Factors</legend>
+                                        {/*<legend>Factors</legend>*/}
 
                                     <div className="field">
                                         <label className="checkbox-group" htmlFor="timedFactors">
@@ -255,98 +251,102 @@ export default function Factors({ auth }) {
                                     <button type="button" className="btn" onClick={calculateOUV}>Calculate OUV</button>
                                     <div className="alert alert-well">Коэффициенты будут рассчитаны только в таблице на этой странице!</div>
                                 </fieldset>
-                                    <table className="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Time</th>
-                                                <th>K1</th>
-                                                <th>K2</th>
-                                                <th>OUV</th>
-                                                <th></th>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th className="w-2/12">Time</th>
+                                            <th className="w-3/12">K1</th>
+                                            <th className="w-3/12">K2</th>
+                                            <th className="w-3/12">OUV</th>
+                                            <th className="w-1/12"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {rFactors.map(row => {
+                                        gl.val = row.k3;
+                                        return (
+                                            <tr key={row.id}>
+                                                <td data-header="Time">
+                                                    <input type="hidden" name={`factors[${row.id}][id]`}
+                                                           value={row.id}/>
+                                                    <input type="time"
+                                                           className="w-full"
+                                                           name={`factors[${row.id}][time]`} value={row.time}
+                                                           onChange={(e) => setTime(row.id, e.target.value)}
+                                                    />
+                                                    {errors[`factors.${row.id}.time`] && (
+                                                        <div className="validation-error">
+                                                            {errors[`factors.${row.id}.time`]}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td data-header="k1">
+                                                    <input type="number"
+                                                           name={`factors[${row.id}][k1]`} value={row.k1}
+                                                           className="w-full"
+                                                           onFocus={(e) => e.target.select()}
+                                                           onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
+                                                           onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
+                                                    />
+                                                    {errors[`factors.${row.id}.k1`] && (
+                                                        <div className="validation-error">
+                                                            {errors[`factors.${row.id}.k1`]}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td data-header="k2">
+                                                    <input type="number"
+                                                           name={`factors[${row.id}][k2]`} value={row.k2}
+                                                           className="w-full"
+                                                           onFocus={(e) => e.target.select()}
+                                                           onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
+                                                           onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
+                                                    />
+                                                    {errors[`factors.${row.id}.k2`] && (
+                                                        <div className="validation-error">
+                                                            {errors[`factors.${row.id}.k2`]}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td data-header="OUV">
+                                                    <input type="hidden"
+                                                           name={`factors[${row.id}][k3]`}
+                                                           value={row.k3}
+                                                           />
+                                                    <input
+                                                        name={`factors[${row.id}][ouv]`}
+                                                        value={activeField.id === row.id ? activeField.val : gl.getView(config)}
+                                                        className="w-full"
+                                                        onFocus={(e) => e.target.select()}
+                                                        onChange={(e) => updateOUV(row.id, e.target.value)}
+                                                        onBlur={(e) => formatOUV(row.id, e.target.value)}
+                                                        />
+                                                    {errors[`factors.${row.id}.ouv`] && (
+                                                        <div className="validation-error">
+                                                            {errors[`factors.${row.id}.ouv`]}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="text-center">
+                                                    <button className="btn"
+                                                        type="button"
+                                                            onClick={() => delRow(row.id)}
+                                                            ><strong>X</strong></button>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                        {rFactors.map(row => {
-                                            gl.val = row.k3;
-                                            return (
-                                                <tr key={row.id}>
-                                                    <td>
-                                                        <input type="hidden" name={`factors[${row.id}][id]`}
-                                                               value={row.id}/>
-                                                        <input type="time"
-                                                               name={`factors[${row.id}][time]`} value={row.time}
-                                                               onChange={(e) => setTime(row.id, e.target.value)}
-                                                        />
-                                                        {errors[`factors.${row.id}.time`] && (
-                                                            <div className="validation-error">
-                                                                {errors[`factors.${row.id}.time`]}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        <input type="number"
-                                                               name={`factors[${row.id}][k1]`} value={row.k1}
-                                                               onFocus={(e) => e.target.select()}
-                                                               onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
-                                                               onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
-                                                        />
-                                                        {errors[`factors.${row.id}.k1`] && (
-                                                            <div className="validation-error">
-                                                                {errors[`factors.${row.id}.k1`]}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        <input type="number"
-                                                               name={`factors[${row.id}][k2]`} value={row.k2}
-                                                               onFocus={(e) => e.target.select()}
-                                                               onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
-                                                               onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
-                                                        />
-                                                        {errors[`factors.${row.id}.k2`] && (
-                                                            <div className="validation-error">
-                                                                {errors[`factors.${row.id}.k2`]}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        <input type="hidden"
-                                                               name={`factors[${row.id}][k3]`}
-                                                               value={row.k3}
-                                                               />
-                                                        <input
-                                                            name={`factors[${row.id}][ouv]`}
-                                                            value={activeField.id === row.id ? activeField.val : gl.getView(config)}
-                                                            onFocus={(e) => e.target.select()}
-                                                            onChange={(e) => updateOUV(row.id, e.target.value)}
-                                                            onBlur={(e) => formatOUV(row.id, e.target.value)}
-                                                            />
-                                                        {errors[`factors.${row.id}.ouv`] && (
-                                                            <div className="validation-error">
-                                                                {errors[`factors.${row.id}.ouv`]}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn"
-                                                            type="button"
-                                                                onClick={() => delRow(row.id)}
-                                                                ><strong>X</strong></button>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })}
-                                        </tbody>
-                                    </table>
+                                        )
+                                    })}
+                                    </tbody>
+                                </table>
                                 <div>
                                     <button type="button"
-                                            className="btn"
+                                            className="btn mt-2 w-24"
                                             onClick={openAddFactorsDialog}
                                     >Add</button>
                                 </div>
 
                                 <div className="button-horizontal">
-                                    <button className="btn settings__btn-save primary"
+                                    <button className="btn settings__btn-save primary w-full md:w-36 mt-3"
                                             type="submit">Save
                                     </button>
 
