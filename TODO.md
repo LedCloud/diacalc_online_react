@@ -3,14 +3,18 @@
 - fill user's products with default products
 - adjustable menu **done**
 - move sex input to inputs **done**
-- factors react page
+- factors react page **done**
 
 ---
-- layout for factors
-- calc OUV fatal
+- layout for factors **done**
+- calc OUV fatal **done**
+- ---
 - test all three on mobile, tablet, desktop
+  - factors ok
+  - settings ok
+  - calculations ok
 - langvars for all three from back
-- close dialog on ESC, click outside
+- close dialog on ESC, click outside **partly done, figure out ESC behavoir**
 
 ---
 

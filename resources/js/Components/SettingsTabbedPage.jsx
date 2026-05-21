@@ -50,14 +50,10 @@ export default function SettingsTabbedPane() {
                                     />
 
                 <div className="button-horizontal">
-                    <button className="btn settings__btn-save primary"
+                    <button className="btn settings__btn-save primary w-full md:w-36 mt-3"
                             type="submit">Save
                     </button>
-                    {/*<a className="btn settings__btn-calcel default" href="{{ route(" dashboard") }}">{{
-                        __(
-                        'inputs.cancel')}}</a>*/}
                 </div>
-
             </Form>
         </div>
     </div>);

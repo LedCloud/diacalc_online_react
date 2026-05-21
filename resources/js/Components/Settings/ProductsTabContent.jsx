@@ -1,15 +1,12 @@
 import Pane from "@/Components/Pane.jsx";
 import React, {useState} from "react";
-import Dialog from "@/Components/Dialog.jsx";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
-import {all} from "axios";
+import Modal from '@/Components/Modal';
 
 export default function ProductsTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
 {
     const [fillDefault, setFillDefault] = useState(false);
-    const [showDialog, setShowDialog] = useState(false);
-
-    //const [useFreq, setUseFreq] = useState(allSettings.use);
+    const [showModal, setShowModal] = useState(false);
 
     const tabId = 'products';
 
@@ -19,6 +16,10 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
 
     const changeFilterOff = (val) => {
         setAllSettings({...allSettings, filter_off: val});
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
     };
 
     return (<>
@@ -35,7 +36,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                    onChange={(e) => {
                                        setFillDefault(e.target.checked);
                                        if (e.target.checked) {
-                                           setShowDialog(true);
+                                           setShowModal(true);
                                        }
                                    }}
                                    type="checkbox"/>Fill product base with default</label>
@@ -72,30 +73,28 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
 
                 </fieldset>
             </Pane>
-            <Dialog
-                className="warning"
-                header='Test Header'
-                showDlg={showDialog}
-                okText='Okay'
-                okHandler={() => {
-                    setFillDefault(true);
-                    setShowDialog(false);
-                }}
-                cancelText="Cancel"
-                cancelHandler={() => {
-                    setFillDefault(false);
-                    setShowDialog(false);
-                }}
-                closeHandler={() => {
-                    setFillDefault(false);
-                    setShowDialog(false);
-                    }}
-                    className="success"
-                    >
-                    <p>After you save settings your database will be filled with the default products</p>
-                <p>All exisiting products will be removed.</p>
-                <p>This action is suitable for the first time filling of an empty product base.</p>
-            </Dialog>
+            <Modal show={showModal} onClose={closeModal} header="Read with attention">
+                <div className="py-3 px-4">
+                        <p>After you save settings, your database will be filled with the default products</p>
+                        <p>All existing products will be removed.</p>
+                        <p>This action is suitable for the first time filling of an empty product base.</p>
+                </div>
+                <div className="flex gap-3 p-2">
+                    <button
+                        type="button"
+                        className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
+                        onClick={() => setShowModal(false)}>Okay
+                    </button>
+                    <button
+                        type="button"
+                        className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
+                        onClick={() => {
+                            setFillDefault(false);
+                            setShowModal(false);
+                        }}>Cancel
+                    </button>
+                </div>
+            </Modal>
         </div>
     </>);
 }

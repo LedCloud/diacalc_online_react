@@ -38,16 +38,24 @@ export default function Calculations({ auth, user }) {
 
                         <div className="calculations-layout">
                             <Pane header="Glucose" className="calculations-layout__pane glucose">
-                                <GlucoseCalculations />
+                                <GlucoseCalculations/>
                             </Pane>
 
-                           <Pane header="Infuence to glycemy" className="calculations-layout__pane influence">
-                                <GlycemicInfluence user={user} />
-                           </Pane>
+                            <Pane header="Infuence to glycemy" className="calculations-layout__pane influence">
+                                <GlycemicInfluence user={user}/>
+                            </Pane>
 
                             <Pane header="ИМТ и коррекция веса" className="calculations-layout__pane bmi-correction">
-                                <BMICorrection />
+                                <BMICorrection/>
                             </Pane>
+                            <div className="button-horizontal">
+                                <a className="btn settings__btn-save primary w-full md:w-36 mt-3"
+                                href={route('dashboard')}>Home
+                                </a>
+                                {/*<a className="btn settings__btn-calcel default" href="{{ route(" dashboard") }}">{{
+                        __(
+                        'inputs.cancel')}}</a>*/}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import {
     Dialog,
-    DialogPanel,
+    DialogPanel, DialogTitle,
     Transition,
     TransitionChild,
 } from '@headlessui/react';
@@ -11,6 +11,7 @@ export default function Modal({
     maxWidth = '2xl',
     closeable = true,
     onClose = () => {},
+    header
 }) {
     const close = () => {
         if (closeable) {
@@ -56,6 +57,7 @@ export default function Modal({
                     <DialogPanel
                         className={`mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
                     >
+                        {header && <DialogTitle className="py-2 px-4 bg-sky-100 text-slate-700 font-medium">{header}</DialogTitle>}
                         {children}
                     </DialogPanel>
                 </TransitionChild>

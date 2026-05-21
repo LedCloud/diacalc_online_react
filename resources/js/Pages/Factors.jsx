@@ -5,8 +5,9 @@ import Glucose from "@/Classes/Glucose.js";
 import React, {useEffect, useState} from 'react';
 import {usePage, Form} from '@inertiajs/react'
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
-import Dialog from "@/Components/Dialog.jsx";
 import InputOneLine from "@/Components/InputOneLine.jsx";
+import Button from "@/Components/Button.jsx";
+import Modal from "@/Components/Modal.jsx";
 
 export default function Factors({ auth }) {
 
@@ -205,7 +206,10 @@ export default function Factors({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 factors-layout">
-                        <Form action="/factors" method="patch">
+                        <Form action="/factors" method="patch"
+                              options={{
+                                preserveScroll: true
+                            }}>
                             <Pane header="Factors" className="factors-layout__pane factors">
                                 <fieldset>
                                         {/*<legend>Factors</legend>*/}
@@ -338,54 +342,33 @@ export default function Factors({ auth }) {
                                     })}
                                     </tbody>
                                 </table>
-                                <div>
-                                    <button type="button"
-                                            className="btn mt-2 w-24"
+                                <div className="flex gap-3 p-2">
+                                    <Button className="ring-slate-400"
                                             onClick={openAddFactorsDialog}
-                                    >Add</button>
+                                    >Add</Button>
                                 </div>
 
-                                <div className="button-horizontal">
-                                    <button className="btn settings__btn-save primary w-full md:w-36 mt-3"
-                                            type="submit">Save
-                                    </button>
-
+                                <div className="flex gap-3 p-2">
+                                    <Button className="ring-blue-400 bg-sky-300"
+                                            type="submit"
+                                    >Save</Button>
                                 </div>
                             </Pane>
                         </Form>
-
-                        <Dialog
-                            header='Add factor'
-                            showDlg={showDialog}
-                            okText='Add'
-                            okHandler={() => {
-                                //setFillDefault(true);
-                                useDialogResult();
-                                setShowDialog(false);
-                            }}
-                            cancelText="Cancel"
-                            cancelHandler={() => {
-                                //setFillDefault(false);
-                                setShowDialog(false);
-                            }}
-                            closeHandler={() => {
-                                //setFillDefault(false);
-                                setShowDialog(false);
-                            }}
-                        >
-                            <div>
+                        <Modal show={showDialog} close={() => setShowDialog(false)} header="Add factor">
+                            <div className="py-3 px-4 flex flex-col gap-2">
                                 <InputOneLine value={dialogData.time}
-                                          focused={true}
-                                      name="time"
-                                      label="time"
-                                      type="time"
-                                     onChange={updateDialog}
-                                     onBlur={formatDialog}
+                                              focused={true}
+                                              name="time"
+                                              label="time"
+                                              type="time"
+                                              onChange={updateDialog}
+                                              onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k1}
-                                      name="k1" label="k1"
-                                     onChange={updateDialog}
-                                     onBlur={formatDialog}
+                                              name="k1" label="k1"
+                                              onChange={updateDialog}
+                                              onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k2}
                                               name="k2" label="k2"
@@ -398,7 +381,22 @@ export default function Factors({ auth }) {
                                               onBlur={formatK3Dialog}
                                 />
                             </div>
-                        </Dialog>
+                            <div className="flex gap-3 p-2">
+                                <button
+                                    type="button"
+                                    className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
+                                    onClick={() => {
+                                        useDialogResult();
+                                        setShowDialog(false);
+                                    }}>Add
+                                </button>
+                                <button
+                                    type="button"
+                                    className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
+                                    onClick={() => setShowDialog(false)}>Cancel
+                                </button>
+                            </div>
+                        </Modal>
                     </div>
                 </div>
             </div>
