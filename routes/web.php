@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,7 +20,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -65,5 +66,19 @@ Route::middleware('auth')->group(function () {
     //Route::livewire('/factors/create', 'pages::more.factors.create')->name('factors.create');
     //Route::livewire('/factors/{id}/edit', 'pages::more.factors.create')->name('factors.edit');
 });
+
+Route::post('/language/{lang}', function(Request $request, string $lang){
+    $supportedLocales = config('app.supported_locales', ['en' => 'English']);
+
+    // Abort if someone passes a locale we don't support
+    if (!in_array($lang, $supportedLocales)) {
+        abort(400);
+    }
+
+    // Save the choice in the user's session
+    session()->put('locale', $lang);
+
+    return back();
+})->name('language.switch');
 
 require __DIR__.'/auth.php';

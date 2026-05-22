@@ -14,7 +14,8 @@
   - settings ok
   - calculations ok
 - langvars for all three from back
-- close dialog on ESC, click outside **partly done, figure out ESC behavoir**
+- close dialog on ESC, click outside **done**
+- the hamburger menu is not working properly
 
 ---
 

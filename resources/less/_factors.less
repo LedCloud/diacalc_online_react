@@ -1,7 +1,16 @@
 .factors-layout {
     &__pane {
+        .panes__pane_header {
+            border-bottom-right-radius: @border-radius;
+            border-bottom-left-radius: @border-radius;
+            @media only screen and (min-width: 1024px) {
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
         .panes__pane_content {
             border: none;
+
             fieldset {
 
                 display: flex;
@@ -47,12 +56,16 @@
                 /*border: 1px solid #ccc;*/
             }
             th:first-child {
-                border-top-right-radius: 5px;
-                border-top-left-radius: 5px;
+                border-top-right-radius: @border-radius;
+                border-top-left-radius: @border-radius;
             }
             @media
             only screen and (max-width: 760px),
             (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+                padding-left: 0;
+                padding-right: 0;
+
                 table, thead, tbody, th, td, tr {
                     display: block;
                 }
@@ -67,12 +80,12 @@
                 tr {
                     border: 1px solid #dadada;
                     &:first-child {
-                        border-top-left-radius: 5px;
-                        border-top-right-radius: 5px;
+                        border-top-left-radius: @border-radius;
+                        border-top-right-radius: @border-radius;
                     }
                     &:last-child {
-                        border-bottom-left-radius: 5px;
-                        border-bottom-right-radius: 5px;
+                        border-bottom-left-radius: @border-radius;
+                        border-bottom-right-radius: @border-radius;
                     }
                 }
                 td {
@@ -99,6 +112,14 @@
                     height: calc(100% - 6px);
                     content: attr(data-header);
                 }
+            }
+            @media only screen and (min-width: 1024px) {
+                border-bottom: 1px solid @border-color;
+                border-left: 1px solid @border-color;
+                border-right: 1px solid @border-color;
+                border-bottom-left-radius: @border-radius;
+                border-bottom-right-radius: @border-radius;
+                padding: 5px 10px 5px 10px;
             }
         }
     }

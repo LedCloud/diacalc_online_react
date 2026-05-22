@@ -2,12 +2,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Pane from "@/Components/Pane.jsx";
 import Glucose from "@/Classes/Glucose.js";
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {usePage, Form} from '@inertiajs/react'
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import InputOneLine from "@/Components/InputOneLine.jsx";
 import Button from "@/Components/Button.jsx";
 import Modal from "@/Components/Modal.jsx";
+import { useTrans } from '@/Hooks/useTrans';
 
 export default function Factors({ auth }) {
 
@@ -19,6 +20,9 @@ export default function Factors({ auth }) {
     const [showDialog, setShowDialog] = useState(false);
     const defaultFactors = {k1:1,k2:0,k3:2, time:"08:00"};
     const [dialogData, setDialogData] = useState(defaultFactors);
+    // 1. Create a reference for the input you want to auto-focus
+    const dialogInputRef = useRef(null);
+    const { __ } = useTrans();
 
     const config = {
         mmol: Boolean(settings.is_mmol),
@@ -199,9 +203,9 @@ export default function Factors({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Factors</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{__('factors.factors')}</h2>}
         >
-            <Head title="Settings" />
+            <Head title={__('factors.factors')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -210,10 +214,8 @@ export default function Factors({ auth }) {
                               options={{
                                 preserveScroll: true
                             }}>
-                            <Pane header="Factors" className="factors-layout__pane factors">
+                            <Pane header={__('factors.factors')} className="factors-layout__pane factors">
                                 <fieldset>
-                                        {/*<legend>Factors</legend>*/}
-
                                     <div className="field">
                                         <label className="checkbox-group" htmlFor="timedFactors">
                                     <input id="timedFactors"
@@ -223,12 +225,12 @@ export default function Factors({ auth }) {
                                            onChange={(e) => {
                                                setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
                                            }}
-                                           type="checkbox"/>Factors by time</label>
+                                           type="checkbox"/>{__('factors.factors_by_time')}</label>
                                     </div>
                                     <InputTwoLines value={allSettings.weight}
                                                    name="weight"
                                                    id="weight"
-                                                   label="Your weight"
+                                                   label={__('factors.your_weight')}
                                                    onChange={setWeight}
                                                    onBlur={formatWeight}
                                     />
@@ -237,7 +239,7 @@ export default function Factors({ auth }) {
                                     <InputTwoLines value={allSettings.k3_factor}
                                                    name="k3_factor"
                                                    id="k3_factor"
-                                                   label="K3 factor"
+                                                   label={__("factors.k3_factor")}
                                                    onChange={setK3Factor}
                                                    onBlur={formatK3Factor}
                                     />
@@ -246,22 +248,22 @@ export default function Factors({ auth }) {
                                     <InputTwoLines value={allSettings.be}
                                                    name="be"
                                                    id="be"
-                                                   label="BE"
+                                                   label={__("factors.be")}
                                                    onChange={setBE}
                                                    onBlur={formatBE}
                                     />
                                     {errors.be && <div className="validation-error">{errors.be}</div>}
 
-                                    <button type="button" className="btn" onClick={calculateOUV}>Calculate OUV</button>
-                                    <div className="alert alert-well">Коэффициенты будут рассчитаны только в таблице на этой странице!</div>
+                                    <button type="button" className="btn" onClick={calculateOUV}>{__('factors.calc_ouv')}</button>
+                                    <div className="alert alert-well">{__('factors.calc_notice')}!</div>
                                 </fieldset>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th className="w-2/12">Time</th>
-                                            <th className="w-3/12">K1</th>
-                                            <th className="w-3/12">K2</th>
-                                            <th className="w-3/12">OUV</th>
+                                            <th className="w-2/12">{__('factors.time')}</th>
+                                            <th className="w-3/12">{__('factors.k1')}</th>
+                                            <th className="w-3/12">{__('factors.k2')}</th>
+                                            <th className="w-3/12">{__('factors.ouv')}</th>
                                             <th className="w-1/12"></th>
                                         </tr>
                                     </thead>
@@ -270,7 +272,7 @@ export default function Factors({ auth }) {
                                         gl.val = row.k3;
                                         return (
                                             <tr key={row.id}>
-                                                <td data-header="Time">
+                                                <td data-header={__('factors.time')}>
                                                     <input type="hidden" name={`factors[${row.id}][id]`}
                                                            value={row.id}/>
                                                     <input type="time"
@@ -284,7 +286,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header="k1">
+                                                <td data-header={__('factors.k1')}>
                                                     <input type="number"
                                                            name={`factors[${row.id}][k1]`} value={row.k1}
                                                            className="w-full"
@@ -298,7 +300,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header="k2">
+                                                <td data-header={__('factors.k2')}>
                                                     <input type="number"
                                                            name={`factors[${row.id}][k2]`} value={row.k2}
                                                            className="w-full"
@@ -312,7 +314,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header="OUV">
+                                                <td data-header={__('factors.ouv')}>
                                                     <input type="hidden"
                                                            name={`factors[${row.id}][k3]`}
                                                            value={row.k3}
@@ -345,38 +347,38 @@ export default function Factors({ auth }) {
                                 <div className="flex gap-3 p-2">
                                     <Button className="ring-slate-400"
                                             onClick={openAddFactorsDialog}
-                                    >Add</Button>
+                                    >{__('factors.add')}</Button>
                                 </div>
 
                                 <div className="flex gap-3 p-2">
                                     <Button className="ring-blue-400 bg-sky-300"
                                             type="submit"
-                                    >Save</Button>
+                                    >{__('factors.save')}</Button>
                                 </div>
                             </Pane>
                         </Form>
-                        <Modal show={showDialog} close={() => setShowDialog(false)} header="Add factor">
+                        <Modal show={showDialog} onClose={() => setShowDialog(false)}
+                               header={__('factors.add_factors')} >
                             <div className="py-3 px-4 flex flex-col gap-2">
                                 <InputOneLine value={dialogData.time}
-                                              focused={true}
                                               name="time"
-                                              label="time"
+                                              label={__('factors.time')}
                                               type="time"
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k1}
-                                              name="k1" label="k1"
+                                              name="k1" label={__('factors.k1')}
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k2}
-                                              name="k2" label="k2"
+                                              name="k2" label={__('factors.k2')}
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogK3}
-                                              name="k3" label="OUV"
+                                              name="k3" label={__('factors.ouv')}
                                               onChange={updateK3Dialog}
                                               onBlur={formatK3Dialog}
                                 />
@@ -388,12 +390,12 @@ export default function Factors({ auth }) {
                                     onClick={() => {
                                         useDialogResult();
                                         setShowDialog(false);
-                                    }}>Add
+                                    }}>{__('factors.add')}
                                 </button>
                                 <button
                                     type="button"
                                     className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
-                                    onClick={() => setShowDialog(false)}>Cancel
+                                    onClick={() => setShowDialog(false)}>{__('factors.cancel')}
                                 </button>
                             </div>
                         </Modal>

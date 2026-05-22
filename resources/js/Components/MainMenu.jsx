@@ -128,7 +128,10 @@ function SubMenu({item}) {
                                 </a>
                             ) : (
                                 <NavLink
-                                    href={route(sub.route)}
+                                    method={sub.method ?? 'get' }
+                                    href={route(sub.route, sub.params || {})}
+                                    active={route().current(sub.route)}
+                                    subitem={true}
                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-none"
                                 >
                                     {sub.name}
