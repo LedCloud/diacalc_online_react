@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'settings' => 'Settings',
     'menu' => 'Menu',
     'glucose' => 'Glucose',
     'products' => 'Products',
@@ -37,4 +38,6 @@ return [
     'saved' => 'Settings saved',
     'save' => 'Save',
     'attention_notice' => 'Read with attention',
+    'ok' => 'Okay',
+    'cancel' => 'Cancel',
 ];

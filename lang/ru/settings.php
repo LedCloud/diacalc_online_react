@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'settings' => 'Настройки',
     'menu' => 'Меню',
     'glucose' => 'Сахар',
     'products' => 'Продукты',
