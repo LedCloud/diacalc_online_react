@@ -4,11 +4,13 @@ import MenuTabContect from "@/Components/Settings/MenuTabContent.jsx";
 import GlucoseTabContent from "@/Components/Settings/GlucoseTabContent.jsx";
 import Tag from "@/Components/Tabs/Tag.jsx";
 import ProductsTabContect from "@/Components/Settings/ProductsTabContent.jsx";
+import { useTrans } from '@/Hooks/useTrans';
 
 export default function SettingsTabbedPane() {
 
     const [activeTab, setActiveTab] = useState('menu');
     const {settings, menuMasks, errors} = usePage().props;
+    const { __ } = useTrans();
 
     const [allSettings, setAllSettings] = useState(settings ?? null);
 
@@ -19,9 +21,9 @@ export default function SettingsTabbedPane() {
     return (<div className="tabs">
         <div className="tabs__tags">
 
-            <Tag id="menu" active={activeTab} name="Menu" clickHandler={setActiveTab} />
-            <Tag id="glucose" active={activeTab} name="Glucose" clickHandler={setActiveTab} />
-            <Tag id="products" active={activeTab} name="Products" clickHandler={setActiveTab} />
+            <Tag id="menu" active={activeTab} name={__('menu')} clickHandler={setActiveTab} />
+            <Tag id="glucose" active={activeTab} name={__('glucose')} clickHandler={setActiveTab} />
+            <Tag id="products" active={activeTab} name={__('products')} clickHandler={setActiveTab} />
 
         </div>
         <div className="tabs__content">
@@ -32,6 +34,7 @@ export default function SettingsTabbedPane() {
                                 activeTab={activeTab}
                                 menuMasks={menuMasks}
                                 errors={errors}
+                                trans={ __ }
                                 className="settings-layout__menu"
                 />
 
@@ -39,6 +42,7 @@ export default function SettingsTabbedPane() {
                                    setAllSettings={setAllSettings}
                                    activeTab={activeTab}
                                    errors={errors}
+                                   trans={ __ }
                                    className="settings-layout__glucose"
                 />
 
@@ -46,12 +50,13 @@ export default function SettingsTabbedPane() {
                                     setAllSettings={setAllSettings}
                                     activeTab={activeTab}
                                     errors={errors}
+                                    trans={ __ }
                                     className="settings-layout__products"
                                     />
 
                 <div className="button-horizontal">
                     <button className="btn settings__btn-save primary w-full md:w-36 mt-3"
-                            type="submit">Save
+                            type="submit">{__('save')}
                     </button>
                 </div>
             </Form>

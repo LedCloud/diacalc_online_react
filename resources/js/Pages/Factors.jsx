@@ -203,9 +203,9 @@ export default function Factors({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{__('factors.factors')}</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{__('factors')}</h2>}
         >
-            <Head title={__('factors.factors')} />
+            <Head title={__('factors')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -214,7 +214,7 @@ export default function Factors({ auth }) {
                               options={{
                                 preserveScroll: true
                             }}>
-                            <Pane header={__('factors.factors')} className="factors-layout__pane factors">
+                            <Pane header={__('factors')} className="factors-layout__pane factors">
                                 <fieldset>
                                     <div className="field">
                                         <label className="checkbox-group" htmlFor="timedFactors">
@@ -225,12 +225,12 @@ export default function Factors({ auth }) {
                                            onChange={(e) => {
                                                setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
                                            }}
-                                           type="checkbox"/>{__('factors.factors_by_time')}</label>
+                                           type="checkbox"/>{__('factors_by_time')}</label>
                                     </div>
                                     <InputTwoLines value={allSettings.weight}
                                                    name="weight"
                                                    id="weight"
-                                                   label={__('factors.your_weight')}
+                                                   label={__('your_weight')}
                                                    onChange={setWeight}
                                                    onBlur={formatWeight}
                                     />
@@ -239,7 +239,7 @@ export default function Factors({ auth }) {
                                     <InputTwoLines value={allSettings.k3_factor}
                                                    name="k3_factor"
                                                    id="k3_factor"
-                                                   label={__("factors.k3_factor")}
+                                                   label={__("k3_factor")}
                                                    onChange={setK3Factor}
                                                    onBlur={formatK3Factor}
                                     />
@@ -248,22 +248,22 @@ export default function Factors({ auth }) {
                                     <InputTwoLines value={allSettings.be}
                                                    name="be"
                                                    id="be"
-                                                   label={__("factors.be")}
+                                                   label={__("be")}
                                                    onChange={setBE}
                                                    onBlur={formatBE}
                                     />
                                     {errors.be && <div className="validation-error">{errors.be}</div>}
 
-                                    <button type="button" className="btn" onClick={calculateOUV}>{__('factors.calc_ouv')}</button>
-                                    <div className="alert alert-well">{__('factors.calc_notice')}!</div>
+                                    <button type="button" className="btn" onClick={calculateOUV}>{__('calc_ouv')}</button>
+                                    <div className="alert alert-well">{__('calc_notice')}!</div>
                                 </fieldset>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th className="w-2/12">{__('factors.time')}</th>
-                                            <th className="w-3/12">{__('factors.k1')}</th>
-                                            <th className="w-3/12">{__('factors.k2')}</th>
-                                            <th className="w-3/12">{__('factors.ouv')}</th>
+                                            <th className="w-2/12">{__('time')}</th>
+                                            <th className="w-3/12">{__('k1')}</th>
+                                            <th className="w-3/12">{__('k2')}</th>
+                                            <th className="w-3/12">{__('ouv')}</th>
                                             <th className="w-1/12"></th>
                                         </tr>
                                     </thead>
@@ -272,7 +272,7 @@ export default function Factors({ auth }) {
                                         gl.val = row.k3;
                                         return (
                                             <tr key={row.id}>
-                                                <td data-header={__('factors.time')}>
+                                                <td data-header={__('time')}>
                                                     <input type="hidden" name={`factors[${row.id}][id]`}
                                                            value={row.id}/>
                                                     <input type="time"
@@ -286,7 +286,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header={__('factors.k1')}>
+                                                <td data-header={__('k1')}>
                                                     <input type="number"
                                                            name={`factors[${row.id}][k1]`} value={row.k1}
                                                            className="w-full"
@@ -300,7 +300,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header={__('factors.k2')}>
+                                                <td data-header={__('k2')}>
                                                     <input type="number"
                                                            name={`factors[${row.id}][k2]`} value={row.k2}
                                                            className="w-full"
@@ -314,7 +314,7 @@ export default function Factors({ auth }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td data-header={__('factors.ouv')}>
+                                                <td data-header={__('ouv')}>
                                                     <input type="hidden"
                                                            name={`factors[${row.id}][k3]`}
                                                            value={row.k3}
@@ -347,38 +347,38 @@ export default function Factors({ auth }) {
                                 <div className="flex gap-3 p-2">
                                     <Button className="ring-slate-400"
                                             onClick={openAddFactorsDialog}
-                                    >{__('factors.add')}</Button>
+                                    >{__('add')}</Button>
                                 </div>
 
                                 <div className="flex gap-3 p-2">
                                     <Button className="ring-blue-400 bg-sky-300"
                                             type="submit"
-                                    >{__('factors.save')}</Button>
+                                    >{__('save')}</Button>
                                 </div>
                             </Pane>
                         </Form>
                         <Modal show={showDialog} onClose={() => setShowDialog(false)}
-                               header={__('factors.add_factors')} >
+                               header={__('add_factors')} >
                             <div className="py-3 px-4 flex flex-col gap-2">
                                 <InputOneLine value={dialogData.time}
                                               name="time"
-                                              label={__('factors.time')}
+                                              label={__('time')}
                                               type="time"
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k1}
-                                              name="k1" label={__('factors.k1')}
+                                              name="k1" label={__('k1')}
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogData.k2}
-                                              name="k2" label={__('factors.k2')}
+                                              name="k2" label={__('k2')}
                                               onChange={updateDialog}
                                               onBlur={formatDialog}
                                 />
                                 <InputOneLine value={dialogK3}
-                                              name="k3" label={__('factors.ouv')}
+                                              name="k3" label={__('ouv')}
                                               onChange={updateK3Dialog}
                                               onBlur={formatK3Dialog}
                                 />
@@ -390,12 +390,12 @@ export default function Factors({ auth }) {
                                     onClick={() => {
                                         useDialogResult();
                                         setShowDialog(false);
-                                    }}>{__('factors.add')}
+                                    }}>{__('add')}
                                 </button>
                                 <button
                                     type="button"
                                     className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
-                                    onClick={() => setShowDialog(false)}>{__('factors.cancel')}
+                                    onClick={() => setShowDialog(false)}>{__('cancel')}
                                 </button>
                             </div>
                         </Modal>

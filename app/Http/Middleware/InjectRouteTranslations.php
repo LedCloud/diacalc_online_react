@@ -32,12 +32,12 @@ class InjectRouteTranslations
 
                 // Return an array where the key matches the file/group name
                 // Example: ['factors' => ['title' => 'Add Factor', 'buttons' => ['submit' => 'Save']]]
-                return [
+                /*return [
                     $group => trans($group) ?: []
-                ];
+                ];*/
 
                 // __() automatically loads translation files for the current app locale
-                //return trans($group) ?: [];
+                return trans($group) ?: [];
             }
         ]);
 

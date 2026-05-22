@@ -3,7 +3,8 @@ import React, {useState} from "react";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Modal from '@/Components/Modal';
 
-export default function ProductsTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
+export default function ProductsTabContect({
+    allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''})
 {
     const [fillDefault, setFillDefault] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -22,9 +23,11 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
         setShowModal(false);
     };
 
+    const __ = (val) => trans ? trans(val) : ('_' + val);
+
     return (<>
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
-            <Pane header="Products"
+            <Pane header={__('products')}
                   className={`products_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
                 <fieldset>
                     <div className="field">
@@ -39,7 +42,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                            setShowModal(true);
                                        }
                                    }}
-                                   type="checkbox"/>Fill product base with default</label>
+                                   type="checkbox"/>{__('fill_default')}</label>
                     </div>
 
                     <div className="field">
@@ -49,13 +52,13 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                                    name="use_freq"
                                    value="use"
                                    onChange={(e) => setAllSettings({...allSettings, use_freq: e.target.checked})}
-                                   type="checkbox"/>Use frequenty used products</label>
+                                   type="checkbox"/>{__('use_freq')}</label>
                     </div>
                     {Boolean(allSettings.use_freq) && (<div className="field">
                         <InputTwoLines value={allSettings.freq_qty}
                                        name="freq_qty"
                                        id="freq_qty"
-                                       label="Freq qty"
+                                       label={__('freq_qty')}
                                        onChange={changeFreqQty}
                         />
                         {errors.freq_qty && <div className="validation-error">{errors.freq_qty}</div>}
@@ -65,7 +68,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                         <InputTwoLines value={allSettings.filter_off}
                                        name="filter_off"
                                        id="filter_off"
-                                       label="Filter off"
+                                       label={__('filter_off')}
                                        onChange={changeFilterOff}
                         />
                         {errors.filter_off && <div className="validation-error">{errors.filter_off}</div>}
@@ -73,17 +76,15 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
 
                 </fieldset>
             </Pane>
-            <Modal show={showModal} onClose={closeModal} header="Read with attention">
+            <Modal show={showModal} onClose={closeModal} header={__('attention_notice')}>
                 <div className="py-3 px-4">
-                        <p>After you save settings, your database will be filled with the default products</p>
-                        <p>All existing products will be removed.</p>
-                        <p>This action is suitable for the first time filling of an empty product base.</p>
+                        <p dangerouslySetInnerHTML={{ __html: __('fill_msg_desc')}} />
                 </div>
                 <div className="flex gap-3 p-2">
                     <button
                         type="button"
                         className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
-                        onClick={() => setShowModal(false)}>Okay
+                        onClick={() => setShowModal(false)}>{__('ok')}
                     </button>
                     <button
                         type="button"
@@ -91,7 +92,7 @@ export default function ProductsTabContect({allSettings, setAllSettings, activeT
                         onClick={() => {
                             setFillDefault(false);
                             setShowModal(false);
-                        }}>Cancel
+                        }}>{__('cancel')}
                     </button>
                 </div>
             </Modal>

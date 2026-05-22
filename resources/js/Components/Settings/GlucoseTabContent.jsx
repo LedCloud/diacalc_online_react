@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import Glucose from "@/Classes/Glucose.js";
 
 export default function GlucoseTabContent(
-    {allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''}
+    {allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''}
 ) {
 
     const [activeField, setActiveField] = useState({ id: null, val: '' });
@@ -13,6 +13,13 @@ export default function GlucoseTabContent(
     const [highGl, setHighGl] = useState(new Glucose(allSettings.high_level));
 
     const tabId = 'glucose';
+
+    const __ = (val) => {
+        if (trans) {
+            return trans(val);
+        }
+        return "_" + val;
+    }
 
     const setMmol = (val) => {
         setAllSettings({...allSettings, is_mmol: val === '1'});
@@ -83,7 +90,7 @@ export default function GlucoseTabContent(
 
     return (
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
-            <Pane header="Glucose"
+            <Pane header={__('glucose')}
                   className={`glucose_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
                 <fieldset>
                     <div className="horizontal-group checkbox-group">
@@ -94,8 +101,7 @@ export default function GlucoseTabContent(
                                    type="radio"
                                    checked={Boolean(!(+allSettings.is_plasma))}
                                    onChange={(e) => setPlasma(e.target.value)}
-                            />
-                            Whole</label>
+                            />{__('whole')}</label>
                     </div>
                     <div className="horizontal-group checkbox-group">
                         <label htmlFor="plasma">
@@ -105,8 +111,7 @@ export default function GlucoseTabContent(
                                    type="radio"
                                    checked={Boolean(+allSettings.is_plasma)}
                                    onChange={(e) => setPlasma(e.target.value)}
-                            />
-                            Plasma</label>
+                            />{__('plasma')}</label>
                     </div>
                 </fieldset>
 
@@ -119,8 +124,7 @@ export default function GlucoseTabContent(
                                    type="radio"
                                    checked={Boolean(+allSettings.is_mmol)}
                                    onChange={(e) => setMmol(e.target.value)}
-                            />
-                            mmol</label>
+                            />{__('mmol')}</label>
                     </div>
                     <div className="horizontal-group checkbox-group">
                         <label htmlFor="mgdl">
@@ -130,12 +134,11 @@ export default function GlucoseTabContent(
                                    type="radio"
                                    checked={Boolean(!(+allSettings.is_mmol))}
                                    onChange={(e) => setMmol(e.target.value)}
-                            />
-                            mgdl</label>
+                            />{__('mgdl')}</label>
                     </div>
                 </fieldset>
                 <fieldset>
-                    <legend>Glucose levels</legend>
+                    <legend>{__('glucose_levels')}</legend>
                     {/* here we will have raw values but the names should correspond the settings names */}
                     <input type="hidden" name="target" value={targetGl.val}/>
                     <input type="hidden" name="low_level" value={lowGl.val}/>
@@ -144,7 +147,7 @@ export default function GlucoseTabContent(
                         <InputTwoLines value={valTarget}
                                        name="target_gl"
                                        id="target"
-                                       label="Target GL"
+                                       label={__('target')}
                                        onChange={updateGlucoseLevel}
                                        onBlur={formatGlucoseLevel}
                         />
@@ -154,7 +157,7 @@ export default function GlucoseTabContent(
                         <InputTwoLines value={valLow}
                                        name="low_level_gl"
                                        id="low_level"
-                                       label="Low GL level"
+                                       label={__('low_level')}
                                        onChange={updateGlucoseLevel}
                                        onBlur={formatGlucoseLevel}
                         />
@@ -164,7 +167,7 @@ export default function GlucoseTabContent(
                         <InputTwoLines value={valHigh}
                                        name="high_level_gl"
                                        id="high_level"
-                                       label="High GL level"
+                                       label={__('high_level')}
                                        onChange={updateGlucoseLevel}
                                        onBlur={formatGlucoseLevel}
                         />

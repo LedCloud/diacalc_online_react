@@ -23,6 +23,7 @@ return [
     'plasma' => 'Plasma',
     'mmol' => 'mmol',
     'mgdl' => 'mg/dl',
+    'glucose_levels' => 'Glucose levels',
     'target' => 'Target',
     'low_level' => 'Low level',
     'high_level' => 'High level',
@@ -34,4 +35,6 @@ return [
     'fill_msg_title' => 'Fill base with the default products',
     'fill_msg_desc' => 'All your current products and groups will be deleted if any exist.<br>This action is suitable for the initial filling, when you don\'t have the products yet.',
     'saved' => 'Settings saved',
+    'save' => 'Save',
+    'attention_notice' => 'Read with attention',
 ];

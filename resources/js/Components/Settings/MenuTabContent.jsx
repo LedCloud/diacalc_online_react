@@ -3,7 +3,7 @@ import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Pane from "@/Components/Pane.jsx";
 import React from "react";
 
-export default function MenuTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
+export default function MenuTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''})
 {
     const tabId = 'menu';
     const setMenuInfo = (val) => {
@@ -19,48 +19,55 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
         setAllSettings({...allSettings, round_to: val});
     };
 
+    const __ = (val) => {
+        if (trans) {
+            return trans(val);
+        }
+        return "_" + val;
+    }
+
     return (
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
-            <Pane header="Menu"
+            <Pane header={__('menu')}
                   className={`menu_pane tab-pane panes__pane ${activeTab === tabId ? 'active' : ''}`}>
                 <input type="hidden" name="menu_info" value={allSettings.menu_info}/>
                 <fieldset>
-                    <legend>Menu info</legend>
-                    <MaskInput name="prot" strName='Prots' masks={menuMasks}
+                    <legend>{__('menu_info')}</legend>
+                    <MaskInput name="prot" strName={__('proteins')} masks={menuMasks}
                                menuInfo={allSettings.menu_info}
                                handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="fat"
-                               strName='Fats'
+                               strName={__('fats')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="carb"
-                               strName='Carbs'
+                               strName={__('carbs')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="be"
-                               strName='BE'
+                               strName={__('be')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="dose"
-                               strName='Dose'
+                               strName={__('dose')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="gi"
-                               strName='GI'
+                               strName={__('gi')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="gl"
-                               strName='GL'
+                               strName={__('gl')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
                     <MaskInput name="calory"
-                               strName='Calory'
+                               strName={__('calories')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
                 </fieldset>
                 <fieldset>
                     <div className="field">
-                        <label htmlFor="round-to">Round dose to</label>
+                        <label htmlFor="round-to">{__('round')}</label>
                         <select id="round-to"
                                 name="round_to"
                                 value={allSettings.round_to}
@@ -68,14 +75,14 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
                                     setRoundTo(+e.target.value)
                                 }}
                         >
-                            <option value="0">to int</option>
-                            <option value="1">to 1/2</option>
-                            <option value="2">to 1/4</option>
+                            <option value="0">{__('round_int')}</option>
+                            <option value="1">{__('round_half')}</option>
+                            <option value="2">{__('round_quarter')}</option>
                         </select>
                     </div>
                     <div className="field">
                         <InputTwoLines value={allSettings.calory_limit}
-                                       label="Calory limit"
+                                       label={__('calorie_limit')}
                                        name="calory_limit"
                                        onChange={changeCaloryLimit}
                         />
