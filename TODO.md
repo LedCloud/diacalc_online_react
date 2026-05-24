@@ -13,9 +13,9 @@
   - factors ok
   - settings ok
   - calculations ok
-- langvars for all three from back
+- langvars for all three from back **done**
 - close dialog on ESC, click outside **done**
-- the hamburger menu is not working properly
+- the hamburger menu is not working properly **done**
 - set BE to the settings from factors on migration from old diacalc
 
 ---
