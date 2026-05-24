@@ -4,8 +4,6 @@ import NavLink from "@/Components/NavLink.jsx";
 import {Link} from "@inertiajs/react";
 
 export default function MobileMenu({ items, user }) {
-    console.log(items);
-
     // Track active submenus using their index
     const [openSubmenus, setOpenSubmenus] = useState({});
 
