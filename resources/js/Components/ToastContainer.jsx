@@ -19,7 +19,6 @@ export default function ToastContainer()
                 setTimeout(() => {
                     setStack((prev) => prev.filter((t) => t.id !== id));
                 }, 3000);
-                console.log('Key', key);
                 return {
                     id,
                     text: value,

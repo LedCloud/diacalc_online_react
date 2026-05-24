@@ -2,9 +2,10 @@ import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Pane from "@/Components/Pane.jsx";
 import React, {useState} from "react";
 import Glucose from "@/Classes/Glucose.js";
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 export default function GlucoseTabContent(
-    {allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''}
+    {allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''}
 ) {
 
     const [activeField, setActiveField] = useState({ id: null, val: '' });
@@ -14,12 +15,7 @@ export default function GlucoseTabContent(
 
     const tabId = 'glucose';
 
-    const __ = (val) => {
-        if (trans) {
-            return trans(val);
-        }
-        return "_" + val;
-    }
+    const { __ } = useTrans();
 
     const setMmol = (val) => {
         setAllSettings({...allSettings, is_mmol: val === '1'});

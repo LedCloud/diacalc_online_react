@@ -8,10 +8,6 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const { menu } = usePage().props;
 
-    /*menu.forEach((item) => {
-        console.log(item.route, item.name);
-    });*/
-
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 

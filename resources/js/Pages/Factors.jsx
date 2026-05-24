@@ -126,7 +126,6 @@ export default function Factors({ auth }) {
     const openAddFactorsDialog = () => {
         const min = rFactors.length > 0 ? Math.min(...rFactors.map(e => e.id)) : 0;
         const nextId = min >= 0 ? -1 : (min - 1);
-        console.log('neg ID', nextId);
         setDialogData({...defaultFactors, id:nextId});
         setShowDialog(true);
     };

@@ -2,9 +2,10 @@ import Pane from "@/Components/Pane.jsx";
 import React, {useState} from "react";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Modal from '@/Components/Modal';
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 export default function ProductsTabContect({
-    allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''})
+    allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
 {
     const [fillDefault, setFillDefault] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -23,7 +24,7 @@ export default function ProductsTabContect({
         setShowModal(false);
     };
 
-    const __ = (val) => trans ? trans(val) : ('_' + val);
+    const { __ } = useTrans();
 
     return (<>
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>

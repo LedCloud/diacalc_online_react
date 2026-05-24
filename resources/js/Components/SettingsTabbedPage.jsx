@@ -34,7 +34,6 @@ export default function SettingsTabbedPane() {
                                 activeTab={activeTab}
                                 menuMasks={menuMasks}
                                 errors={errors}
-                                trans={ __ }
                                 className="settings-layout__menu"
                 />
 
@@ -42,7 +41,6 @@ export default function SettingsTabbedPane() {
                                    setAllSettings={setAllSettings}
                                    activeTab={activeTab}
                                    errors={errors}
-                                   trans={ __ }
                                    className="settings-layout__glucose"
                 />
 
@@ -50,7 +48,6 @@ export default function SettingsTabbedPane() {
                                     setAllSettings={setAllSettings}
                                     activeTab={activeTab}
                                     errors={errors}
-                                    trans={ __ }
                                     className="settings-layout__products"
                                     />
 

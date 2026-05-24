@@ -78,12 +78,9 @@ export default function BMICorrection() {
         //(steps - 5000)/400 + 110 = val <= for 7000 we get 115
         const config = {weight: weight, height: height, age: age, male: sex === 'male', activity: stepsToActivity()};
 
-        console.log('Config', config);
-
         const caloryCurrent = calcCalorsNeeded(config);
         config.weight = targetWeight;
         let caloryTarget = calcCalorsNeeded(config);
-        console.log(caloryCurrent, caloryTarget);
         //do no allow to starve
         if (caloryTarget <= 1200) {
             caloryTarget = 1201;

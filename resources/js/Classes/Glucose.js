@@ -15,7 +15,6 @@ export default class Glucose {
             ;
     }
     getFactor({mmol = true, plasma = false}){
-        //console.log('In get factor', plasma, (plasma?1.12:1), mmol, (mmol ? 1 : 18), (plasma?1.12:1) * (mmol ? 1 : 18));
         return (plasma?1.12:1) * (mmol ? 1 : 18);
     };
     getHbA1c(){

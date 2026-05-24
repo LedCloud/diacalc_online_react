@@ -2,8 +2,9 @@ import MaskInput from "@/Components/Settings/MaskInput.jsx";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Pane from "@/Components/Pane.jsx";
 import React from "react";
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
-export default function MenuTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, trans, className = ''})
+export default function MenuTabContect({allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
 {
     const tabId = 'menu';
     const setMenuInfo = (val) => {
@@ -15,16 +16,10 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
     };
 
     const setRoundTo = (val) => {
-        console.log(val);
         setAllSettings({...allSettings, round_to: val});
     };
 
-    const __ = (val) => {
-        if (trans) {
-            return trans(val);
-        }
-        return "_" + val;
-    }
+    const { __ } = useTrans();
 
     return (
         <div className={`tab-pane ${className} ${activeTab === tabId ? 'active' : ''}`}>
