@@ -5,53 +5,38 @@ import Pane from "@/Components/Pane.jsx";
 import GlycemicInfluence from "@/Components/Calculations/GlycemicInfluence.jsx";
 import React, {useState} from "react";
 import BMICorrection from "@/Components/Calculations/BMICorrection.jsx";
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 export default function Calculations({ auth, user }) {
-    const [weight, setWeight] = useState('60');
-    const [height, setHeight] = useState('170');
-    const [age, setAge] = useState('40');
-    const [targetWeight, setTargetWeight] = useState('60');
-    const [period, setPeriod] = useState(['12']);
-
-    const calcBmi = () => {
-        const parsedW = parseFloat(weight);
-        const parsedH = parseFloat(height);
-        if (isNaN(parsedW) || isNaN(parsedH)) {
-            return '---';
-        }
-        return (10000 * parsedW /( parsedH * parsedH)).toFixed(1);
-    };
-
-    const bmi = calcBmi();
+    const { __ } = useTrans();
 
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Расчёты</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{__('calculations')}</h2>}
         >
 
-            <Head  title="Settings" />
+            <Head  title={__('calculations')} />
 
             <div className="py-6 md:py-8 lg:py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
                         <div className="calculations-layout">
-                            <Pane header="Glucose" className="calculations-layout__pane glucose">
+                            <Pane header={__('glucose')} className="calculations-layout__pane glucose">
                                 <GlucoseCalculations/>
                             </Pane>
 
-                            <Pane header="Infuence to glycemy" className="calculations-layout__pane influence">
+                            <Pane header={__('glyc_influence')} className="calculations-layout__pane influence">
                                 <GlycemicInfluence user={user}/>
                             </Pane>
 
-                            <Pane header="ИМТ и коррекция веса" className="calculations-layout__pane bmi-correction">
+                            <Pane header={__('bmi_correction')} className="calculations-layout__pane bmi-correction">
                                 <BMICorrection/>
                             </Pane>
                             <div className="button-horizontal">
                                 <a className="btn settings__btn-save primary w-full md:w-36 mt-3"
-                                href={route('dashboard')}>Home
-                                </a>
+                                href={route('dashboard')}>{__('home')}</a>
                                 {/*<a className="btn settings__btn-calcel default" href="{{ route(" dashboard") }}">{{
                         __(
                         'inputs.cancel')}}</a>*/}

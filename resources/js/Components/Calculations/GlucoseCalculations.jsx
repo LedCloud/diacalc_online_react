@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Glucose from "@/Classes/Glucose.js";
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 const GlucoseInput = ({ label, value, onChange, onBlur }) => (
     <div className="horizontal-group">
@@ -13,7 +14,7 @@ const GlucoseInput = ({ label, value, onChange, onBlur }) => (
     </div>
 );
 
-const findName = ({mmol = true, plasma = false, hba1c = false}) => {
+const findIDName = ({mmol = true, plasma = false, hba1c = false}) => {
     if (hba1c)
         return 'hba1c';
     if (mmol && !plasma)
@@ -26,6 +27,7 @@ const findName = ({mmol = true, plasma = false, hba1c = false}) => {
 }
 
 const GlucoseCalculations = () => {
+    const { __ } = useTrans();
     const [glucose, setGlucose] = useState(new Glucose(5.6));
     const [activeField, setActiveField] = useState({ id: null, val: '' });
 
@@ -35,7 +37,7 @@ const GlucoseCalculations = () => {
         if (config.hba1c)
             fieldId = 'hba1c';
         else
-            fieldId = findName(config);
+            fieldId = findIDName(config);
         setActiveField({ id: fieldId, val: val });
 
         const parsed = parseFloat(val);
@@ -46,7 +48,6 @@ const GlucoseCalculations = () => {
             else
                 newGl.setVal(val, config);
             setGlucose(newGl);
-            //setActiveField({ id: null, val: '' }); // Reset draft after valid update
         }
     };
 
@@ -61,7 +62,6 @@ const GlucoseCalculations = () => {
             else
                 newGl.setVal(parsed.toFixed(1), config);
             setGlucose(newGl);
-            //setActiveField({ id: null, val: '' });
         }
         setActiveField({ id: null, val: '' }); // Now it's safe to reset
     };
@@ -78,35 +78,35 @@ const GlucoseCalculations = () => {
 
     return (<>
                 <GlucoseInput
-                    label="Mmol whole"
+                    label={__('mmolwhole')}
                     value={valMmolWhole}
                     onChange={(v) => updateGlucose(v, {mmol:true, plasma:false})}
                     onBlur={(v) => formatField(v, {mmol:true, plasma:false})}
                 />
 
                 <GlucoseInput
-                    label="Mmol plasma"
+                    label={__('mmolplasma')}
                     value={valMmolPlasma}
                     onChange={(v) => updateGlucose(v, {mmol:true, plasma:true})}
                     onBlur={(v) => formatField(v, {mmol:true, plasma:true})}
                 />
 
                 <GlucoseInput
-                    label="Mgdl whole"
+                    label={__('mgdlwhole')}
                     value={valMgdlWhole}
                     onChange={(v) => updateGlucose(v, {mmol:false, plasma:false})}
                     onBlur={(v) => formatField(v, {mmol:false, plasma:false})}
                 />
 
                 <GlucoseInput
-                    label="Mgdl plasma"
+                    label={__('mgdlplasma')}
                     value={valMgdlPlasma}
                     onChange={(v) => updateGlucose(v, {mmol:false, plasma:true})}
                     onBlur={(v) => formatField(v, {mmol:false, plasma:true})}
                 />
 
                 <GlucoseInput
-                    label="HbA1c"
+                    label={__('hba1c')}
                     value={valHbA1c}
                     onChange={(v) => updateGlucose(v, {hba1c: true})}
                     onBlur={(v) => formatField(v, {hba1c: true})}

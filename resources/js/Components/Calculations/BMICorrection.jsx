@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import InputOneLine from "@/Components/InputOneLine.jsx";
-
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 export default function BMICorrection() {
+    const { __ } = useTrans();
     const [weight, setWeight] = useState('60');
     const [height, setHeight] = useState('170');
     const [age, setAge] = useState('40');
@@ -32,15 +33,15 @@ export default function BMICorrection() {
         if (isNaN(intv))
             return;
         if (intv > 25000) {
-            return 'Экстремальная';
+            return __('extremal');
         } else if (intv > 15000) {
-            return 'Высокая';
+            return __('high');
         } else if (intv > 7000) {
-            return 'Средняя';
+            return __('moderate');
         } else if (intv > 5000) {
-            return 'Лёгкая';
+            return __('light');
         }
-        return 'Сидячая';
+        return __('sedentary');
     };
 
     const activity_type = calculateActivityType();
@@ -78,23 +79,23 @@ export default function BMICorrection() {
         //(steps - 5000)/400 + 110 = val <= for 7000 we get 115
         const config = {weight: weight, height: height, age: age, male: sex === 'male', activity: stepsToActivity()};
 
-        const caloryCurrent = calcCalorsNeeded(config);
+        const calorieCurrent = calcCalorsNeeded(config);
         config.weight = targetWeight;
-        let caloryTarget = calcCalorsNeeded(config);
+        let calorieTarget = calcCalorsNeeded(config);
         //do no allow to starve
-        if (caloryTarget <= 1200) {
-            caloryTarget = 1201;
+        if (calorieTarget <= 1200) {
+            calorieTarget = 1201;
         }
-        const caloryToLoose = getCalor2Loose(weight, targetWeight);
+        const calorieToLoose = getCalor2Loose(weight, targetWeight);
         let minMonths;
-        if (caloryToLoose > 0){//loose weight
-            minMonths = Math.ceil(caloryToLoose/( (caloryTarget - 1200) * 30 ));
+        if (calorieToLoose > 0){//loose weight
+            minMonths = Math.ceil(calorieToLoose/( (calorieTarget - 1200) * 30 ));
         } else {
             //gain weight
             let addon = 0;
-            if (caloryTarget < 5500){
-                addon = 5500 - caloryTarget;
-                minMonths = Math.ceil(-caloryToLoose/(addon*30));
+            if (calorieTarget < 5500){
+                addon = 5500 - calorieTarget;
+                minMonths = Math.ceil(-calorieToLoose/(addon*30));
             }
             else{
                 minMonths = 0;
@@ -108,8 +109,6 @@ export default function BMICorrection() {
             //create an only one option
             months_range.push(minMonths);
             currentSelection = minMonths;
-            //setPeriods([minMonths]);
-            //setPeriod(minMonths);
         } else {
             //generate months and select the nearest that was previously selected
             months_range = [...genMonths(minMonths)];
@@ -123,15 +122,15 @@ export default function BMICorrection() {
         }
 
         //Теперь можно произвести расчет калорийности для снижения.
-        const caloryToGetTarget = (caloryTarget - caloryToLoose/(currentSelection * 30)).toFixed(0);
+        const calorieToGetTarget = (calorieTarget - calorieToLoose/(currentSelection * 30)).toFixed(0);
 
-        return [caloryCurrent, caloryTarget, caloryToGetTarget, months_range, currentSelection];
+        return [calorieCurrent, calorieTarget, calorieToGetTarget, months_range, currentSelection];
     };
 
-    const [caloryCurrent, caloryTarget, caloryToGetTarget, months_range, periodSelection] = calculateCalories();
+    const [calorieCurrent, calorieTarget, calorieToGetTarget, months_range, periodSelection] = calculateCalories();
 
     if (periodSelection != period) {
-        setPeriod(''+ periodSelection);
+        setPeriod('' + periodSelection);
     }
 
     const periods = months_range;
@@ -139,22 +138,22 @@ export default function BMICorrection() {
     return (
         <div className="bmi-correction__panel">
             <div className="bmi_panel">
-                <div className="bmi_panel__bmi-label">ИМТ</div>
+                <div className="bmi_panel__bmi-label">{__('bmi')}</div>
                 <div className="bmi_panel__bmi-result">{bmi}</div>
-                <div className="bmi_panel__weight-label">Вес кг:</div>
+                <div className="bmi_panel__weight-label">{__('weight_kg')}:</div>
                 <input
                     className="bmi_panel__weight-input"
                     value={weight}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => setWeight(e.target.value)}/>
-                <div className="bmi_panel__height-label">Рост см:</div>
+                <div className="bmi_panel__height-label">{__('height_cm')}:</div>
                 <input
                     className="bmi_panel__height-input"
                     value={height}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => setHeight(e.target.value)}/>
 
-                <div className="bmi_panel__sex-label bmi_panel__height-label">Ваш пол</div>
+                <div className="bmi_panel__sex-label bmi_panel__height-label">{__('your_sex')}</div>
                 <div className="bmi_panel__sex-input bmi_panel__height-input">
                     <div className="sex-group__radio checkbox-group">
                         <label htmlFor="sexMale">
@@ -164,8 +163,7 @@ export default function BMICorrection() {
                                    type="radio"
                                    checked={sex === 'male'}
                                    onChange={(e) => setSex(e.target.value)}
-                            />
-                            Male</label>
+                            />{__('male')}</label>
                     </div>
                     <div className="sex-group__radio checkbox-group">
                         <label htmlFor="sexFemale">
@@ -175,31 +173,29 @@ export default function BMICorrection() {
                                    type="radio"
                                    checked={sex === 'female'}
                                    onChange={(e) => setSex(e.target.value)}
-                            />
-                            Female</label>
+                            />{__('female')}</label>
                     </div>
                 </div>
 
-                <div className="bmi_panel__note">Внимание! ИМТ рассчитанный у детей (до 18
-                    лет), должен интерпретироваться специальным образом!
-                    Подробнее <a href="https://diacalc.ru/BMIchildren.html">тут</a></div>
+                <div className="bmi_panel__note"
+                     dangerouslySetInnerHTML={{__html: __('bmi_children_notice')}} />
             </div>
             <div className="target_panel">
                 <InputOneLine value={age}
                               onChange={setAge}
                               onBlur={setAge}
-                              label="Возраст"
+                              label={__('age')}
                               className="target_panel__age-input"
                 />
                 <InputOneLine
                     value={targetWeight}
                     onChange={setTargetWeight}
                     onBlur={setTargetWeight}
-                    label="Целевой вес"
+                    label={__('target_weight')}
                     className="target_panel__weight-input"
                 />
                 <div className="target_panel__period">
-                    <label>Период коррекции</label>
+                    <label>{__('correction_period')}</label>
                     {/* add calculation based on age, targetWeight, sex and activity */}
                     <select value={period} onChange={(e) => setPeriod(e.target.value)}>
                         {periods.map((value) => (
@@ -213,7 +209,7 @@ export default function BMICorrection() {
                 <fieldset className="results_panel__activity">
                     <div>
                         <label htmlFor="activity-selector">
-                            Активность: <span className="activity__type">{activity_type}</span> &bull; Количество шагов:
+                            {__('activity')}: <span className="activity__type">{activity_type}</span> &bull; {__('steps_count')}:
                             ≈<span className="activity__steps">{steps}</span>
                         </label>
                         <input id="activity-selector"
@@ -222,18 +218,18 @@ export default function BMICorrection() {
                                onChange={(e) => setSteps(e.target.value)}/>
                     </div>
                     <div className="results_panel__results">
-                        <div className="results_panel__results__header">Норма потребления ккал/сут.</div>
+                        <div className="results_panel__results__header">{__('calories_a_day')}</div>
                         <div className="results_panel__results__result">
-                            <div>Для текущего веса</div>
-                            <div>{caloryCurrent}</div>
+                            <div>{__('for_current_weight')}</div>
+                            <div>{calorieCurrent}</div>
                         </div>
                         <div className="results_panel__results__result">
-                            <div>Для целевого веса</div>
-                            <div>{caloryTarget}</div>
+                            <div>{__('for_target_weight')}</div>
+                            <div>{calorieTarget}</div>
                         </div>
                         <div className="results_panel__results__result">
-                            <div>Для достижения целевого веса</div>
-                            <div>{caloryToGetTarget}</div>
+                            <div>{__('to_gain_target_weight')}</div>
+                            <div>{calorieToGetTarget}</div>
                         </div>
                     </div>
                 </fieldset>

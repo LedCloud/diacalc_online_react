@@ -16,6 +16,7 @@
 - langvars for all three from back
 - close dialog on ESC, click outside **done**
 - the hamburger menu is not working properly
+- set BE to the settings from factors on migration from old diacalc
 
 ---
 

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Glucose from "@/Classes/Glucose.js";
 import InputOneLine from "@/Components/InputOneLine.jsx";
-import GlucoseCalculations from "@/Components/Calculations/GlucoseCalculations.jsx";
+import {useTrans} from "@/Hooks/useTrans.jsx";
 
 const GlycemicInfluence = ({user}) => {
+    const { __ } = useTrans();
     const [activeField, setActiveField] = useState({ id: null, val: '' });
     const [ouvGl, setOuvGl] = useState(new Glucose(2.0));
     const [k1, setK1] = useState('1.00');
@@ -76,13 +77,13 @@ const GlycemicInfluence = ({user}) => {
             <div className="influence__panel__inputs">
                 <div className="influence__panel__inputs_top">
                     <InputOneLine id='ouv'
-                                  label='ouv'
+                                  label={__('ouv')}
                                   value={ouv}
                                   onChange={updateOuv}
                                   onBlur={formatOuv}/>
 
                     <InputOneLine id='k1'
-                                  label='k1'
+                                  label={__('k1')}
                                   value={k1}
                                   onChange={setK1}
                                   onBlur={formatK1}/>
@@ -97,8 +98,7 @@ const GlycemicInfluence = ({user}) => {
                                        type="radio"
                                        checked={mmol === 'mmol'}
                                        onChange={(e) => setMmol(e.target.value)}
-                                />
-                                mmol</label>
+                                />{__('mmol')}</label>
                         </div>
                         <div className="horizontal-group checkbox-group">
                             <label htmlFor="mgdl">
@@ -108,8 +108,7 @@ const GlycemicInfluence = ({user}) => {
                                        type="radio"
                                        checked={mmol === 'mgdl'}
                                        onChange={(e) => setMmol(e.target.value)}
-                                />
-                                mgdl</label>
+                                />{__('mgdl')}</label>
                         </div>
                     </div>
                     <div>
@@ -121,8 +120,7 @@ const GlycemicInfluence = ({user}) => {
                                        type="radio"
                                        checked={plasma === 'whole'}
                                        onChange={(e) => setPlasma(e.target.value)}
-                                />
-                                Whole</label>
+                                />{__('whole')}</label>
                         </div>
                         <div className="horizontal-group checkbox-group">
                             <label htmlFor="plasma">
@@ -132,55 +130,52 @@ const GlycemicInfluence = ({user}) => {
                                        type="radio"
                                        checked={plasma === 'plasma'}
                                        onChange={(e) => setPlasma(e.target.value)}
-                                />
-                                Plasma</label>
+                                />{__('plasma')}</label>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="influence__panel__results">
-                {/* results */}
-                {/*<div className="two-column">*/}
-                    <div>
-                        <table className="table-auto md:table-fixed">
-                            <thead>
-                            <tr>
-                                <th className="text-center pr-2 pl-2">инс.ед</th>
-                                <th className="text-center pr-2 pl-2">
-                                    {mmol === 'mmol' ? 'Ммоль' : 'мг.дл.'}:{plasma === 'plasma' ? 'плазма' : 'цельная'}</th>
+                <div>
+                    <table className="table-auto md:table-fixed">
+                        <thead>
+                        <tr>
+                            <th className="text-center pr-2 pl-2">{__("insulin_units")}</th>
+                            <th className="text-center pr-2 pl-2">
+                                {plasma === 'plasma' ? __('plasma') : __('whole') }, {mmol === 'mmol' ? __('mmol') : __('mgdl') }
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {[0.1, 0.2, 0.25, 0.5].map((value) => (
+                            <tr key={value} className="even:bg-slate-50">
+                                <td className="text-center">{value}</td>
+                                <td className="text-center">{calcInsulinInfluence(value)}</td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            {[0.1, 0.2, 0.25, 0.5].map((value) => (
-                                <tr key={value} className="even:bg-slate-50">
-                                    <td className="text-center">{value}</td>
-                                    <td className="text-center">{calcInsulinInfluence(value)}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                        <table className="table-auto">
-                            <thead>
-                            <tr>
-                                <th className="text-center pr-2 pl-2">Угл.гр.</th>
-                                <th className="text-center pr-2 pl-2">
-                                    {mmol === 'mmol' ? 'Ммоль' : 'мг.дл.'}:{plasma === 'plasma' ? 'плазма' : 'цельная'}
-                                </th>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <table className="table-auto md:table-fixed">
+                        <thead>
+                        <tr>
+                            <th className="text-center pr-2 pl-2">{__('carb_gr')}</th>
+                            <th className="text-center pr-2 pl-2">
+                                {plasma === 'plasma' ? __('plasma') : __('whole') }, {mmol === 'mmol' ? __('mmol') : __('mgdl') }
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {[1, 2, 5, 10].map((value) => (
+                            <tr key={value} className="even:bg-slate-50">
+                                <td className="text-center">{value}</td>
+                                <td className="text-center">{calcCarboInfluence(value)}</td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            {[1, 2, 5, 10].map((value) => (
-                                <tr key={value} className="even:bg-slate-50">
-                                    <td className="text-center">{value}</td>
-                                    <td className="text-center">{calcCarboInfluence(value)}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                {/*</div>*/}
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
