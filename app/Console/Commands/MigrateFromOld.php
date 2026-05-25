@@ -143,8 +143,11 @@ class MigrateFromOld extends Command
     protected function moveSettings($user, $old_user_id)
     {
         //copy settings
-        $old_settings = DB::connection('old_diacalc')->table('settings')
-            ->where('iduser', $old_user_id)
+        $old_settings = DB::connection('old_diacalc')
+            ->table('settings')
+            ->leftJoin('backup_users','settings.iduser','=','backup_users.id')
+            ->select('settings.*','backup_users.be')
+            ->where('settings.iduser',$old_user_id)
             ->first();
 
         if (empty($old_settings)) {
@@ -166,6 +169,7 @@ class MigrateFromOld extends Command
             'low_level' => $old_settings->shlow,
             'high_level' => $old_settings->shhigh,
             'period' => $old_settings->period,
+            'be' => $old_settings->be ?? 10,
         ];
         $user->putSetting('User', $settings);
     }

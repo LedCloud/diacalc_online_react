@@ -2,30 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\Settings\MenuInfo;
-use App\Classes\Settings\UserSetting;
 use App\Http\Requests\FactorsPatchRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class FactorsController extends Controller
 {
     public function index()
     {
-        $factors = Auth::user()->factors;
         $settings = Auth::user()->getSetting('User');
-
         $factors = Auth::user()->factors;
-        /*$factors = Auth::user()->factors->map(function($e){
-            $arr = $e->toArray();
-            $time = \DateTime::createFromFormat("H:i:s");
-            $arr['time'] = $time->format('H:i');
-            return $arr;
-        });*/
 
         return Inertia::render('Factors',[
             'factors' => $factors,
@@ -56,6 +43,6 @@ class FactorsController extends Controller
 
         session()->flash('notification', 'Updated');
 
-        return Redirect::route('factors.react');
+        return Redirect::route('factors');
     }
 }

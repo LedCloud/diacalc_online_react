@@ -25,27 +25,15 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Твой новый роут
-    /*Route::get('/settings_react', function () {
-        if (auth()) {
-            $settings = Auth::user()->getSetting('User');
-        } else {
-            $settings = \App\Classes\Settings\UserSetting::DEFAULT;
-        }
-        return Inertia::render('Settings',[
-            'settings' => $settings,
-        ]);
-    })->name('settings.react');*/
-
     Route::get('/settings_react', [\App\Http\Controllers\SettingsController::class, 'index'])
-        ->name('settings.react');
+        ->name('settings');
     Route::patch('/settings_react', [\App\Http\Controllers\SettingsController::class, 'update'])
-        ->name('settings.react');
+        ->name('settings');
 
     Route::get('/factors', [App\Http\Controllers\FactorsController::class, 'index'])
-        ->name('factors.react');
+        ->name('factors');
     Route::patch('/factors', [App\Http\Controllers\FactorsController::class, 'update'])
-        ->name('factors.react');
+        ->name('factors');
 
 
     Route::get('/calculations', function () {
@@ -61,24 +49,29 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
         ]);
     })->name('calculations');
 
-    Route::livewire('/settings', 'pages::settings')->name('settings');
+    Route::get('/archive', [\App\Http\Controllers\ArchiveController::class, 'index'])
+        ->name('archive');
+
+    Route::post('/language/{lang}', function(Request $request, string $lang){
+        $supportedLocales = config('app.supported_locales', ['en' => 'English']);
+
+        // Abort if someone passes a locale we don't support
+        if (!in_array($lang, $supportedLocales)) {
+            abort(400);
+        }
+
+        // Save the choice in the user's session
+        session()->put('locale', $lang);
+
+        return back();
+    })->name('language.switch');
+
+    //Route::livewire('/settings', 'pages::settings')->name('settings');
     //Route::livewire('/factors', 'pages::more.factors')->name('factors');
     //Route::livewire('/factors/create', 'pages::more.factors.create')->name('factors.create');
     //Route::livewire('/factors/{id}/edit', 'pages::more.factors.create')->name('factors.edit');
 });
 
-Route::post('/language/{lang}', function(Request $request, string $lang){
-    $supportedLocales = config('app.supported_locales', ['en' => 'English']);
 
-    // Abort if someone passes a locale we don't support
-    if (!in_array($lang, $supportedLocales)) {
-        abort(400);
-    }
-
-    // Save the choice in the user's session
-    session()->put('locale', $lang);
-
-    return back();
-})->name('language.switch');
 
 require __DIR__.'/auth.php';

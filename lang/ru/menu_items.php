@@ -8,4 +8,5 @@ return [
     'ru' => 'Русский',
     'factors' => 'Коэффициенты',
     'calculations' => 'Расчёты',
+    'archive' => 'Архив',
 ];

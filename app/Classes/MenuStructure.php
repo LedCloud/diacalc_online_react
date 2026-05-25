@@ -12,8 +12,8 @@ class MenuStructure
             'name' => 'dashboard',
         ],
         [
-            'route' => 'settings.react',
-            'name' => 'settings',
+            'route' => 'archive',
+            'name' => 'archive',
         ],
         [
             'name' => 'languages',
@@ -25,8 +25,8 @@ class MenuStructure
         [
             'name' => 'settings',
             'submenu' => [
-                ['route' => 'settings.react', 'name' => 'settings',],
-                ['route' => 'factors.react', 'name' => 'factors', ],
+                ['route' => 'settings', 'name' => 'settings',],
+                ['route' => 'factors', 'name' => 'factors', ],
                 ['route' => 'calculations', 'name' => 'calculations', ],
             ],
         ],

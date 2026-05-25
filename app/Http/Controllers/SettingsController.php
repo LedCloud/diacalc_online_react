@@ -39,6 +39,6 @@ class SettingsController extends Controller
 
         session()->flash('notification', 'Settings saved');
 
-        return Redirect::route('settings.react');
+        return Redirect::route('settings');
     }
 }

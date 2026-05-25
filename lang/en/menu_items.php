@@ -8,4 +8,5 @@ return [
     'ru' => 'Russian',
     'factors' => 'Factors',
     'calculations' => 'Calculations',
+    'archive' => 'Archive',
 ];
