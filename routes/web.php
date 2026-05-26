@@ -52,6 +52,9 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
     Route::get('/archive', [\App\Http\Controllers\ArchiveController::class, 'index'])
         ->name('archive');
 
+    Route::get('/archive/groups/{group}/products', [\App\Http\Controllers\ArchiveController::class, 'getProducts'])
+        ->name('archive.get_products');
+
     Route::post('/language/{lang}', function(Request $request, string $lang){
         $supportedLocales = config('app.supported_locales', ['en' => 'English']);
 
