@@ -1,7 +1,9 @@
 import {useTrans} from "@/Hooks/useTrans.jsx";
 import {usePage} from "@inertiajs/react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Dialog, DialogPanel, Transition, TransitionChild} from "@headlessui/react";
+import ContextMenu from "@/Components/ContextMenu.jsx";
+import Tooltip from "@/Components/Tooltip.jsx";
 
 export default function ArchivePage(){
     const { __ } = useTrans();
@@ -15,6 +17,14 @@ export default function ArchivePage(){
     const [cache, setCache] = useState({});
 
     const [loading, setLoading] = useState(false);
+
+    const formatter = (val, fractions = 1) => {
+        const parsed = parseFloat(val);
+        if (isNaN(parsed)) {
+            return val;
+        }
+        return parsed.toFixed(fractions);
+    }
 
     useEffect(() => {
         if (!selectedGrId) return;
@@ -74,6 +84,54 @@ export default function ArchivePage(){
 
     const selectedGroup = groups.find(gr => gr.id === selectedGrId);
 
+    // Store menu visibility and screen coordinates
+    const [menuSettings, setMenuSettings] = useState({
+        visible: false,
+        x: 0,
+        y: 0,
+    });
+
+    const menuRef = useRef(null);
+
+    // Handle right-click on the specific target element
+    const handleContextMenu = (e) => {
+        e.preventDefault(); // Stop default browser menu
+
+        setMenuSettings({
+            visible: true,
+            x: e.clientX, // Mouse X position
+            y: e.clientY, // Mouse Y position
+        });
+    };
+
+    // Close menu when clicking anywhere else
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuSettings((prev) => ({ ...prev, visible: false }));
+            }
+        };
+
+        if (menuSettings.visible) {
+            document.addEventListener('click', handleClickOutside);
+        }
+
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [menuSettings.visible]);
+
+    const menuItems = [
+        {
+            name: __("add_to_products"),
+            handler: () => alert(__("add_to_products"))
+        },
+        {
+            name: __("remove_from_products"),
+            handler: () => alert(__("remove_from_products")),
+        }
+    ];
+
+    const closeMenu = () => setMenuSettings(prev => ({ ...prev, visible: false }));
+
     return (<div className="archive-layout">
         <div className="groups">
             <div className="groups__left btn p-3"
@@ -85,33 +143,29 @@ export default function ArchivePage(){
             <div className="groups__right btn p-3"
                  onClick={() => changeGroup('right')}
             >&gt;&gt;</div>
-            {/*{groups.map((gr) => {
-                        return <div className={`group px-2 py-1 rounded ${selectedGr === gr.id ? 'border-sky-600 bg-sky-300' : 'bg-slate-100'}`}
-                                    key={gr.id}
-                                    onClick={() => {
-                                        setShowGroupPopup(true);
-                                        //setSelectedGr(gr.id)
-                                    }}
-                        >{gr.name}</div>
-                    })}*/}
         </div>
-        <div className="products">
+        <div className="products context-menu-box" onContextMenu={handleContextMenu}>
             {loading ? <p>Loading...</p> : (
-                <ul>
-                    {products.map(product => (
-                        <li key={product.id}>{product.name}</li>
-                    ))}
-                </ul>
+                <>
+                {products.map(product => (
+                    <div className="product-item bg-slate-50 border-2  border-slate-600 rounded-lg" key={product.id}>
+                        <div className="product-item__name">{product.name}</div>
+                        <div className="product-item__description">
+                            <Tooltip text={__("prot")}>{formatter(product.prot)}</Tooltip>-
+                            <Tooltip text={__("fat")}>{formatter(product.fat)}</Tooltip>-
+                            <Tooltip text={__("carb")}>{formatter(product.carb)}</Tooltip>-
+                            <Tooltip text={__('gi')}>{formatter(product.gi,0)}</Tooltip>
+                        </div>
+                    </div>
+                ))}
+                </>
             )}
+            <ContextMenu menuSettings={menuSettings}
+                         menuRef={menuRef}
+                         menuItems={menuItems}
+                         onClose={closeMenu}
+            />
         </div>
-        {/*<div className="products">
-                    {products.map((pr) => {
-                        return <div className={`product px-2 py-1 rounded ${selectedPr === pr.id ? 'border-green-600 bg-green-300' : 'bg-green-100'}`}
-                                    key={pr.id}
-                                    onClick={() => setSelectedPr(pr.id)}
-                        >{pr.name}</div>
-                    })}
-                </div>*/}
             <Transition show={showGroupPopup} leave="duration-200">
                 <Dialog
                     as="div"
