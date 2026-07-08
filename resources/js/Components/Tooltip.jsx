@@ -14,7 +14,7 @@ export default function Tooltip({ text, children }) {
 
         setCoords({
             // Позиционируем НАД элементом (вычитаем высоту тултипа, например ~40px)
-            top: rect.top - 40 + window.scrollY,
+            top: rect.top - 38 + window.scrollY,
             // Центрируем по горизонтали
             left: rect.left + rect.width / 2 + window.scrollX,
         });
@@ -34,6 +34,7 @@ export default function Tooltip({ text, children }) {
                 onBlur={handleMouseLeave}
                 style={{ display: 'inline-block', cursor: 'help' }}
                 tabIndex="0"
+                className="tooltip"
             >
         {children}
       </span>
