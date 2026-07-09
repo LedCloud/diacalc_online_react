@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
-abstract class Controller
+use Inertia\Inertia;
+class Controller
 {
-    //
+    public function index()
+    {
+
+    }
 }

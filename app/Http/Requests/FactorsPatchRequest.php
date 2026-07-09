@@ -37,10 +37,14 @@ class FactorsPatchRequest extends FormRequest
             $validated['factors_by_time'] = (int)($this->factors_by_time === 'timed');
         }
 
-        $validated['factors'] = array_map(function($e){
-            unset($e['ouv']);
-            return $e;
-        }, $validated['factors']);
+        if (!empty($validated['factors'])) {
+            $validated['factors'] = array_map(function ($e) {
+                unset($e['ouv']);
+                return $e;
+            }, $validated['factors']);
+        } else {
+            $validated['factors'] = [];
+        }
 
         return $validated;
     }

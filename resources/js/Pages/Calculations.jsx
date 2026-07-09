@@ -6,6 +6,7 @@ import GlycemicInfluence from "@/Components/Calculations/GlycemicInfluence.jsx";
 import React, {useState} from "react";
 import BMICorrection from "@/Components/Calculations/BMICorrection.jsx";
 import {useTrans} from "@/Hooks/useTrans.jsx";
+import PageContainer from "@/Components/PageContainer.jsx";
 
 export default function Calculations({ auth, user }) {
     const { __ } = useTrans();
@@ -18,8 +19,7 @@ export default function Calculations({ auth, user }) {
 
             <Head  title={__('calculations')} />
 
-            <div className="py-6 md:py-8 lg:py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <PageContainer>
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
                         <div className="calculations-layout">
@@ -43,8 +43,7 @@ export default function Calculations({ auth, user }) {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+            </PageContainer>
         </AuthenticatedLayout>
     );
 }

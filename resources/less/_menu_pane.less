@@ -1,0 +1,66 @@
+.menu-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    &__actions {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
+        justify-content: space-between;
+        align-items: stretch;
+        &__plus,&__diary,&__trash {
+            flex-grow: 0;
+        }
+        &__counter {
+            flex-grow: 1;
+            text-align: center;
+            background-image: linear-gradient(to right, rgb(85, 231, 164) 0%, rgb(85, 231, 164) 0%, rgb(109, 210, 227) 0%, rgb(109, 210, 227) 100%);
+            background-size: 46.6% 100%;
+        }
+    }
+    &__menu {
+        .menu-item {
+            display: grid;
+            grid-template-areas: "name name weight close"
+                            " . info weight .";
+            grid-template-columns: 5fr 5fr 70px 30px;
+            grid-template-rows: 1fr 1fr;
+            gap: 5px;
+            &__name {
+                grid-area: name;
+                padding: 3px 0 0 3px;
+                background-color: white;
+                font-weight: 500;
+                font-size: 1.05rem;
+            }
+            &__info {
+                grid-area: info;
+                font-weight: 500;
+                font-size: 0.85rem;
+                text-align: right;
+            }
+            &__weight {
+                grid-area: weight;
+                height: 35px;
+                line-height: 35px;
+                margin: auto 0;
+            }
+            &__close {
+                grid-area: close;
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+}
+
+.info-piece {
+    &__title {
+        font-weight: 400;
+        font-size: 0.7rem;
+    }
+    &__value {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+}

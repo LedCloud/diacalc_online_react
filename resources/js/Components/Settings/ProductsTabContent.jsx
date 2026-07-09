@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import InputTwoLines from "@/Components/InputTwoLines.jsx";
 import Modal from '@/Components/Modal';
 import {useTrans} from "@/Hooks/useTrans.jsx";
+import {router} from "@inertiajs/react";
 
 export default function ProductsTabContect({
     allSettings, setAllSettings, activeTab, menuMasks, errors, className = ''})
@@ -21,6 +22,13 @@ export default function ProductsTabContect({
     };
 
     const closeModal = () => {
+        setShowModal(false);
+    };
+
+    const handleFillProducts = () => {
+        router.post(route('settings.fill_products'), {}, {
+            preserveScroll: true,
+        });
         setShowModal(false);
     };
 
@@ -85,7 +93,7 @@ export default function ProductsTabContect({
                     <button
                         type="button"
                         className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
-                        onClick={() => setShowModal(false)}>{__('ok')}
+                        onClick={handleFillProducts}>{__('ok')}
                     </button>
                     <button
                         type="button"

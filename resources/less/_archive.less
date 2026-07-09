@@ -32,6 +32,8 @@
             flex-direction: column;
             gap:5px;
             height: 100%;
+            min-height: 0;
+            overflow: hidden;
         }
         &__header {
             display: flex;
@@ -49,16 +51,12 @@
             text-align: center;
         }
         &__list {
-            flex-grow: 1;
-            flex-shrink: 1;
-            min-height: 0;      /* МАГИЯ FLEXBOX: разрешает блоку сжиматься меньше размера его контента */
+            flex: 1 1 auto;
+            min-height: 0;
             overflow-y: auto;
-
-            display:flex;
+            display: flex;
             flex-direction: column;
             gap: 3px;
-            /*overflow-y: auto;*/
-            /*overflow-y: auto;*/
             .group-item {
                 border: 1px solid #ccc;
                 box-sizing: border-box;

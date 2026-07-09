@@ -9,6 +9,7 @@ import InputOneLine from "@/Components/InputOneLine.jsx";
 import Button from "@/Components/Button.jsx";
 import Modal from "@/Components/Modal.jsx";
 import { useTrans } from '@/Hooks/useTrans';
+import PageContainer from "@/Components/PageContainer.jsx";
 
 export default function Factors({ auth }) {
 
@@ -206,201 +207,199 @@ export default function Factors({ auth }) {
         >
             <Head title={__('factors')} />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 factors-layout">
-                        <Form action="/factors" method="patch"
-                              options={{
-                                preserveScroll: true
-                            }}>
-                            <Pane header={__('factors')} className="factors-layout__pane factors">
-                                <fieldset>
-                                    <div className="field">
-                                        <label className="checkbox-group" htmlFor="timedFactors">
-                                    <input id="timedFactors"
-                                           checked={Boolean(allSettings.factors_by_time)}
-                                           name="factors_by_time"
-                                           value="timed"
-                                           onChange={(e) => {
-                                               setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
-                                           }}
-                                           type="checkbox"/>{__('factors_by_time')}</label>
-                                    </div>
-                                    <InputTwoLines value={allSettings.weight}
-                                                   name="weight"
-                                                   id="weight"
-                                                   label={__('your_weight')}
-                                                   onChange={setWeight}
-                                                   onBlur={formatWeight}
-                                    />
-                                    {errors.weight && <div className="validation-error">{errors.weight}</div>}
+            <PageContainer>
+                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 factors-layout">
+                    <Form action="/factors" method="patch"
+                          options={{
+                            preserveScroll: true
+                        }}>
+                        <Pane header={__('factors')} className="factors-layout__pane factors">
+                            <fieldset>
+                                <div className="field">
+                                    <label className="checkbox-group" htmlFor="timedFactors">
+                                <input id="timedFactors"
+                                       checked={Boolean(allSettings.factors_by_time)}
+                                       name="factors_by_time"
+                                       value="timed"
+                                       onChange={(e) => {
+                                           setAllSettings({...allSettings, factors_by_time: (e.target.checked ? 1 : 0)});
+                                       }}
+                                       type="checkbox"/>{__('factors_by_time')}</label>
+                                </div>
+                                <InputTwoLines value={allSettings.weight}
+                                               name="weight"
+                                               id="weight"
+                                               label={__('your_weight')}
+                                               onChange={setWeight}
+                                               onBlur={formatWeight}
+                                />
+                                {errors.weight && <div className="validation-error">{errors.weight}</div>}
 
-                                    <InputTwoLines value={allSettings.k3_factor}
-                                                   name="k3_factor"
-                                                   id="k3_factor"
-                                                   label={__("k3_factor")}
-                                                   onChange={setK3Factor}
-                                                   onBlur={formatK3Factor}
-                                    />
-                                    {errors.k3_factor && <div className="validation-error">{errors.k3_factor}</div>}
+                                <InputTwoLines value={allSettings.k3_factor}
+                                               name="k3_factor"
+                                               id="k3_factor"
+                                               label={__("k3_factor")}
+                                               onChange={setK3Factor}
+                                               onBlur={formatK3Factor}
+                                />
+                                {errors.k3_factor && <div className="validation-error">{errors.k3_factor}</div>}
 
-                                    <InputTwoLines value={allSettings.be}
-                                                   name="be"
-                                                   id="be"
-                                                   label={__("be")}
-                                                   onChange={setBE}
-                                                   onBlur={formatBE}
-                                    />
-                                    {errors.be && <div className="validation-error">{errors.be}</div>}
+                                <InputTwoLines value={allSettings.be}
+                                               name="be"
+                                               id="be"
+                                               label={__("be")}
+                                               onChange={setBE}
+                                               onBlur={formatBE}
+                                />
+                                {errors.be && <div className="validation-error">{errors.be}</div>}
 
-                                    <button type="button" className="btn" onClick={calculateOUV}>{__('calc_ouv')}</button>
-                                    <div className="alert alert-well">{__('calc_notice')}!</div>
-                                </fieldset>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th className="w-2/12">{__('time')}</th>
-                                            <th className="w-3/12">{__('k1')}</th>
-                                            <th className="w-3/12">{__('k2')}</th>
-                                            <th className="w-3/12">{__('ouv')}</th>
-                                            <th className="w-1/12"></th>
+                                <button type="button" className="btn" onClick={calculateOUV}>{__('calc_ouv')}</button>
+                                <div className="alert alert-well">{__('calc_notice')}!</div>
+                            </fieldset>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th className="w-2/12">{__('time')}</th>
+                                        <th className="w-3/12">{__('k1')}</th>
+                                        <th className="w-3/12">{__('k2')}</th>
+                                        <th className="w-3/12">{__('ouv')}</th>
+                                        <th className="w-1/12"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {rFactors.map(row => {
+                                    gl.val = row.k3;
+                                    return (
+                                        <tr key={row.id}>
+                                            <td data-header={__('time')}>
+                                                <input type="hidden" name={`factors[${row.id}][id]`}
+                                                       value={row.id}/>
+                                                <input type="time"
+                                                       className="w-full"
+                                                       name={`factors[${row.id}][time]`} value={row.time}
+                                                       onChange={(e) => setTime(row.id, e.target.value)}
+                                                />
+                                                {errors[`factors.${row.id}.time`] && (
+                                                    <div className="validation-error">
+                                                        {errors[`factors.${row.id}.time`]}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td data-header={__('k1')}>
+                                                <input type="number"
+                                                       name={`factors[${row.id}][k1]`} value={row.k1}
+                                                       className="w-full"
+                                                       onFocus={(e) => e.target.select()}
+                                                       onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
+                                                       onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
+                                                />
+                                                {errors[`factors.${row.id}.k1`] && (
+                                                    <div className="validation-error">
+                                                        {errors[`factors.${row.id}.k1`]}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td data-header={__('k2')}>
+                                                <input type="number"
+                                                       name={`factors[${row.id}][k2]`} value={row.k2}
+                                                       className="w-full"
+                                                       onFocus={(e) => e.target.select()}
+                                                       onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
+                                                       onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
+                                                />
+                                                {errors[`factors.${row.id}.k2`] && (
+                                                    <div className="validation-error">
+                                                        {errors[`factors.${row.id}.k2`]}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td data-header={__('ouv')}>
+                                                <input type="hidden"
+                                                       name={`factors[${row.id}][k3]`}
+                                                       value={row.k3}
+                                                       />
+                                                <input
+                                                    name={`factors[${row.id}][ouv]`}
+                                                    value={activeField.id === row.id ? activeField.val : gl.getView(config)}
+                                                    className="w-full"
+                                                    onFocus={(e) => e.target.select()}
+                                                    onChange={(e) => updateOUV(row.id, e.target.value)}
+                                                    onBlur={(e) => formatOUV(row.id, e.target.value)}
+                                                    />
+                                                {errors[`factors.${row.id}.ouv`] && (
+                                                    <div className="validation-error">
+                                                        {errors[`factors.${row.id}.ouv`]}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="text-center">
+                                                <button className="btn"
+                                                    type="button"
+                                                        onClick={() => delRow(row.id)}
+                                                        ><strong>X</strong></button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                    {rFactors.map(row => {
-                                        gl.val = row.k3;
-                                        return (
-                                            <tr key={row.id}>
-                                                <td data-header={__('time')}>
-                                                    <input type="hidden" name={`factors[${row.id}][id]`}
-                                                           value={row.id}/>
-                                                    <input type="time"
-                                                           className="w-full"
-                                                           name={`factors[${row.id}][time]`} value={row.time}
-                                                           onChange={(e) => setTime(row.id, e.target.value)}
-                                                    />
-                                                    {errors[`factors.${row.id}.time`] && (
-                                                        <div className="validation-error">
-                                                            {errors[`factors.${row.id}.time`]}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td data-header={__('k1')}>
-                                                    <input type="number"
-                                                           name={`factors[${row.id}][k1]`} value={row.k1}
-                                                           className="w-full"
-                                                           onFocus={(e) => e.target.select()}
-                                                           onChange={(e) => setFactor(row.id, 'k1', e.target.value)}
-                                                           onBlur={(e) => formatFactor(row.id, 'k1', e.target.value)}
-                                                    />
-                                                    {errors[`factors.${row.id}.k1`] && (
-                                                        <div className="validation-error">
-                                                            {errors[`factors.${row.id}.k1`]}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td data-header={__('k2')}>
-                                                    <input type="number"
-                                                           name={`factors[${row.id}][k2]`} value={row.k2}
-                                                           className="w-full"
-                                                           onFocus={(e) => e.target.select()}
-                                                           onChange={(e) => setFactor(row.id, 'k2', e.target.value)}
-                                                           onBlur={(e) => formatFactor(row.id, 'k2', e.target.value)}
-                                                    />
-                                                    {errors[`factors.${row.id}.k2`] && (
-                                                        <div className="validation-error">
-                                                            {errors[`factors.${row.id}.k2`]}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td data-header={__('ouv')}>
-                                                    <input type="hidden"
-                                                           name={`factors[${row.id}][k3]`}
-                                                           value={row.k3}
-                                                           />
-                                                    <input
-                                                        name={`factors[${row.id}][ouv]`}
-                                                        value={activeField.id === row.id ? activeField.val : gl.getView(config)}
-                                                        className="w-full"
-                                                        onFocus={(e) => e.target.select()}
-                                                        onChange={(e) => updateOUV(row.id, e.target.value)}
-                                                        onBlur={(e) => formatOUV(row.id, e.target.value)}
-                                                        />
-                                                    {errors[`factors.${row.id}.ouv`] && (
-                                                        <div className="validation-error">
-                                                            {errors[`factors.${row.id}.ouv`]}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="text-center">
-                                                    <button className="btn"
-                                                        type="button"
-                                                            onClick={() => delRow(row.id)}
-                                                            ><strong>X</strong></button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                    </tbody>
-                                </table>
-                                <div className="flex gap-3 p-2">
-                                    <Button className="ring-slate-400"
-                                            onClick={openAddFactorsDialog}
-                                    >{__('add')}</Button>
-                                </div>
-
-                                <div className="flex gap-3 p-2">
-                                    <Button className="ring-blue-400 bg-sky-300"
-                                            type="submit"
-                                    >{__('save')}</Button>
-                                </div>
-                            </Pane>
-                        </Form>
-                        <Modal show={showDialog} onClose={() => setShowDialog(false)}
-                               header={__('add_factors')} >
-                            <div className="py-3 px-4 flex flex-col gap-2">
-                                <InputOneLine value={dialogData.time}
-                                              name="time"
-                                              label={__('time')}
-                                              type="time"
-                                              onChange={updateDialog}
-                                              onBlur={formatDialog}
-                                />
-                                <InputOneLine value={dialogData.k1}
-                                              name="k1" label={__('k1')}
-                                              onChange={updateDialog}
-                                              onBlur={formatDialog}
-                                />
-                                <InputOneLine value={dialogData.k2}
-                                              name="k2" label={__('k2')}
-                                              onChange={updateDialog}
-                                              onBlur={formatDialog}
-                                />
-                                <InputOneLine value={dialogK3}
-                                              name="k3" label={__('ouv')}
-                                              onChange={updateK3Dialog}
-                                              onBlur={formatK3Dialog}
-                                />
-                            </div>
+                                    )
+                                })}
+                                </tbody>
+                            </table>
                             <div className="flex gap-3 p-2">
-                                <button
-                                    type="button"
-                                    className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
-                                    onClick={() => {
-                                        useDialogResult();
-                                        setShowDialog(false);
-                                    }}>{__('add')}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
-                                    onClick={() => setShowDialog(false)}>{__('cancel')}
-                                </button>
+                                <Button className="ring-slate-400"
+                                        onClick={openAddFactorsDialog}
+                                >{__('add')}</Button>
                             </div>
-                        </Modal>
-                    </div>
+
+                            <div className="flex gap-3 p-2">
+                                <Button className="ring-blue-400 bg-sky-300"
+                                        type="submit"
+                                >{__('save')}</Button>
+                            </div>
+                        </Pane>
+                    </Form>
+                    <Modal show={showDialog} onClose={() => setShowDialog(false)}
+                           header={__('add_factors')} >
+                        <div className="py-3 px-4 flex flex-col gap-2">
+                            <InputOneLine value={dialogData.time}
+                                          name="time"
+                                          label={__('time')}
+                                          type="time"
+                                          onChange={updateDialog}
+                                          onBlur={formatDialog}
+                            />
+                            <InputOneLine value={dialogData.k1}
+                                          name="k1" label={__('k1')}
+                                          onChange={updateDialog}
+                                          onBlur={formatDialog}
+                            />
+                            <InputOneLine value={dialogData.k2}
+                                          name="k2" label={__('k2')}
+                                          onChange={updateDialog}
+                                          onBlur={formatDialog}
+                            />
+                            <InputOneLine value={dialogK3}
+                                          name="k3" label={__('ouv')}
+                                          onChange={updateK3Dialog}
+                                          onBlur={formatK3Dialog}
+                            />
+                        </div>
+                        <div className="flex gap-3 p-2">
+                            <button
+                                type="button"
+                                className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
+                                onClick={() => {
+                                    useDialogResult();
+                                    setShowDialog(false);
+                                }}>{__('add')}
+                            </button>
+                            <button
+                                type="button"
+                                className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
+                                onClick={() => setShowDialog(false)}>{__('cancel')}
+                            </button>
+                        </div>
+                    </Modal>
                 </div>
-            </div>
+            </PageContainer>
         </AuthenticatedLayout>
     );
 }

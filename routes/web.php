@@ -16,9 +16,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/dashboard', function () {
+//    return Inertia::render('Dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -29,16 +29,20 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
         ->name('settings');
     Route::patch('/settings_react', [\App\Http\Controllers\SettingsController::class, 'update'])
         ->name('settings');
+    Route::post('/settings_react/fill-products', [\App\Http\Controllers\SettingsController::class, 'fillProducts'])
+        ->name('settings.fill_products');
 
     Route::get('/factors', [App\Http\Controllers\FactorsController::class, 'index'])
         ->name('factors');
     Route::patch('/factors', [App\Http\Controllers\FactorsController::class, 'update'])
         ->name('factors');
 
+    Route::get('/dashboard', [App\Http\Controllers\DashbordController::class, 'index'])
+        ->name('dashboard');
 
     Route::get('/calculations', function () {
         if (auth()) {
-            $be = Auth::user()->eating->be;
+            $be = Auth::user()->getSetting('User')['be'] ?? 10;
         } else {
             $be = 10;
         }

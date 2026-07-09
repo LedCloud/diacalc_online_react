@@ -8,6 +8,7 @@ import Tooltip from "@/Components/Tooltip.jsx";
 export default function ArchivePage(){
     // 1. Создаем ссылку на DOM-элемент списка
     const listRef = useRef(null);
+    const groupsListRef = useRef(null);
     const { __ } = useTrans();
     const {groups, errors} = usePage().props;
     const [selectedGrId, setSelectedGrId] = useState(groups[0]?.id || null);
@@ -66,7 +67,6 @@ export default function ArchivePage(){
             return;
         }
         setLoading(true);
-        console.log('Cache miss. Fetching from server for group:', selectedGrId)
         axios.get(`/archive/groups/${currentId}/products`)
             .then(response => {
                 const data = response.data;
@@ -83,6 +83,14 @@ export default function ArchivePage(){
             .catch(error => console.error("Error fetching products", error))
             .finally(() => setLoading(false));
 
+    }, [selectedGrId]);
+
+    useEffect(() => {
+        const listElement = groupsListRef.current;
+        if (!listElement || !selectedGrId) return;
+
+        const selectedElement = listElement.querySelector(`[data-group-id="${selectedGrId}"]`);
+        selectedElement?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }, [selectedGrId]);
 
     const closeGroupPopup = () => {
@@ -172,15 +180,16 @@ export default function ArchivePage(){
         </div>
         <div className="groups-full">
             <div className="groups-full__header">
-                <div className="btn groups-full__left" onClick={() => changeGroup('right')}>&lt;&lt;</div>
+                <div className="btn groups-full__left" onClick={() => changeGroup('left')}>&lt;&lt;</div>
                 <div className="groups-full__selected_group">{selectedGroup.name}</div>
                 <div className="btn groups-full__right" onClick={() => changeGroup('right')}>&gt;&gt;</div>
             </div>
-            <div className="groups-full__list">
+            <div className="groups-full__list" ref={groupsListRef}>
                 {groups.map(group => (
                     <div
                         className={`group-item bg-slate-50 ${selectedGroup.id === group.id ? "bg-slate-300" : ""}`}
                         key={group.id}
+                        data-group-id={group.id}
                         onClick={() => setSelectedGrId(group.id)}
                     >{group.name}</div>
                 ))}

@@ -2,13 +2,32 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LinkedInputs from '@/Components/LinkedInputs';
-import {useAuth} from "@/Hooks/useAuth.jsx"; // Импорт твоего компонента
+import {useAuth} from "@/Hooks/useAuth.jsx";
+import PageContainer from "@/Components/PageContainer.jsx";
+import Accordion from "@/Components/Accordion.jsx";
+import MenuPane from "@/Components/Dashbord/MenuPane.jsx";
+import {useTrans} from "@/Hooks/useTrans.jsx";
+import {usePage} from "@inertiajs/react";
 
 export default function Dashboard() {
+    const {menu_items, settings, menu_masks} = usePage().props;
+    console.log('In dash', menu_items, settings);
+    const { __ } = useTrans();
     const [value, setVal] = useState('');
     const multipliedVal = value * 2;
 
     const { hasAccess } = useAuth();
+
+    const items = [
+        {
+            title: __('menu'),
+            content: <MenuPane menu_items={menu_items} settings={settings} menu_masks={menu_masks} />
+        },
+        {
+            title: __('products'),
+            content: <div>Content Second</div>
+        },
+    ];
 
     return (
         <AuthenticatedLayout
@@ -20,36 +39,37 @@ export default function Dashboard() {
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            Let's put inputs here
-                            {hasAccess('platform.index') && (
-                                <a href="/admin" className="btn-admin">
-                                    Панель администратора
-                                </a>
-                            )}
+            <PageContainer>
 
-                            <hr style={{margin: '20px 0'}}/>
-                            <h3>Связанные поля:</h3>
-                            {/* Используем как <x-component /> в Blade */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <LinkedInputs initialValue={10} label="Возраст" />
-                                <LinkedInputs initialValue={100} label="Сумма" />
-                            </div>
+                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="p-6 text-gray-900">
+                        create three panels layout
+                        <Accordion items={items}/>
+                {/*        Let's put inputs here*/}
+                {/*        {hasAccess('platform.index') && (*/}
+                {/*            <a href="/admin" className="btn-admin">*/}
+                {/*                Панель администратора*/}
+                {/*            </a>*/}
+                {/*        )}*/}
 
-                            <div className="panes">
-                                <div className="panes__pane">
-                                    <div className="panes__pane_header">Header</div>
-                                    <div className="panes__pane_content">Content</div>
-                                </div>
-                            </div>
+                {/*        <hr style={{margin: '20px 0'}}/>*/}
+                {/*        <h3>Связанные поля:</h3>*/}
+                {/*        /!* Используем как <x-component /> в Blade *!/*/}
+                {/*        <div className="grid grid-cols-2 gap-4">*/}
+                {/*            <LinkedInputs initialValue={10} label="Возраст" />*/}
+                {/*            <LinkedInputs initialValue={100} label="Сумма" />*/}
+                {/*        </div>*/}
 
-                        </div>
+                {/*        <div className="panes">*/}
+                {/*            <div className="panes__pane">*/}
+                {/*                <div className="panes__pane_header">Header</div>*/}
+                {/*                <div className="panes__pane_content">Content</div>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </AuthenticatedLayout>
     )
         ;
