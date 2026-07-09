@@ -1,26 +1,70 @@
 .archive-layout {
     height: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto 1fr;
     gap: 10px;
-    .groups {
+    @media screen and (min-width: 768px) {
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: 1fr;
+        min-height: 0;
+        height: 100%;
+    }
+    .groups-compact {
         display: grid;
         grid-template-columns: 40px auto 40px;
         gap: 2px;
         align-items: baseline;
-        /*max-height: calc(100vh - 250px);*/
-        /*max-height: 50vh;
-        overflow-y: auto;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #b1b1b1;*/
         &__left, &__right {
-            /*padding: 3px;*/
             background-color: #F1F5F9;
             border-radius: @border-radius;
             cursor: pointer;
+        }
+        @media screen and (min-width: 768px) {
+            display: none;
+        }
+    }
+    .groups-full {
+        display: none;
+        @media screen and (min-width: 768px) {
+            display: flex;
+            flex-direction: column;
+            gap:5px;
+            height: 100%;
+        }
+        &__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-shrink: 0;
+        }
+        &__left, &__right {
+            background-color: #F1F5F9;
+            border-radius: @border-radius;
+            cursor: pointer;
+        }
+        &__selected_group {
+            padding: 0 5px;
+            text-align: center;
+        }
+        &__list {
+            flex-grow: 1;
+            flex-shrink: 1;
+            min-height: 0;      /* МАГИЯ FLEXBOX: разрешает блоку сжиматься меньше размера его контента */
+            overflow-y: auto;
+
+            display:flex;
+            flex-direction: column;
+            gap: 3px;
+            /*overflow-y: auto;*/
+            /*overflow-y: auto;*/
+            .group-item {
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+                border-radius: 3px;
+                padding: 2px 4px;
+            }
         }
     }
     .products {
@@ -28,6 +72,7 @@
         flex-direction: column;
         gap: 7px;
         overflow-y: auto;
+        min-height: 0;
         .product-item {
             padding: 10px;
             display: flex;

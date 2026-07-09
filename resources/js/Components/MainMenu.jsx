@@ -3,8 +3,11 @@ import NavLink from '@/Components/NavLink';
 import {Link} from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo.jsx";
 import Dropdown from "@/Components/Dropdown.jsx";
+import {useAuth} from "@/Hooks/useAuth.jsx";
 
 export default function MainMenu({ items, user }) {
+    const { hasAccess } = useAuth();
+
     return (
         <div className="flex h-16 justify-between">
             <div className="flex">
@@ -63,6 +66,13 @@ export default function MainMenu({ items, user }) {
                             >
                                 Profile
                             </Dropdown.Link>
+                            {hasAccess('platform.index') && (
+                                <Dropdown.Link
+                                    href={route('platform.index')}
+                                >
+                                    Admin Panel**
+                                </Dropdown.Link>
+                            )}
                             <Dropdown.Link
                                 href={route('logout')}
                                 method="post"

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Orchid\Platform\Dashboard;
+use Orchid\Platform\ItemPermission;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,8 +20,15 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Dashboard $dashboard): void
     {
         Vite::prefetch(concurrency: 3);
+
+        $dashboard->registerPermissions(
+            ItemPermission::group('Управление Блогом')
+                ->addPermission('blog.posts.create', 'Создание статей')
+                ->addPermission('blog.posts.edit', 'Редактирование статей')
+                ->addPermission('blog.posts.delete', 'Удаление статей')
+        );
     }
 }

@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.jsx";
 import NavLink from "@/Components/NavLink.jsx";
 import {Link} from "@inertiajs/react";
+import Dropdown from "@/Components/Dropdown.jsx";
+import {useAuth} from "@/Hooks/useAuth.jsx";
 
 export default function MobileMenu({ items, user }) {
+    const { hasAccess } = useAuth();
     // Track active submenus using their index
     const [openSubmenus, setOpenSubmenus] = useState({});
 
@@ -114,14 +117,20 @@ export default function MobileMenu({ items, user }) {
 
                 <div className="mt-3 space-y-1">
                     <ResponsiveNavLink href={route('profile.edit')}>
-                        Profile++
+                        Profile
                     </ResponsiveNavLink>
+                    {hasAccess('platform.index') && (
+                        <a href={route('platform.index')}
+                            className="flex w-full items-start border-l-4 py-2 pe-4 ps-3 border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 text-base font-medium transition duration-150 ease-in-out focus:outline-none ">
+                                Admin Panel22
+                        </a>
+                    )}
                     <ResponsiveNavLink
                         method="post"
                         href={route('logout')}
                         as="button"
                     >
-                        Log ->
+                        Log out
                     </ResponsiveNavLink>
                 </div>
             </div>

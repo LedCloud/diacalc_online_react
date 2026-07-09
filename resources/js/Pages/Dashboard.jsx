@@ -1,11 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
-import LinkedInputs from '@/Components/LinkedInputs'; // Импорт твоего компонента
+import LinkedInputs from '@/Components/LinkedInputs';
+import {useAuth} from "@/Hooks/useAuth.jsx"; // Импорт твоего компонента
 
 export default function Dashboard() {
     const [value, setVal] = useState('');
     const multipliedVal = value * 2;
+
+    const { hasAccess } = useAuth();
 
     return (
         <AuthenticatedLayout
@@ -22,6 +25,11 @@ export default function Dashboard() {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             Let's put inputs here
+                            {hasAccess('platform.index') && (
+                                <a href="/admin" className="btn-admin">
+                                    Панель администратора
+                                </a>
+                            )}
 
                             <hr style={{margin: '20px 0'}}/>
                             <h3>Связанные поля:</h3>

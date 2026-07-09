@@ -6,6 +6,8 @@ import ContextMenu from "@/Components/ContextMenu.jsx";
 import Tooltip from "@/Components/Tooltip.jsx";
 
 export default function ArchivePage(){
+    // 1. Создаем ссылку на DOM-элемент списка
+    const listRef = useRef(null);
     const { __ } = useTrans();
     const {groups, errors} = usePage().props;
     const [selectedGrId, setSelectedGrId] = useState(groups[0]?.id || null);
@@ -25,6 +27,31 @@ export default function ArchivePage(){
         }
         return parsed.toFixed(fractions);
     }
+
+    useEffect(() => {
+        const listElement = listRef.current;
+        if (!listElement) return;
+
+        // Таймер для скролла вниз (запустится через 400мс после открытия)
+        const scrollDownTimeout = setTimeout(() => {
+            listElement.scrollTo({
+                top: 60, // Дистанция в пикселях, на которую опустится список
+                behavior: 'smooth',
+            });
+
+            // Таймер для возврата наверх (запустится через 1 секунду после открытия)
+            const scrollUpTimeout = setTimeout(() => {
+                listElement.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                });
+            }, 600); // 600мс задержки, чтобы пользователь успел заметить движение
+
+            return () => clearTimeout(scrollUpTimeout);
+        }, 400);
+
+        return () => clearTimeout(scrollDownTimeout);
+    }, []); // Пустой массив зависимостей означает, что эффект сработает один раз при монтировании
 
     useEffect(() => {
         if (!selectedGrId) return;
@@ -78,7 +105,6 @@ export default function ArchivePage(){
             else
                 toBeSelected = groups[current + 1].id;
         }
-        console.log(direction, toBeSelected);
         setSelectedGrId(toBeSelected);
     }
 
@@ -133,18 +159,35 @@ export default function ArchivePage(){
     const closeMenu = () => setMenuSettings(prev => ({ ...prev, visible: false }));
 
     return (<div className="archive-layout">
-        <div className="groups">
-            <div className="groups__left btn p-3"
+        <div className="groups-compact">
+            <div className="groups-compact__left btn p-3"
                  onClick={() => changeGroup('left')}
             >&lt;&lt;</div>
             <div className="group btn p-3"
                  onClick={() => setShowGroupPopup(true)}
             >{selectedGroup.name}</div>
-            <div className="groups__right btn p-3"
+            <div className="groups-compact__right btn p-3"
                  onClick={() => changeGroup('right')}
             >&gt;&gt;</div>
         </div>
-        <div className="products context-menu-box" onContextMenu={handleContextMenu}>
+        <div className="groups-full">
+            <div className="groups-full__header">
+                <div className="btn groups-full__left" onClick={() => changeGroup('right')}>&lt;&lt;</div>
+                <div className="groups-full__selected_group">{selectedGroup.name}</div>
+                <div className="btn groups-full__right" onClick={() => changeGroup('right')}>&gt;&gt;</div>
+            </div>
+            <div className="groups-full__list">
+                {groups.map(group => (
+                    <div
+                        className={`group-item bg-slate-50 ${selectedGroup.id === group.id ? "bg-slate-300" : ""}`}
+                        key={group.id}
+                        onClick={() => setSelectedGrId(group.id)}
+                    >{group.name}</div>
+                ))}
+            </div>
+        </div>
+        <div ref={listRef}
+            className="products context-menu-box" onContextMenu={handleContextMenu}>
             {loading ? <p>Loading...</p> : (
                 <>
                 {products.map(product => (
