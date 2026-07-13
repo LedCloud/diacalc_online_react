@@ -18,7 +18,7 @@ class SettingsPatchRequest extends FormRequest
         return [
             'menu_info' => ['numeric', 'integer', 'min:1', 'max:255'],
             'round_to' => ['numeric', Rule::in(['1', '2', '3']),],
-            'calory_limit' => ['numeric', 'integer', 'min:1200', ],
+            'calorie_limit' => ['numeric', 'integer', 'min:1200', ],
 
             'is_mmol' => ['numeric', Rule::in(['1', '0'])],
             'is_plasma' => ['numeric', Rule::in(['1', '0'])],

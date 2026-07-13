@@ -12,7 +12,7 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
     };
 
     const changeCaloryLimit = (val) => {
-        setAllSettings({...allSettings, calory_limit: val});
+        setAllSettings({...allSettings, calorie_limit: val});
     };
 
     const setRoundTo = (val) => {
@@ -56,7 +56,7 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
                                strName={__('gl')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
 
-                    <MaskInput name="calory"
+                    <MaskInput name="calorie"
                                strName={__('calories')}
                                masks={menuMasks} menuInfo={allSettings.menu_info} handlerInfo={setMenuInfo}/>
                 </fieldset>
@@ -76,12 +76,12 @@ export default function MenuTabContect({allSettings, setAllSettings, activeTab, 
                         </select>
                     </div>
                     <div className="field">
-                        <InputTwoLines value={allSettings.calory_limit}
+                        <InputTwoLines value={allSettings.calorie_limit}
                                        label={__('calorie_limit')}
-                                       name="calory_limit"
+                                       name="calorie_limit"
                                        onChange={changeCaloryLimit}
                         />
-                        {errors.calory_limit && <div className="validation-error">{errors.calory_limit}</div>}
+                        {errors.calorie_limit && <div className="validation-error">{errors.calorie_limit}</div>}
                     </div>
                 </fieldset>
             </Pane>

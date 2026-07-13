@@ -10,8 +10,8 @@ import {useTrans} from "@/Hooks/useTrans.jsx";
 import {usePage} from "@inertiajs/react";
 
 export default function Dashboard() {
-    const {menu_items, settings, menu_masks} = usePage().props;
-    console.log('In dash', menu_items, settings);
+    const {menu_items, settings, menu_masks, factors} = usePage().props;
+    console.log('In dash', menu_items, settings, factors);
     const { __ } = useTrans();
     const [value, setVal] = useState('');
     const multipliedVal = value * 2;
@@ -21,7 +21,12 @@ export default function Dashboard() {
     const items = [
         {
             title: __('menu'),
-            content: <MenuPane menu_items={menu_items} settings={settings} menu_masks={menu_masks} />
+            content: <MenuPane
+                menu_items={menu_items}
+                settings={settings}
+                menu_masks={menu_masks}
+                factors={factors}
+            />
         },
         {
             title: __('products'),

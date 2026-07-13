@@ -23,7 +23,7 @@ class MenuInfo
             'dose' => self::MASK_DOSE,
             'gi' => self::MASK_GI,
             'gl' => self::MASK_GL,
-            'calory' => self::MASK_CALOR,
+            'calorie' => self::MASK_CALOR,
             'true' => 0xFF,
             'false' => 0,
         ];
