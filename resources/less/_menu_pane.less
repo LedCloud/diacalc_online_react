@@ -52,6 +52,94 @@
             }
         }
     }
+    &__factors {
+        margin: 5px 0;
+        display: grid;
+        grid-template-areas: "factors factors factors results"
+            "k1 k2 k3 results"
+            "gl1 gl2 be results"
+            "doses doses doses results"
+            "scale scale scale scale";
+        gap: 5px;
+
+        &__k1 {
+            grid-area: k1;
+        }
+        &__k2 {
+            grid-area: k2;
+        }
+        &__k3 {
+            grid-area: k3;
+        }
+        &__gl1 {
+            grid-area: gl1;
+        }
+        &__gl2 {
+            grid-area: gl2;
+        }
+        &__be {
+            grid-area: be;
+        }
+        &__scale {
+            grid-area: scale;
+        }
+        &__results {
+            grid-area: results;
+            display: grid;
+            grid-template-columns: 1fr;
+            padding: 3px;
+            border: @border-color solid 1px;
+            border-radius: @border-radius;
+            .results-piece {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                padding: 1px 2px;
+                align-items: baseline;
+                .results-piece {
+                    &__lbl {
+                        text-align: center;
+                    }
+                    &__vl {
+                        font-weight: 500;
+                        font-size: 0.99rem;
+                        padding: 1px 2px 1px 4px;
+                    }
+                }
+                &:nth-child(odd) {
+                    background-color: #dddddd;
+                }
+            }
+        }
+        .scale-bars {
+
+            >div {
+                padding: 2px 3px;
+            }
+            display: flex;
+            flex-direction: row;
+            &__prot {
+                color: #0b1d3a;
+                text-align: center;
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+                background-color: #ff5500;
+                background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+            }
+            &__fat {
+                color: #0b1d3a;
+                background-color: #ffaa00;
+                text-align: center;
+            }
+            &__carb {
+                color: #0b1d3a;
+                background-color: #00aa00;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                text-align: center;
+            }
+        }
+    }
 }
 
 .info-piece {

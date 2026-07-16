@@ -11,10 +11,8 @@ const InputOneLine = forwardRef(
                 onFocus={(e) => e.target.select()}
                 ref={ref}
                 value={value}
-                onChange={(e) => (onChange ? onChange(e.target.value, name ?? null) : () => {
-                })}
-                onBlur={(e) => (onBlur ? onBlur(e.target.value, name ?? null) : () => {
-                })}
+                onChange={(e) => (onChange?.(e.target.value, name ?? null))}
+                onBlur={(e) => (onBlur?.(e.target.value, name ?? null))}
             />
         </div>
     );

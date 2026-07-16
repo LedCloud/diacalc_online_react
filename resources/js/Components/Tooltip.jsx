@@ -33,7 +33,7 @@ export default function Tooltip({ text, children }) {
                 onFocus={handleMouseEnter}
                 onBlur={handleMouseLeave}
                 style={{ display: 'inline-block', cursor: 'help' }}
-                tabIndex="0"
+                tabIndex="-1"
                 className="tooltip"
             >
         {children}

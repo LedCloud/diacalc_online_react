@@ -16,7 +16,7 @@ export default function Factors({ auth }) {
     const [activeField, setActiveField] = useState({ id: null, val: '' });
     const {settings, factors, errors} = usePage().props;
     const [allSettings, setAllSettings] = useState(settings ?? null);
-    const [rFactors, setRFactors] = useState(factors ?? null);
+    const [pageFactors, setPageFactors] = useState(factors ?? null);
 
     const [showDialog, setShowDialog] = useState(false);
     const defaultFactors = {k1:1,k2:0,k3:2, time:"08:00"};
@@ -35,11 +35,11 @@ export default function Factors({ auth }) {
 
     useEffect(() => {
         setAllSettings(settings);
-        setRFactors(factors);
+        setPageFactors(factors);
     }, [settings, factors]);
 
     const setTime = (id, value) => {
-        setRFactors(latest =>
+        setPageFactors(latest =>
             latest.map(el =>
                 el.id === id
                     ? {...el, time: value}
@@ -47,7 +47,7 @@ export default function Factors({ auth }) {
     };
 
     const setFactor = (id, name, value) => {
-        setRFactors(latest =>
+        setPageFactors(latest =>
             latest.map(el =>
                 el.id === id
                     ? {...el, [name]: value}
@@ -57,7 +57,7 @@ export default function Factors({ auth }) {
     const formatFactor = (id, name, value) => {
         const parsed = parseFloat(value);
         if (!isNaN(parsed) && !value.endsWith('.')) {
-            setRFactors(latest =>
+            setPageFactors(latest =>
                 latest.map(el =>
                     el.id === id
                         ? {...el, [name]: String(parsed.toFixed(2))}
@@ -72,7 +72,7 @@ export default function Factors({ auth }) {
         if (!isNaN(parsed) && !value.endsWith('.')) {
             const newGl = new Glucose();
             newGl.setVal(value, config);
-            setRFactors(latest =>
+            setPageFactors(latest =>
                 latest.map(el =>
                     el.id === id
                         ? {...el, k3: newGl.val}
@@ -85,7 +85,7 @@ export default function Factors({ auth }) {
         if (!isNaN(parsed) && !value.endsWith('.')) {
             const newGl = new Glucose();
             newGl.setVal(value, config);
-            setRFactors(latest =>
+            setPageFactors(latest =>
                 latest.map(el =>
                     el.id === id
                         ? {...el, k3: newGl.val}
@@ -125,7 +125,7 @@ export default function Factors({ auth }) {
     };
 
     const openAddFactorsDialog = () => {
-        const min = rFactors.length > 0 ? Math.min(...rFactors.map(e => e.id)) : 0;
+        const min = pageFactors.length > 0 ? Math.min(...pageFactors.map(e => e.id)) : 0;
         const nextId = min >= 0 ? -1 : (min - 1);
         setDialogData({...defaultFactors, id:nextId});
         setShowDialog(true);
@@ -145,7 +145,7 @@ export default function Factors({ auth }) {
     }
 
     const useDialogResult = () => {
-        setRFactors(latest => {
+        setPageFactors(latest => {
             const copy = { ...dialogData};
             const newGl = new Glucose(2);
             newGl.setVal(dialogK3, config);
@@ -165,7 +165,7 @@ export default function Factors({ auth }) {
     };
 
     const delRow = (id) => {
-        setRFactors(latest => latest.filter(e => e.id !== id));
+        setPageFactors(latest => latest.filter(e => e.id !== id));
     };
 
     const updateK3Dialog = (val) => {
@@ -185,7 +185,7 @@ export default function Factors({ auth }) {
     const calculateOUV = () => {
         //if (!$base->query("UPDATE `coefs` SET `k3`=".
         //             $k3factor."/(".$weight."*`k1`*10/".$be.") WHERE `iduser`='".$user_id."';")){
-        setRFactors(latest => {
+        setPageFactors(latest => {
             return latest.map(row => {
                 return {
                     id: row.id,
@@ -267,7 +267,7 @@ export default function Factors({ auth }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {rFactors.map(row => {
+                                {pageFactors.map(row => {
                                     gl.val = row.k3;
                                     return (
                                         <tr key={row.id}>

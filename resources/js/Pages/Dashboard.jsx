@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import LinkedInputs from '@/Components/LinkedInputs';
 import {useAuth} from "@/Hooks/useAuth.jsx";
 import PageContainer from "@/Components/PageContainer.jsx";
@@ -8,15 +8,19 @@ import Accordion from "@/Components/Accordion.jsx";
 import MenuPane from "@/Components/Dashbord/MenuPane.jsx";
 import {useTrans} from "@/Hooks/useTrans.jsx";
 import {usePage} from "@inertiajs/react";
+import CalculableInput from "@/Components/CalculableInput.jsx";
 
 export default function Dashboard() {
     const {menu_items, settings, menu_masks, factors} = usePage().props;
+
     console.log('In dash', menu_items, settings, factors);
     const { __ } = useTrans();
     const [value, setVal] = useState('');
     const multipliedVal = value * 2;
 
     const { hasAccess } = useAuth();
+
+
 
     const items = [
         {
@@ -34,6 +38,8 @@ export default function Dashboard() {
         },
     ];
 
+
+
     return (
         <AuthenticatedLayout
             header={
@@ -48,7 +54,8 @@ export default function Dashboard() {
 
                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div className="p-6 text-gray-900">
-                        create three panels layout
+                        <CalculableInput valueIn={25} id="cal-1" label="Test"/>
+                        create three panels layout add here
                         <Accordion items={items}/>
                 {/*        Let's put inputs here*/}
                 {/*        {hasAccess('platform.index') && (*/}
