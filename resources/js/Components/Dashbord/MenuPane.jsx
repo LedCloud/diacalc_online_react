@@ -91,6 +91,8 @@ export default function MenuPane({menu_items, settings, menu_masks, factors})
         results.push(result);
     });
 
+    const [showDetails , setShowDetails] = useState(false);
+
     //Object.entries(obj).forEach(([key, value]) => { console.log(`${key} ${value}`); });
     // const menu_info = menu_masks.map(mask => {
     //     return {
@@ -127,23 +129,29 @@ export default function MenuPane({menu_items, settings, menu_masks, factors})
                     </div>
                 ))}
                 <div className="menu-pane__factors">
-                    <div className="menu-pane__factors__k1">
-                        <InputOneLine id="factors-k1" label="k1" value={current_factor.k1} />
+                    <div className="menu-pane__factors__k1 factor">
+                        <label htmlFor="factors-k1">k1</label>
+                        <input id="factors-k1" value={current_factor.k1} />
                     </div>
-                    <div className="menu-pane__factors__k2">
-                        <InputOneLine id="factors-k2" label="k2" value={current_factor.k2} />
+                    <div className="menu-pane__factors__k2 factor">
+                        <label htmlFor="factors-k2">k2</label>
+                        <input id="factors-k2" value={current_factor.k2} />
                     </div>
-                    <div className="menu-pane__factors__k3">
-                        <InputOneLine label="OUV" value={current_factor.k3} />
+                    <div className="menu-pane__factors__k3 factor">
+                        <label htmlFor="factors-k3">k3</label>
+                        <input id="factors-k3" value={current_factor.k3} />
                     </div>
-                    <div className="menu-pane__factors__gl1">
-                        <InputOneLine label="gl1" value={current_factor.gl1} />
+                    <div className="menu-pane__factors__gl1 factor">
+                        <label htmlFor="factors-gl1">gl1</label>
+                        <input id="factors-gl1" value={current_factor.gl1} />
                     </div>
-                    <div className="menu-pane__factors__gl2">
-                        <InputOneLine label="gl2" value={current_factor.gl2} />
+                    <div className="menu-pane__factors__gl2 factor">
+                        <label htmlFor="factors-gl2">gl2</label>
+                        <input id="factors-gl2" value={current_factor.gl2} />
                     </div>
-                    <div className="menu-pane__factors__be">
-                        <InputOneLine label="be" value={settings.be} />
+                    <div className="menu-pane__factors__be factor">
+                        <label htmlFor="factors-be">BE</label>
+                        <input id="factors-be" value={settings.be} />
                     </div>
                     <div className="menu-pane__factors__results">
                         <div className="factors__results__prot results-piece">
@@ -169,6 +177,27 @@ export default function MenuPane({menu_items, settings, menu_masks, factors})
                         <div className="factors__results__gl results-piece">
                             <div className="factors__results__gl_lbl results-piece__lbl">GL</div>
                             <div className="factors__results__gl_vl results-piece__vl">{21}</div>
+                        </div>
+                    </div>
+                    <div className="menu-pane__factors__grand-total" onClick={() => setShowDetails(!showDetails)}>
+                        <div className="doses-sign">+</div>
+                        <div className="doses-quick"><span className="dose-label">qck</span>6.0</div>
+                        <div className="doses-slow"><span className="dose-label">sl</span>4.1</div>
+                        <div className="doses-sum"><span className="dose-label">=&nbsp;Σ</span>10.1</div>
+
+                        <div style={{ display: showDetails ? 'block' : 'none' }}
+                            className="doses-detail-quick1"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + Qcarb</span>4.3
+                            <span className="dose-label">)</span></div>
+                        <div style={{ display: showDetails ? 'block' : 'none' }}
+                            className="doses-detail-slow1"><span className="dose-label">(sl</span>1.8<span className="dose-label"> + SLfp</span>2.4
+                            <span className="dose-label">)</span></div>
+
+                        <div style={{ display: showDetails ? 'block' : 'none' }}
+                             className="doses-detail-quick2"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + carb</span>6.0
+                            <span className="dose-label">)</span>
+                        </div>
+                        <div style={{ display: showDetails ? 'block' : 'none' }}
+                             className="doses-detail-slow2"><span className="dose-label">(fp</span>2.4)
                         </div>
                     </div>
                     <div className="menu-pane__factors__scale">
