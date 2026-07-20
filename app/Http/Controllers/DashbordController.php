@@ -3,11 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Classes\Settings\MenuInfo;
+use App\Models\Menu;
 use App\Services\CalculateFactorsService;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class DashbordController
 {
+    public function deleteitem(Menu $menu)
+    {
+        // Ensure the menu belongs to the current user
+        if ($menu->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $menu->delete();
+
+        return redirect()->back();
+    }
+    public function update(Request $request)
+    {
+        Log::info('req', $request->all());
+
+        $validated = $request->validate([
+            'menu_items' => 'required|array',
+            'menu_items.*.id' => 'numeric|min:1|integer',
+            'menu_items.*.weight' => 'numeric|min:0|integer',
+        ]);
+
+        $current_ids = auth()->user()->menus->pluck('id')->toArray();
+
+        $to_update = array_column($validated['menu_items'], 'id');
+        $to_delete = array_diff($current_ids, $to_update);
+        auth()->user()->menus()->whereIn('id', $to_delete)->delete();
+        foreach($validated['menu_items'] as $menu_data) {
+            auth()->user()->menus()->where('id', $menu_data['id'])->update(['weight' => $menu_data['weight']]);
+        }
+
+        return redirect()->back();
+    }
     public function index()
     {
         $menus = auth()->user()->menus;
@@ -20,8 +55,11 @@ class DashbordController
         $masks = MenuInfo::getAllNamed();
         unset($masks['true'], $masks['false']);
 
+        //dd(auth()->user()->eating);
+
         return Inertia::render('Dashboard',
             [
+                'eating' => auth()->user()->eating,
                 'menu_items' => $menus,
                 'settings' => $setting,
                 'menu_masks' => $masks,

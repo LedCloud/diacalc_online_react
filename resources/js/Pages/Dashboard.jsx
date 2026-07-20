@@ -25,12 +25,7 @@ export default function Dashboard() {
     const items = [
         {
             title: __('menu'),
-            content: <MenuPane
-                menu_items={menu_items}
-                settings={settings}
-                menu_masks={menu_masks}
-                factors={factors}
-            />
+            content: <MenuPane />
         },
         {
             title: __('products'),

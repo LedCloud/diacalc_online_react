@@ -39,6 +39,10 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
 
     Route::get('/dashboard', [App\Http\Controllers\DashbordController::class, 'index'])
         ->name('dashboard');
+    Route::post('/dashboard/updatemenu', [App\Http\Controllers\DashbordController::class, 'update'])
+        ->name('dashboard.updatemenu');
+    Route::delete('/dashboard/updatemenu/{menu}', [App\Http\Controllers\DashbordController::class, 'delete'])
+        ->name('dashboard.deleteitem');
 
     Route::get('/calculations', function () {
         if (auth()) {

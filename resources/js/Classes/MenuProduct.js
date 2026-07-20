@@ -31,7 +31,7 @@ export default class MenuProduct {
     }
 
     getCalor() {
-        console.log('Calorie', this.getCalorByFat(), this.getCalorByProt(), this.getCalorByCarb());
+        //console.log('Calorie', this.getCalorByFat(), this.getCalorByProt(), this.getCalorByCarb());
         return this.getCalorByFat() + this.getCalorByProt() + this.getCalorByCarb();
     }
 

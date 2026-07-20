@@ -1,19 +1,29 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 export default function CalculableInput({label, id, valueIn, fractions=0, setHandler})
 {
     const [value, setValue] = useState(valueIn);
     const [errors, setError] = useState([]);
 
+    // Синхронизируем локальный стейт, если valueIn изменился в родителе
+    useEffect(() => {
+        setValue(String(valueIn ?? ""));
+    }, [valueIn]);
+
     // Регулярное выражение разрешает ТОЛЬКО: цифры, точки, +, -, *, /, (, ) и пробелы
     const allowed = /^[0-9+\-*/().\s]+$/;
 
     const errorSetter = (error) => {
-        setError(last => {
-            last.push(error);
-            setError(last);
-        });
+        // Создаем НОВЫЙ массив с помощью spread-оператора
+        setError(last => [...last, error]);
     };
+
+    // const errorSetter = (error) => {
+    //     setError(last => {
+    //         last.push(error);
+    //         setError(last);
+    //     });
+    // };
 
     const handleBlur = () => {
         if (!value.trim()) return;
@@ -50,7 +60,7 @@ export default function CalculableInput({label, id, valueIn, fractions=0, setHan
             onFocus={(e) => e.target.select()}
             onChange={(e) => {
                 setValue(e.target.value);
-                setHandler?.(res);
+                //setHandler(e.target.value);
             }}
             onBlur={handleBlur}
             placeholder="(15+30)*3 - 10"

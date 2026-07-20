@@ -77,9 +77,9 @@ class MigrateFromOld extends Command
                 'k1' => $old_user->k1 ?? 1.0,
                 'k2' => $old_user->k2 ?? 0.0,
                 'k3' => $old_user->k3 ?? 2.0,
-                'sh1' => $old_user->sh1 ?? 5.6,
-                'sh2' => $old_user->sh2 ?? 5.6,
-                'be' => $old_user->be ?? 10,
+                'gl1' => $old_user->sh1 ?? 5.6,
+                'gl2' => $old_user->sh2 ?? 5.6,
+                //'be' => $old_user->be ?? 10,
                 'eaten' => $old_user->eaten ?? 0,
                 'eaten_date' => Carbon::createFromFormat('Y-m-d', $old_user->eatendate ?? now()),
             ]);

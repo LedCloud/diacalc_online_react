@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Eating extends Model
 {
     protected $fillable = [
-        'k1','k2','k3','sh1','sh2','be','eaten', 'eaten_date'
+        'k1','k2','k3','gl1','gl2','be','eaten', 'eaten_date'
     ];
 
     /**
