@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import React, {useEffect, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import LinkedInputs from '@/Components/LinkedInputs';
 import {useAuth} from "@/Hooks/useAuth.jsx";
 import PageContainer from "@/Components/PageContainer.jsx";
@@ -20,18 +20,20 @@ export default function Dashboard() {
 
     const { hasAccess } = useAuth();
 
+    // Stable element identity so Accordion does not receive a fresh <MenuPane />
+    // on every Dashboard render (avoids unnecessary reconcile churn).
+    const menuPane = useMemo(() => <MenuPane />, []);
 
-
-    const items = [
+    const items = useMemo(() => [
         {
             title: __('menu'),
-            content: <MenuPane />
+            content: menuPane,
         },
         {
             title: __('products'),
-            content: <div>Content Second</div>
+            content: <div>Content Second</div>,
         },
-    ];
+    ], [__, menuPane]);
 
 
 

@@ -9,13 +9,15 @@ import MenuProduct from "@/Classes/MenuProduct.js";
 import valueCalculator from "@/Classes/MenuCalulator.js";
 import {Head, useForm} from "@inertiajs/react";
 import CalculableInput from "@/Components/CalculableInput.jsx";
-import InputOneLine from "@/Components/InputOneLine.jsx";
+import GlucoseInput from "@/Components/GlucoseInput.jsx";
 import Scale from "@/Components/Scale.jsx";
 import Glucose from "@/Classes/Glucose.js";
 import {usePage, Form, router} from '@inertiajs/react'
 
 export default function MenuPane()
 {
+    const [activeField, setActiveField] = useState({ id: null, val: '' });
+
     // 1. По-прежнему берем данные из Inertia
     const {settings, menu_masks, factors, menu_items, eating} = usePage().props;
 
@@ -26,8 +28,8 @@ export default function MenuPane()
             k1: eating?.k1 ?? 1,
             k2: eating?.k2 ?? 0,
             k3: eating?.k3 ?? 2,
-            sh1: eating?.sh1 ?? 5.6,
-            sh2: eating?.sh2 ?? 5.6,
+            gl1: eating?.gl1 ?? 5.6,
+            gl2: eating?.gl2 ?? 5.6,
             be: eating?.be ?? 10,
             eaten: eating?.eaten ?? 0,
             eaten_date: eating?.eaten_date ?? null,
@@ -40,8 +42,8 @@ export default function MenuPane()
                 k1: eating.k1,
                 k2: eating.k2,
                 k3: eating.k3,
-                sh1: eating.sh1,
-                sh2: eating.sh2,
+                gl1: eating.gl1,
+                gl2: eating.gl2,
                 be: eating.be,
                 eaten: eating.eaten,
                 eaten_date: eating.eaten_date,
@@ -49,9 +51,8 @@ export default function MenuPane()
         }
     }, [eating]);
 
-    console.log('Eating', data);
-
     const current_factor = Object.values(factors).find(f => f.now === true);
+
     const factor = new Factor(
         data.eating.k1,
         data.eating.k2,
@@ -86,11 +87,14 @@ export default function MenuPane()
         }
     };
 
-
-
     const [k3, setK3] = useState(new Glucose(factor.k3));
     const [gl1, setGl1] = useState(new Glucose(factor.gl1));
     const [gl2, setGl2] = useState(new Glucose(factor.gl2));
+
+    const [glucose1, setGlucose1] = useState(new Glucose(factor.gl1));
+    const [glucose2, setGlucose2] = useState(new Glucose(factor.gl2));
+    const [ouv, setOUV] = useState(new Glucose(factor.k3));
+    const [k1, setK1] = useState(factor.k1);
 
     const calculateMenuTotals = (items, factor) => {
         const total = new MenuProduct('', 0, 0, 0, 0, 0, 50, 0);
@@ -265,8 +269,84 @@ export default function MenuPane()
             preserveScroll: true,
         });
     };
+    const updateGlucose = (val, field) => {
+        setActiveField({ id: field, val: val });
 
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const gls = ['glucose1', 'glucose2', 'ouv'];
+            if (gls.includes(field)) {
+                const newGl = new Glucose();
+                const config = formGlConfig();
+                newGl.setVal(val, config);
+                switch (field) {
+                    case 'glucose1':setGlucose1(newGl);
+                        break;
+                    case 'glucose2': setGlucose2(newGl);
+                        break;
+                    case 'ouv': setOUV(newGl);
+                        break;
+                    case 'k1': setK1()
+                }
+            } else {
+                switch (field) {
+                    case "k1": setK1(val);
+                        break;
+                }
+            }
+        }
+    };
+    const formatGlucose = (val, field) => {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed) && !val.endsWith('.')) {
+            const gls = ['glucose1', 'glucose2', 'ouv'];
+            if (gls.includes(field)) {
+                const newGl = new Glucose();
+                newGl.setVal(val, formGlConfig());
+                switch (field) {
+                    case 'glucose1':setGlucose1(newGl);
+                        break;
+                    case 'glucose2': setGlucose2(newGl);
+                        break;
+                    case 'ouv': setOUV(newGl);
+                        break;
+                }
+            } else {
+                switch (field) {
+                    case 'k1':
+                        const formatted = parsed.toFixed(2);
+                        const copy = new Factor(0,0,0,0,0,0);
+                        copy.clone(factor);
+                        copy.k1 = formatted;
+                        setData();
+                        break;
+                }
+            }
 
+        }
+        setActiveField({ id: null, val: '' });
+
+        // const factors = {
+        //     k1: data.eating.k1,
+        //     k2: data.eating.k2,
+        //     k3: ouv.val,
+        //     gl1: glucose1.val,
+        //     gl2: glucose1.val,
+        //     be: factor.be,
+        // };
+
+        //here we can send the changes to back
+        router.post(route('dashboard.updatefactors'), {
+            factor
+        }, {
+            preserveScroll: true,
+        });
+    };
+
+    const valGlucose1 = activeField.id === 'glucose1' ? activeField.val : glucose1.getView(formGlConfig());
+    const valGlucose2 = activeField.id === 'glucose2' ? activeField.val : glucose2.getView(formGlConfig());
+    const valOUV = activeField.id === 'ouv' ? activeField.val : ouv.getView(formGlConfig());
+    const valK1 = activeField.id === 'k1' ? activeField.val : factor.k1;
 
     return (
         <div className="menu-pane">
@@ -299,26 +379,51 @@ export default function MenuPane()
                 ))}
 
                 <div className="menu-pane__factors">
+                    <div className="menu-pane__factors__debug">
+                        GL1: {valGlucose1}, GL2: {valGlucose2}, OUV: {valOUV}
+                    </div>
                     <div className="menu-pane__factors__k1 factor">
                         <label htmlFor="factors-k1">k1</label>
-                        <input id="factors-k1" value={current_factor.k1} />
+                        <input
+                            id="factors-k1"
+                            name="k1"
+                            value={valK1}
+                            onFocus={(e) => e.target.select()}
+                            onChange={(e) => updateGlucose(e.target.value, e.target.name)}
+                            onBlur={(e) => formatGlucose(e.target.value, e.target.name)}
+                        />
                     </div>
                     <div className="menu-pane__factors__k2 factor">
                         <label htmlFor="factors-k2">k2</label>
                         <input id="factors-k2" value={current_factor.k2} />
                     </div>
-                    <div className="menu-pane__factors__k3 factor">
-                        <label htmlFor="factors-k3">OUV</label>
-                        <input id="factors-k3" value={k3.getView(formGlConfig())} />
-                    </div>
-                    <div className="menu-pane__factors__gl1 factor">
-                        <label htmlFor="factors-gl1">gl1</label>
-                        <input id="factors-gl1" value={gl1.getView(formGlConfig())} />
-                    </div>
-                    <div className="menu-pane__factors__gl2 factor">
-                        <label htmlFor="factors-gl2">gl2</label>
-                        <input id="factors-gl2" value={gl2.getView(formGlConfig())} />
-                    </div>
+                    <GlucoseInput
+                        className="menu-pane__factors__k3 factor"
+                        id="factors-k3"
+                        field="ouv"
+                        label="OUV"
+                        value={valOUV}
+                        onChange={(v) => updateGlucose(v, 'ouv')}
+                        onBlur={(v) => formatGlucose(v, 'ouv')}
+                    />
+                    <GlucoseInput
+                        className="menu-pane__factors__gl1 factor"
+                        id="factors-gl1"
+                        field="glucose1"
+                        label="gl1"
+                        value={valGlucose1}
+                        onChange={(v) => updateGlucose(v, 'glucose1')}
+                        onBlur={(v) => formatGlucose(v, 'glucose1')}
+                    />
+                    <GlucoseInput
+                        className="menu-pane__factors__gl2 factor"
+                        id="factors-gl2"
+                        field="glucose2"
+                        label="gl2"
+                        value={valGlucose2}
+                        onChange={(v) => updateGlucose(v, 'glucose2')}
+                        onBlur={(v) => formatGlucose(v, 'glucose2')}
+                    />
                     <div className="menu-pane__factors__be factor">
                         <label htmlFor="factors-be">BE</label>
                         <input id="factors-be" value={settings.be} />

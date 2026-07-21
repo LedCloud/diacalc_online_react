@@ -68,6 +68,9 @@
             align-items: baseline;
             align-content: stretch;
             justify-content: flex-start;
+            position: relative;
+            z-index: 1;
+            min-width: 0;
         }
         .factor {
             &>:first-child {
@@ -76,6 +79,12 @@
             &>:last-child {
                 flex-grow: 1;
             }
+        }
+        &__debug {
+            grid-area: factors;
+            min-width: 0;
+            overflow: hidden;
+            font-size: 0.75rem;
         }
         &__k1 {
             grid-area: k1;

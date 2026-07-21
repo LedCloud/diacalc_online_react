@@ -16,8 +16,8 @@ return new class extends Migration
             $table->float('k1')->default(1);
             $table->float('k2')->default(0);
             $table->float('k3')->default(3);
-            $table->float('sh1')->default(5.6);
-            $table->float('sh2')->default(5.6);
+            $table->float('gl1')->default(5.6);
+            $table->float('gl2')->default(5.6);
             $table->float('be')->default(10);
             $table->integer('eaten')->default(0);
             $table->date('eaten_date')->default(null);

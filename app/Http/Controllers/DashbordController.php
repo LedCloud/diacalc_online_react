@@ -11,6 +11,32 @@ use Illuminate\Http\Request;
 
 class DashbordController
 {
+    public function updateFactors(Request $request)
+    {
+        //{"factor":{"k1":1.49,"k2":0.28,"k3":1.33929,"gl1":10.7143,"gl2":5.35714,"be":12}}
+        Log::info('Got factors', $request->all());
+
+        $validated = $request->validate([
+            'factor' => 'required|array',
+            'factor.k1' => 'numeric|min:0.01',
+            'factor.k2' => 'numeric|min:0',
+            'factor.k3' => 'numeric|min:0.01',
+            'factor.gl1' => 'numeric|min:0.1',
+            'factor.gl2' => 'numeric|min:0.1',
+            'factor.be' => 'numeric|min:0.1',
+        ]);
+
+        $eating = auth()->user()->eating;
+        $eating = array_merge($eating->toArray(), $validated);
+
+        $setting = auth()->user()->getSetting('User');
+        $setting['be'] = $validated['factor']['be'];
+        auth()->user()->putSetting('User', $setting);
+
+        Log::info('Validated', $validated);
+
+        return redirect()->back();
+    }
     public function deleteitem(Menu $menu)
     {
         // Ensure the menu belongs to the current user

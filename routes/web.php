@@ -41,6 +41,8 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
         ->name('dashboard');
     Route::post('/dashboard/updatemenu', [App\Http\Controllers\DashbordController::class, 'update'])
         ->name('dashboard.updatemenu');
+    Route::post('/dashboard/updateating', [App\Http\Controllers\DashbordController::class, 'updateFactors'])
+        ->name('dashboard.updatefactors');
     Route::delete('/dashboard/updatemenu/{menu}', [App\Http\Controllers\DashbordController::class, 'delete'])
         ->name('dashboard.deleteitem');
 
