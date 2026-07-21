@@ -7,22 +7,25 @@ import Factor from "@/Classes/Factor.js";
 import Dose from "@/Classes/Dose.js";
 import MenuProduct from "@/Classes/MenuProduct.js";
 import valueCalculator from "@/Classes/MenuCalulator.js";
-import {Head, useForm} from "@inertiajs/react";
+import {useForm} from "@inertiajs/react";
 import CalculableInput from "@/Components/CalculableInput.jsx";
 import GlucoseInput from "@/Components/GlucoseInput.jsx";
 import Scale from "@/Components/Scale.jsx";
 import Glucose from "@/Classes/Glucose.js";
-import {usePage, Form, router} from '@inertiajs/react'
+import {usePage, router} from '@inertiajs/react'
 
 export default function MenuPane()
 {
+    //This is to understand what field is being edited right now, to allow enter part of the number
     const [activeField, setActiveField] = useState({ id: null, val: '' });
 
     // 1. По-прежнему берем данные из Inertia
+    //props (read-only snapshot)
     const {settings, menu_masks, factors, menu_items, eating} = usePage().props;
 
     // 2. Инициализируем форму. Первичный источник правды для UI теперь data.items
-    const { data, setData, post, processing } = useForm({
+    //local working copy (editable).
+    const { data, setData } = useForm({
         menu_items: menu_items || [],
         eating: {
             k1: eating?.k1 ?? 1,
@@ -36,7 +39,7 @@ export default function MenuPane()
         }
     });
 
-    useEffect(() => {
+    useEffect(() => { //this one is needed to update eating after post request
         if (eating) {
             setData('eating', {
                 k1: eating.k1,
@@ -51,6 +54,12 @@ export default function MenuPane()
         }
     }, [eating]);
 
+    /*
+    * TODO Line 57 is confusing me. Probably it goes from the initial implementation.
+    * The array factors contains factors calculated by 24 hours, label now in it marks the factors that are suitable for the current hour.
+    * But applied factors are in eating. The plan to use factors - add the selectbox where the user can select the factrors to apply and copy
+    * selected factors to eating. Now it's not implemented. So I write it for me mostly. I add a todo to add changes later.
+     */
     const current_factor = Object.values(factors).find(f => f.now === true);
 
     const factor = new Factor(
@@ -87,106 +96,10 @@ export default function MenuPane()
         }
     };
 
-    const [k3, setK3] = useState(new Glucose(factor.k3));
-    const [gl1, setGl1] = useState(new Glucose(factor.gl1));
-    const [gl2, setGl2] = useState(new Glucose(factor.gl2));
-
     const [glucose1, setGlucose1] = useState(new Glucose(factor.gl1));
     const [glucose2, setGlucose2] = useState(new Glucose(factor.gl2));
     const [ouv, setOUV] = useState(new Glucose(factor.k3));
     const [k1, setK1] = useState(factor.k1);
-
-    const calculateMenuTotals = (items, factor) => {
-        const total = new MenuProduct('', 0, 0, 0, 0, 0, 50, 0);
-        items?.forEach(item => {
-            const product = new MenuProduct(
-                item.name, item.id, item.weight,
-                item.prot, item.fat, item.carb, item.gi, 0
-            );
-            total.addProduct(product);
-        });
-        const dose = new Dose(total, factor);
-        return {
-            product: total,
-            nutrients: {
-                prot: total.getProt(),
-                fat: total.getFat(),
-                carb: total.getCarb(),
-                gi: total.gi,
-                calorie: total.getCalor(),
-                gl: total.getGLIndx(),
-            },
-            doses: {
-                dps: dose.getDPS(),
-                qCarbD: dose.getQCarbD(),
-                slCarbD: dose.getSlCarbD(),
-                carbD: dose.getCarbD(),
-                protFatD: dose.getProtFatD(),
-                quick: dose.getDPS() + dose.getQCarbD(),
-                slow: dose.getSlCarbD() + dose.getProtFatD(),
-                total: dose.getWholeD(),
-            },
-        };
-    };
-
-    const totals = React.useMemo(
-        () => calculateMenuTotals(data.menu_items, factor),
-        [data.menu_items, factor]
-    );
-
-    /*useEffect(() => {
-        //setPageMenuItems(menu_items);
-        setPageFactors(factors);
-    }, [ factors]);*/
-
-    // const setMenuItemWeight = (id, value) => {
-    //     setPageMenuItems(latest =>
-    //         latest.map(el => el.id === id ? {...el, weight: value} : el)
-    //     );
-    // };
-
-    const formatMenuItemWeight = (id, value) => {
-        const parsed = parseFloat(value);
-        if (!isNaN(parsed) && !value.endsWith('.')) {
-            setPageMenuItems(latest =>
-                latest.map(el => el.id === id ? {...el, weight:String(parsed.toFixed(0))} : el)
-            );
-        }
-    };
-
-    //Factors - it's an array witgh time , k1, k2, k3
-    //First of all k3 must be converted respect the BE and settings mmol and plasma
-    //console.log('Check names',factors);
-    //console.log('Settings', settings);
-
-    const setFactor = (id, name, value) => {
-        setPageFactors(latest =>
-            latest.map(el =>
-                el.id === id
-                    ? {...el, [name]: value}
-                    : el));
-    };
-
-    const formatFactor = (id, name, value) => {
-        const parsed = parseFloat(value);
-        if (!isNaN(parsed) && !value.endsWith('.')) {
-            setPageFactors(latest =>
-                latest.map(el =>
-                    el.id === id
-                        ? {...el, [name]: String(parsed.toFixed(2))}
-                        : el));
-        }
-    };
-
-    const setMenuItemWeight = (id, value) => {
-        setData(
-            'menu_items',
-            data.menu_items.map(el =>
-                el.id === id ? { ...el, weight: value } : el
-            )
-        );
-    };
-
 
     const deleteItem = (id) => {
         const updated = data.menu_items.filter(el => el.id !== id);
@@ -220,7 +133,6 @@ export default function MenuPane()
 
         const dose = new Dose(product, factor);
 
-        //Return InfoPieces
         const pieces = Object.entries(mask_arr).map(([mask, index]) => {
             const {val,precision} = valueCalculator(item, mask, settings, factor);
             return {
@@ -241,21 +153,6 @@ export default function MenuPane()
     });
 
     const [showDetails , setShowDetails] = useState(false);
-
-    //Object.entries(obj).forEach(([key, value]) => { console.log(`${key} ${value}`); });
-    // const menu_info = menu_masks.map(mask => {
-    //     return {
-    //         title: mask.
-    //     }
-    // });
-
-    // 6. Отправка формы на сервер через PATCH
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        patch(route("dashboard.updatemenu"), {
-            preserveScroll: true, // Страница не будет прыгать вверх при сохранении
-        });
-    };
 
     const setMenuItemWeightAndSave = (id, value) => {
         const updated = data.menu_items.map(el =>
@@ -286,7 +183,6 @@ export default function MenuPane()
                         break;
                     case 'ouv': setOUV(newGl);
                         break;
-                    case 'k1': setK1()
                 }
             } else {
                 switch (field) {
@@ -326,15 +222,6 @@ export default function MenuPane()
         }
         setActiveField({ id: null, val: '' });
 
-        // const factors = {
-        //     k1: data.eating.k1,
-        //     k2: data.eating.k2,
-        //     k3: ouv.val,
-        //     gl1: glucose1.val,
-        //     gl2: glucose1.val,
-        //     be: factor.be,
-        // };
-
         //here we can send the changes to back
         router.post(route('dashboard.updatefactors'), {
             factor
@@ -366,9 +253,6 @@ export default function MenuPane()
                         <div className="menu-item__weight">
                             <CalculableInput
                                 valueIn={item.product.weight}
-                                // setHandler={(val) => {
-                                //     setMenuItemWeight(item.id, val);
-                                // }}
                                 setHandler={(val) => setMenuItemWeightAndSave(item.id, val)}
                             />
                         </div>
@@ -379,9 +263,6 @@ export default function MenuPane()
                 ))}
 
                 <div className="menu-pane__factors">
-                    <div className="menu-pane__factors__debug">
-                        GL1: {valGlucose1}, GL2: {valGlucose2}, OUV: {valOUV}
-                    </div>
                     <div className="menu-pane__factors__k1 factor">
                         <label htmlFor="factors-k1">k1</label>
                         <input

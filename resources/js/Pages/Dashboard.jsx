@@ -1,24 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import React, {useMemo, useState} from 'react';
-import LinkedInputs from '@/Components/LinkedInputs';
-import {useAuth} from "@/Hooks/useAuth.jsx";
+import React, {useMemo} from 'react';
 import PageContainer from "@/Components/PageContainer.jsx";
 import Accordion from "@/Components/Accordion.jsx";
 import MenuPane from "@/Components/Dashbord/MenuPane.jsx";
 import {useTrans} from "@/Hooks/useTrans.jsx";
-import {usePage} from "@inertiajs/react";
-import CalculableInput from "@/Components/CalculableInput.jsx";
 
 export default function Dashboard() {
-    const {menu_items, settings, menu_masks, factors} = usePage().props;
-
-    console.log('In dash', menu_items, settings, factors);
     const { __ } = useTrans();
-    const [value, setVal] = useState('');
-    const multipliedVal = value * 2;
-
-    const { hasAccess } = useAuth();
 
     // Stable element identity so Accordion does not receive a fresh <MenuPane />
     // on every Dashboard render (avoids unnecessary reconcile churn).
@@ -35,8 +24,6 @@ export default function Dashboard() {
         },
     ], [__, menuPane]);
 
-
-
     return (
         <AuthenticatedLayout
             header={
@@ -48,38 +35,12 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             <PageContainer>
-
                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div className="p-6 text-gray-900">
-                        <CalculableInput valueIn={25} id="cal-1" label="Test"/>
-                        create three panels layout add here
                         <Accordion items={items}/>
-                {/*        Let's put inputs here*/}
-                {/*        {hasAccess('platform.index') && (*/}
-                {/*            <a href="/admin" className="btn-admin">*/}
-                {/*                Панель администратора*/}
-                {/*            </a>*/}
-                {/*        )}*/}
-
-                {/*        <hr style={{margin: '20px 0'}}/>*/}
-                {/*        <h3>Связанные поля:</h3>*/}
-                {/*        /!* Используем как <x-component /> в Blade *!/*/}
-                {/*        <div className="grid grid-cols-2 gap-4">*/}
-                {/*            <LinkedInputs initialValue={10} label="Возраст" />*/}
-                {/*            <LinkedInputs initialValue={100} label="Сумма" />*/}
-                {/*        </div>*/}
-
-                {/*        <div className="panes">*/}
-                {/*            <div className="panes__pane">*/}
-                {/*                <div className="panes__pane_header">Header</div>*/}
-                {/*                <div className="panes__pane_content">Content</div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-
                     </div>
                 </div>
             </PageContainer>
         </AuthenticatedLayout>
-    )
-        ;
+    );
 }

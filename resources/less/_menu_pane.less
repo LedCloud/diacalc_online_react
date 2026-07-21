@@ -55,7 +55,7 @@
     &__factors {
         margin: 5px 0;
         display: grid;
-        grid-template-areas: "factors factors factors results"
+        grid-template-areas:
             "k1 k2 k3 results"
             "gl1 gl2 be results"
             "doses doses doses results"
@@ -79,12 +79,6 @@
             &>:last-child {
                 flex-grow: 1;
             }
-        }
-        &__debug {
-            grid-area: factors;
-            min-width: 0;
-            overflow: hidden;
-            font-size: 0.75rem;
         }
         &__k1 {
             grid-area: k1;
