@@ -55,6 +55,7 @@
     &__factors {
         margin: 5px 0;
         display: grid;
+        grid-template-columns: 3fr 3fr 3fr 1fr;
         grid-template-areas:
             "select select select results"
             "k1 k2 k3 results"
@@ -70,7 +71,6 @@
         }
         .factor {
             display: flex;
-            /*grid-template-columns: 30px 1fr;*/
             gap: 3px;
             align-items: baseline;
             align-content: stretch;
@@ -89,7 +89,6 @@
         }
         &__k1 {
             grid-area: k1;
-
         }
         &__k2 {
             grid-area: k2;
@@ -138,7 +137,6 @@
             }
         }
         .scale-bars {
-
             >div {
                 padding: 2px 3px;
             }
@@ -167,7 +165,8 @@
             }
         }
         &__grand-total {
-            /*background-color: #00aa00;*/
+            justify-self: center;
+            width: 85%;
             grid-area: doses;
             display: grid;
             /* Closed: one row so + / = align with the values */
@@ -176,6 +175,7 @@
             gap: 5px;
             justify-content: center;
             align-items: baseline;
+            justify-items: center;
             font-weight: 600;
             font-size: 1.05rem;
 

@@ -26,8 +26,11 @@ class DashbordController
             'factor.be' => 'numeric|min:0.1',
         ]);
 
-        $eating = auth()->user()->eating;
-        $eating = array_merge($eating->toArray(), $validated);
+        $factor = $validated['factor'];
+
+        auth()->user()->eating->update(
+            collect($factor)->only(['k1', 'k2', 'k3', 'gl1', 'gl2'])->all()
+        );
 
         $setting = auth()->user()->getSetting('User');
         $setting['be'] = $validated['factor']['be'];
@@ -48,6 +51,7 @@ class DashbordController
 
         return redirect()->back();
     }
+
     public function update(Request $request)
     {
         Log::info('req', $request->all());
@@ -76,12 +80,12 @@ class DashbordController
 
         if ($setting['factors_by_time'] && count(auth()->user()->factors)) {
             $factors = CalculateFactorsService::calculate(auth()->user()->factors);
+        } else {
+            $factors = auth()->user()->factors;
         }
 
         $masks = MenuInfo::getAllNamed();
         unset($masks['true'], $masks['false']);
-
-        //dd(auth()->user()->eating);
 
         return Inertia::render('Dashboard',
             [

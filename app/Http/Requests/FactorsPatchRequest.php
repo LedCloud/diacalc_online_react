@@ -35,6 +35,8 @@ class FactorsPatchRequest extends FormRequest
 
         if (isset($this->factors_by_time)) {
             $validated['factors_by_time'] = (int)($this->factors_by_time === 'timed');
+        } else {
+            $validated['factors_by_time'] = 0;
         }
 
         if (!empty($validated['factors'])) {

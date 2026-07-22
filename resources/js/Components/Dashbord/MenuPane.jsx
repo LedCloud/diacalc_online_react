@@ -12,20 +12,23 @@ import GlucoseInput from "@/Components/GlucoseInput.jsx";
 import Scale from "@/Components/Scale.jsx";
 import Glucose from "@/Classes/Glucose.js";
 import {usePage, router} from '@inertiajs/react'
+import Dose from "@/Classes/Dose.js";
+import Tooltip from "@/Components/Tooltip.jsx";
 
 export default function MenuPane()
 {
     //This is to understand what field is being edited right now, to allow enter part of the number
     const [activeField, setActiveField] = useState({ id: null, val: '' });
 
-    // 1. По-прежнему берем данные из Inertia
-    //props (read-only snapshot)
+    // 1. Props from Inertia (read-only snapshot)
     const {settings, menu_masks, factors, menu_items, eating} = usePage().props;
 
-    console.log('Factors', factors);
+    const factorsByTime = Boolean(+settings.factors_by_time);
+    // 24h object (by-time) or user Factors.jsx list (0–N); empty is normal → hide select
+    const factorOptions = Object.values(factors ?? {});
 
-    // 2. Инициализируем форму. Первичный источник правды для UI теперь data.items
-    //local working copy (editable).
+    // 2. Form: local editable copy. Applied k1/k2/k3 always live in data.eating.
+    // Schedule rows are copied into eating only via select or clear (now-row when by-time).
     const { data, setData } = useForm({
         menu_items: menu_items || [],
         eating: {
@@ -55,13 +58,16 @@ export default function MenuPane()
         }
     }, [eating]);
 
-    /*
-    * TODO Line 57 is confusing me. Probably it goes from the initial implementation.
-    * The array factors contains factors calculated by 24 hours, label now in it marks the factors that are suitable for the current hour.
-    * But applied factors are in eating. The plan to use factors - add the selectbox where the user can select the factrors to apply and copy
-    * selected factors to eating. Now it's not implemented. So I write it for me mostly. I add a todo to add changes later.
-     */
-    const current_factor = Object.values(factors).find(f => f.now === true);
+    // Select highlight only — do not overwrite eating on load
+    const [currentFactor, setCurrentFactor] = useState(() => {
+        if (!factorOptions.length) {
+            return null;
+        }
+        if (factorsByTime) {
+            return factorOptions.find(f => f.now === true) ?? factorOptions[0];
+        }
+        return factorOptions[0];
+    });
 
     const factor = new Factor(
         data.eating.k1,
@@ -102,6 +108,56 @@ export default function MenuPane()
     const [ouv, setOUV] = useState(new Glucose(factor.k3));
 
     const [k1, setK1] = useState(factor.k1);
+
+    /** Copy a schedule / Factors.jsx row into eating (local + DB). Does not run on page load. */
+    const applyFactorToEating = (selected, { onSuccess } = {}) => {
+        if (!selected) {
+            return;
+        }
+        const nextEating = {
+            ...data.eating,
+            k1: +selected.k1,
+            k2: +selected.k2,
+            k3: +selected.k3,
+        };
+        setData('eating', nextEating);
+        setCurrentFactor(selected);
+        setOUV(new Glucose(+selected.k3));
+        router.post(route('dashboard.updatefactors'), {
+            factor: {
+                k1: nextEating.k1,
+                k2: nextEating.k2,
+                k3: nextEating.k3,
+                gl1: nextEating.gl1,
+                gl2: nextEating.gl2,
+                be: nextEating.be,
+            },
+        }, {
+            preserveScroll: true,
+            onSuccess,
+        });
+    };
+
+    const clearMenu = () => {
+        const nowRow = factorsByTime
+            ? factorOptions.find(f => f.now === true)
+            : null;
+
+        const postClear = () => {
+            setData('menu_items', []);
+            router.post(route('dashboard.updatemenu'), {
+                menu_items: [],
+            }, {
+                preserveScroll: true,
+            });
+        };
+
+        if (nowRow) {
+            applyFactorToEating(nowRow, { onSuccess: postClear });
+        } else {
+            postClear();
+        }
+    };
 
     const deleteItem = (id) => {
         const updated = data.menu_items.filter(el => el.id !== id);
@@ -165,6 +221,7 @@ export default function MenuPane()
     };
 
     const formatGlucose = (val, field) => {
+        const nextEating = {...data.eating};
         const parsed = parseFloat(val);
         if (!isNaN(parsed) && !val.endsWith('.')) {
             const gls = ['glucose1', 'glucose2', 'ouv'];
@@ -179,13 +236,25 @@ export default function MenuPane()
                     case 'ouv': setOUV(newGl);
                         break;
                 }
+                const eatingKey = field === 'glucose1' ? 'gl1'
+                    : field === 'glucose2' ? 'gl2'
+                    : 'k3';
+                nextEating[eatingKey] = newGl.val;
+                setData('eating', nextEating);
             }
         }
         setActiveField({ id: null, val: '' });
 
         //here we can send the changes to back
         router.post(route('dashboard.updatefactors'), {
-            factor
+            factor: {
+                k1: nextEating.k1,
+                k2: nextEating.k2,
+                k3: nextEating.k3,
+                gl1: nextEating.gl1,
+                gl2: nextEating.gl2,
+                be: nextEating.be,
+            },
         }, {
             preserveScroll: true,
         });
@@ -200,16 +269,32 @@ export default function MenuPane()
     };
 
     const formatFactor = (val, field) => {
+        const nextEating = {...data.eating};
         const parsed = parseDec(val);
         if (!isNaN(parsed) && !/[.,]$/.test(val)) {
             let fractions = 0;
             if (field === 'k1' || field === 'k2') {
                 fractions = 2;
             }
-            setData('eating', { ...data.eating, [field]: Number(parsed.toFixed(fractions)) });
+            nextEating[field] = Number(parsed.toFixed(fractions));
+            setData('eating', nextEating);
         }
         //release latch
         setActiveField({ id: null, val: '' });
+
+        //here we can send the changes to back
+        router.post(route('dashboard.updatefactors'), {
+            factor: {
+                k1: nextEating.k1,
+                k2: nextEating.k2,
+                k3: nextEating.k3,
+                gl1: nextEating.gl1,
+                gl2: nextEating.gl2,
+                be: nextEating.be,
+            },
+        }, {
+            preserveScroll: true,
+        });
     };
 
     const valGlucose1 = activeField.id === 'glucose1' ? activeField.val : glucose1.getView(formGlConfig());
@@ -220,13 +305,39 @@ export default function MenuPane()
     const valK2 = activeField.id === 'k2' ? activeField.val : formatDec(data.eating.k2, 2);
     const valBE = activeField.id === 'be' ? activeField.val : formatDec(data.eating.be, 0);
 
+    const calculateMenu = () => {
+        //first find out the summarized product
+        const product = new MenuProduct('',0,0,0,0,0,50,0);
+        //Now add all products to it
+        data.menu_items.forEach(i => {
+            const pr = new MenuProduct(i.name, i.id, i.weight, i.prot, i.fat, i.carb, i.gi, 0);
+            product.addProduct(pr);
+        });
+
+        //Okay now we can calculate Dose
+        const dose = new Dose(product, data.eating);
+
+        return {
+            dose: dose,
+            product: product
+        };
+    };
+
+    const calculation = calculateMenu();
+
     return (
         <div className="menu-pane">
             <div className="menu-pane__actions">
+                <Tooltip text={__('create_product')}>
                 <div className="menu-pane__actions__plus btn"><CiCirclePlus /></div>
+                </Tooltip>
+                <Tooltip text={__('record_diary')}>
                 <div className="menu-pane__actions__diary btn"><GoPencil /></div>
+                </Tooltip>
                 <div className="menu-pane__actions__counter">0+839 / 1800</div>
-                <div className="menu-pane__actions__trash btn"><CiTrash /></div>
+                <Tooltip text={__('trash_menu')}>
+                    <div className="menu-pane__actions__trash btn" onClick={clearMenu}><CiTrash /></div>
+                </Tooltip>
             </div>
             <div className="menu-pane__menu">
                 {(data.menu_items ?? []).map(item => {
@@ -265,18 +376,27 @@ export default function MenuPane()
                 })}
 
                 <div className="menu-pane__factors">
+                    {factorOptions.length > 0 && (
                     <div className="menu-pane__factors__select">
-                        <select className="factors-selector" value={current_factor?.id ?? ''}>
-                            {Object.values(factors ?? {}).map((f) => {
+                        <select className="factors-selector"
+                            onChange={(e) => {
+                                const selected = factorOptions.find(f => f.id == e.target.value);
+                                if (!selected) return;
+                                applyFactorToEating(selected);
+                            }}
+                            value={currentFactor?.id ?? ''}
+                        >
+                            {factorOptions.map((f) => {
                                  const gl = new Glucose(f.k3);
                                  return (
                                     <option key={f.id} value={f.id}>{f.time} k1={f.k1} k2={f.k2} OUV={gl.getView(formGlConfig())}</option>
                                  );
-                        })}
+                            })}
                         </select>
                     </div>
+                    )}
                     <div className="menu-pane__factors__k1 factor">
-                        <label htmlFor="factors-k1">k1</label>
+                        <label htmlFor="factors-k1">{__('k1')}</label>
                         <input
                             id="factors-k1"
                             name="k1"
@@ -287,7 +407,7 @@ export default function MenuPane()
                         />
                     </div>
                     <div className="menu-pane__factors__k2 factor">
-                        <label htmlFor="factors-k2">k2</label>
+                        <label htmlFor="factors-k2">{__('k2')}</label>
                         <input id="factors-k2"
                                name="k2"
                                value={valK2}
@@ -300,7 +420,7 @@ export default function MenuPane()
                         className="menu-pane__factors__k3 factor"
                         id="factors-k3"
                         field="ouv"
-                        label="OUV"
+                        label={__('ouv')}
                         value={valOUV}
                         onChange={(v) => updateGlucose(v, 'ouv')}
                         onBlur={(v) => formatGlucose(v, 'ouv')}
@@ -309,7 +429,7 @@ export default function MenuPane()
                         className="menu-pane__factors__gl1 factor"
                         id="factors-gl1"
                         field="glucose1"
-                        label="gl1"
+                        label={__('gl1')}
                         value={valGlucose1}
                         onChange={(v) => updateGlucose(v, 'glucose1')}
                         onBlur={(v) => formatGlucose(v, 'glucose1')}
@@ -318,13 +438,13 @@ export default function MenuPane()
                         className="menu-pane__factors__gl2 factor"
                         id="factors-gl2"
                         field="glucose2"
-                        label="gl2"
+                        label={__('gl2')}
                         value={valGlucose2}
                         onChange={(v) => updateGlucose(v, 'glucose2')}
                         onBlur={(v) => formatGlucose(v, 'glucose2')}
                     />
                     <div className="menu-pane__factors__be factor">
-                        <label htmlFor="factors-be">BE</label>
+                        <label htmlFor="factors-be">{__('be')}</label>
                         <input id="factors-be"
                                name="be"
                                value={valBE}
@@ -335,28 +455,28 @@ export default function MenuPane()
                     </div>
                     <div className="menu-pane__factors__results">
                         <div className="factors__results__prot results-piece">
-                            <div className="factors__results__prot_lbl results-piece__lbl">P</div>
-                            <div className="factors__results__prot_vl results-piece__vl">{123}</div>
+                            <div className="factors__results__prot_lbl results-piece__lbl">{__('p')}</div>
+                            <div className="factors__results__prot_vl results-piece__vl">{formatDec(calculation.product.getProt(),0)}</div>
                         </div>
                         <div className="factors__results__fat results-piece">
-                            <div className="factors__results__fat_lbl results-piece__lbl">F</div>
-                            <div className="factors__results__fat_vl results-piece__vl">{123}</div>
+                            <div className="factors__results__fat_lbl results-piece__lbl">{__('f')}</div>
+                            <div className="factors__results__fat_vl results-piece__vl">{formatDec(calculation.product.getFat(),0)}</div>
                         </div>
                         <div className="factors__results__carb results-piece">
-                            <div className="factors__results__carb_lbl results-piece__lbl">C</div>
-                            <div className="factors__results__carb_vl results-piece__vl">{123}</div>
+                            <div className="factors__results__carb_lbl results-piece__lbl">{__('c')}</div>
+                            <div className="factors__results__carb_vl results-piece__vl">{formatDec(calculation.product.getCarb(),0)}</div>
                         </div>
                         <div className="factors__results__gi results-piece">
-                            <div className="factors__results__gi_lbl results-piece__lbl">GI</div>
-                            <div className="factors__results__gi_vl results-piece__vl">{12}</div>
+                            <div className="factors__results__gi_lbl results-piece__lbl">{__('gi')}</div>
+                            <div className="factors__results__gi_vl results-piece__vl">{calculation.product.gi}</div>
                         </div>
                         <div className="factors__results__calorie results-piece">
-                            <div className="factors__results__calorie_lbl results-piece__lbl">kC</div>
-                            <div className="factors__results__calorie_vl results-piece__vl">{858}</div>
+                            <div className="factors__results__calorie_lbl results-piece__lbl">{__('kcal')}</div>
+                            <div className="factors__results__calorie_vl results-piece__vl">{formatDec(calculation.product.getCalor(),0)}</div>
                         </div>
                         <div className="factors__results__gl results-piece">
-                            <div className="factors__results__gl_lbl results-piece__lbl">GL</div>
-                            <div className="factors__results__gl_vl results-piece__vl">{21}</div>
+                            <div className="factors__results__gl_lbl results-piece__lbl">{__('gl')}</div>
+                            <div className="factors__results__gl_vl results-piece__vl">{formatDec(calculation.product.getGLIndx(),0)}</div>
                         </div>
                     </div>
                     <div
@@ -364,23 +484,26 @@ export default function MenuPane()
                         onClick={() => setShowDetails(!showDetails)}
                     >
                         <div className="doses-sign">+</div>
-                        <div className="doses-quick"><span className="dose-label">qck</span>6.0</div>
-                        <div className="doses-slow"><span className="dose-label">sl</span>4.1</div>
-                        <div className="doses-sum"><span className="dose-label">=&nbsp;Σ</span>10.1</div>
+                        <div className="doses-quick"><span className="dose-label">{__('dose_quick')}</span>{formatDec(calculation.dose.getQuick(),1)}</div>
+                        <div className="doses-slow"><span className="dose-label">{__('dose_slow')}</span>{formatDec(calculation.dose.getSlow(),1)}</div>
+                        <div className="doses-sum"><span className="dose-label">=&nbsp;{__('dose_sum')}</span>{formatDec(calculation.dose.getWholeD(),1)}</div>
 
-                        <div className="doses-detail-quick1"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + Qcarb</span>4.3
+                        <div className="doses-detail-quick1"><span className="dose-label">({__('dose_dps')}</span>{formatDec(calculation.dose.getDPS(),1)}
+                            <span className="dose-label"> + {__('dose_q_carb')}</span>{formatDec(calculation.dose.getQCarbD(),1)}
                             <span className="dose-label">)</span></div>
-                        <div className="doses-detail-slow1"><span className="dose-label">(sl</span>1.8<span className="dose-label"> + SLfp</span>2.4
+                        <div className="doses-detail-slow1"><span className="dose-label">({__('dose_slow')}</span>{formatDec(calculation.dose.getSlCarbD(),1)}
+                            <span className="dose-label"> + {__('dose_sl_prot')}</span>{formatDec(calculation.dose.getSlow(),1)}
                             <span className="dose-label">)</span></div>
 
-                        <div className="doses-detail-quick2"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + carb</span>6.0
+                        <div className="doses-detail-quick2"><span className="dose-label">(dps</span>{formatDec(calculation.dose.getDPS(),1)}
+                            <span className="dose-label"> + {__('dose_carb')}</span>{formatDec(calculation.dose.getCarbD(),1)}
                             <span className="dose-label">)</span>
                         </div>
-                        <div className="doses-detail-slow2"><span className="dose-label">(fp</span>2.4)
+                        <div className="doses-detail-slow2"><span className="dose-label">({__('dose_prot_fat')}</span>{formatDec(calculation.dose.getProtFatD(),1)})
                         </div>
                     </div>
                     <div className="menu-pane__factors__scale">
-                        <Scale prot={10} fat={20} carb={70}/>
+                        <Scale prot={calculation.product.getProt()} fat={calculation.product.getFat()} carb={calculation.product.getCarb()}/>
                     </div>
                 </div>
             </div>

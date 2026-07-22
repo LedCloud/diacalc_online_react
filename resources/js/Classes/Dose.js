@@ -45,4 +45,12 @@ export default class Dose {
         console.log(this.getDPS(),this.getCarbD(),this.getProtFatD());
         return this.getDPS() + this.getCarbD() + this.getProtFatD();
     }
+
+    getQuick() {
+        return this.getDPS() + this.getQCarbD();
+    }
+
+    getSlow() {
+        return this.getSlCarbD() + this.getProtFatD();
+    }
 }
