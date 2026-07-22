@@ -4,7 +4,6 @@ import InfoPiece from "@/Components/Dashbord/InfoPiece.jsx";
 import { CiTrash, CiCirclePlus } from "react-icons/ci";
 import { GoPencil } from "react-icons/go";
 import Factor from "@/Classes/Factor.js";
-import Dose from "@/Classes/Dose.js";
 import MenuProduct from "@/Classes/MenuProduct.js";
 import valueCalculator from "@/Classes/MenuCalulator.js";
 import {useForm} from "@inertiajs/react";
@@ -22,6 +21,8 @@ export default function MenuPane()
     // 1. По-прежнему берем данные из Inertia
     //props (read-only snapshot)
     const {settings, menu_masks, factors, menu_items, eating} = usePage().props;
+
+    console.log('Factors', factors);
 
     // 2. Инициализируем форму. Первичный источник правды для UI теперь data.items
     //local working copy (editable).
@@ -68,7 +69,7 @@ export default function MenuPane()
         data.eating.k3,
         data.eating.gl1,
         data.eating.gl2,
-        settings.be
+        data.eating.be
     );
 
     // 3. СИНХРОНИЗАЦИЯ: Если Laravel обновит menu_items (например, прилетит новый список),
@@ -99,6 +100,7 @@ export default function MenuPane()
     const [glucose1, setGlucose1] = useState(new Glucose(factor.gl1));
     const [glucose2, setGlucose2] = useState(new Glucose(factor.gl2));
     const [ouv, setOUV] = useState(new Glucose(factor.k3));
+
     const [k1, setK1] = useState(factor.k1);
 
     const deleteItem = (id) => {
@@ -125,33 +127,6 @@ export default function MenuPane()
     }).filter(e => e.show)
             .map(item => [item.name, item.mask]));
 
-    const results = [];
-
-    data.menu_items?.forEach(item => {
-        const product = new MenuProduct(item.name,item.id, item.weight,
-            item.prot, item.fat, item.carb, item.gi, 0);
-
-        const dose = new Dose(product, factor);
-
-        const pieces = Object.entries(mask_arr).map(([mask, index]) => {
-            const {val,precision} = valueCalculator(item, mask, settings, factor);
-            return {
-                name: mask,
-                value: val,
-                precision:precision
-            };
-        });
-
-        const result = {
-            id: item.id,
-            product: product,
-            info_pieces: pieces.map(piece => {
-                return <InfoPiece key={`piece_${item.id}_${piece.name}`} title={piece.name} value={piece.value} precision={piece.precision}/>
-            })
-        };
-        results.push(result);
-    });
-
     const [showDetails , setShowDetails] = useState(false);
 
     const setMenuItemWeightAndSave = (id, value) => {
@@ -166,6 +141,7 @@ export default function MenuPane()
             preserveScroll: true,
         });
     };
+
     const updateGlucose = (val, field) => {
         setActiveField({ id: field, val: val });
 
@@ -184,14 +160,10 @@ export default function MenuPane()
                     case 'ouv': setOUV(newGl);
                         break;
                 }
-            } else {
-                switch (field) {
-                    case "k1": setK1(val);
-                        break;
-                }
             }
         }
     };
+
     const formatGlucose = (val, field) => {
         const parsed = parseFloat(val);
         if (!isNaN(parsed) && !val.endsWith('.')) {
@@ -207,18 +179,7 @@ export default function MenuPane()
                     case 'ouv': setOUV(newGl);
                         break;
                 }
-            } else {
-                switch (field) {
-                    case 'k1':
-                        const formatted = parsed.toFixed(2);
-                        const copy = new Factor(0,0,0,0,0,0);
-                        copy.clone(factor);
-                        copy.k1 = formatted;
-                        setData();
-                        break;
-                }
             }
-
         }
         setActiveField({ id: null, val: '' });
 
@@ -230,10 +191,34 @@ export default function MenuPane()
         });
     };
 
+    const parseDec = (s) => parseFloat(String(s).replace(',', '.'));
+    const formatDec = (n, fractions) =>
+        Number(n).toFixed(fractions).replace('.', ',');
+
+    const updateFactor = (val, field) => {
+        setActiveField({ id: field, val: val });
+    };
+
+    const formatFactor = (val, field) => {
+        const parsed = parseDec(val);
+        if (!isNaN(parsed) && !/[.,]$/.test(val)) {
+            let fractions = 0;
+            if (field === 'k1' || field === 'k2') {
+                fractions = 2;
+            }
+            setData('eating', { ...data.eating, [field]: Number(parsed.toFixed(fractions)) });
+        }
+        //release latch
+        setActiveField({ id: null, val: '' });
+    };
+
     const valGlucose1 = activeField.id === 'glucose1' ? activeField.val : glucose1.getView(formGlConfig());
     const valGlucose2 = activeField.id === 'glucose2' ? activeField.val : glucose2.getView(formGlConfig());
-    const valOUV = activeField.id === 'ouv' ? activeField.val : ouv.getView(formGlConfig());
-    const valK1 = activeField.id === 'k1' ? activeField.val : factor.k1;
+    const valOUV = activeField.id === 'ouv' ? activeField.val : ouv.getView({...formGlConfig(), precision: 2});
+
+    const valK1 = activeField.id === 'k1' ? activeField.val : formatDec(data.eating.k1, 2);
+    const valK2 = activeField.id === 'k2' ? activeField.val : formatDec(data.eating.k2, 2);
+    const valBE = activeField.id === 'be' ? activeField.val : formatDec(data.eating.be, 0);
 
     return (
         <div className="menu-pane">
@@ -244,25 +229,52 @@ export default function MenuPane()
                 <div className="menu-pane__actions__trash btn"><CiTrash /></div>
             </div>
             <div className="menu-pane__menu">
-                {results.map(item => (
-                    <div className="menu-item" key={item.id}>
-                        <div className="menu-item__name">{item.product.name}</div>
-                        <div  className="menu-item__info">
-                            {item.info_pieces.map(piece => piece)}
-                        </div>
-                        <div className="menu-item__weight">
-                            <CalculableInput
-                                valueIn={item.product.weight}
-                                setHandler={(val) => setMenuItemWeightAndSave(item.id, val)}
+                {(data.menu_items ?? []).map(item => {
+                    const product = new MenuProduct(item.name, item.id, item.weight,
+                        item.prot, item.fat, item.carb, item.gi, 0);
+
+                    const info_pieces = Object.entries(mask_arr).map(([mask]) => {
+                        const {val, precision} = valueCalculator(item, mask, settings, factor);
+                        return (
+                            <InfoPiece
+                                key={`piece_${item.id}_${mask}`}
+                                title={mask}
+                                value={val}
+                                precision={precision}
                             />
+                        );
+                    });
+
+                    return (
+                        <div className="menu-item" key={item.id}>
+                            <div className="menu-item__name">{product.name}</div>
+                            <div className="menu-item__info">
+                                {info_pieces}
+                            </div>
+                            <div className="menu-item__weight">
+                                <CalculableInput
+                                    valueIn={product.weight}
+                                    setHandler={(val) => setMenuItemWeightAndSave(item.id, val)}
+                                />
+                            </div>
+                            <div className="menu-item__close btn"
+                                 onClick={() => {deleteItem(item.id)}}
+                            >X</div>
                         </div>
-                        <div className="menu-item__close btn"
-                             onClick={() => {deleteItem(item.id)}}
-                        >X</div>
-                    </div>
-                ))}
+                    );
+                })}
 
                 <div className="menu-pane__factors">
+                    <div className="menu-pane__factors__select">
+                        <select className="factors-selector" value={current_factor?.id ?? ''}>
+                            {Object.values(factors ?? {}).map((f) => {
+                                 const gl = new Glucose(f.k3);
+                                 return (
+                                    <option key={f.id} value={f.id}>{f.time} k1={f.k1} k2={f.k2} OUV={gl.getView(formGlConfig())}</option>
+                                 );
+                        })}
+                        </select>
+                    </div>
                     <div className="menu-pane__factors__k1 factor">
                         <label htmlFor="factors-k1">k1</label>
                         <input
@@ -270,13 +282,19 @@ export default function MenuPane()
                             name="k1"
                             value={valK1}
                             onFocus={(e) => e.target.select()}
-                            onChange={(e) => updateGlucose(e.target.value, e.target.name)}
-                            onBlur={(e) => formatGlucose(e.target.value, e.target.name)}
+                            onChange={(e) => updateFactor(e.target.value, e.target.name)}
+                            onBlur={(e) => formatFactor(e.target.value, e.target.name)}
                         />
                     </div>
                     <div className="menu-pane__factors__k2 factor">
                         <label htmlFor="factors-k2">k2</label>
-                        <input id="factors-k2" value={current_factor.k2} />
+                        <input id="factors-k2"
+                               name="k2"
+                               value={valK2}
+                               onFocus={(e) => e.target.select()}
+                               onChange={(e) => updateFactor(e.target.value, e.target.name)}
+                               onBlur={(e) => formatFactor(e.target.value, e.target.name)}
+                           />
                     </div>
                     <GlucoseInput
                         className="menu-pane__factors__k3 factor"
@@ -307,7 +325,13 @@ export default function MenuPane()
                     />
                     <div className="menu-pane__factors__be factor">
                         <label htmlFor="factors-be">BE</label>
-                        <input id="factors-be" value={settings.be} />
+                        <input id="factors-be"
+                               name="be"
+                               value={valBE}
+                               onFocus={(e) => e.target.select()}
+                               onChange={(e) => updateFactor(e.target.value, e.target.name)}
+                               onBlur={(e) => formatFactor(e.target.value, e.target.name)}
+                        />
                     </div>
                     <div className="menu-pane__factors__results">
                         <div className="factors__results__prot results-piece">
@@ -335,25 +359,24 @@ export default function MenuPane()
                             <div className="factors__results__gl_vl results-piece__vl">{21}</div>
                         </div>
                     </div>
-                    <div className="menu-pane__factors__grand-total" onClick={() => setShowDetails(!showDetails)}>
+                    <div
+                        className={`menu-pane__factors__grand-total${showDetails ? ' is-open' : ''}`}
+                        onClick={() => setShowDetails(!showDetails)}
+                    >
                         <div className="doses-sign">+</div>
                         <div className="doses-quick"><span className="dose-label">qck</span>6.0</div>
                         <div className="doses-slow"><span className="dose-label">sl</span>4.1</div>
                         <div className="doses-sum"><span className="dose-label">=&nbsp;Σ</span>10.1</div>
 
-                        <div style={{ display: showDetails ? 'block' : 'none' }}
-                            className="doses-detail-quick1"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + Qcarb</span>4.3
+                        <div className="doses-detail-quick1"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + Qcarb</span>4.3
                             <span className="dose-label">)</span></div>
-                        <div style={{ display: showDetails ? 'block' : 'none' }}
-                            className="doses-detail-slow1"><span className="dose-label">(sl</span>1.8<span className="dose-label"> + SLfp</span>2.4
+                        <div className="doses-detail-slow1"><span className="dose-label">(sl</span>1.8<span className="dose-label"> + SLfp</span>2.4
                             <span className="dose-label">)</span></div>
 
-                        <div style={{ display: showDetails ? 'block' : 'none' }}
-                             className="doses-detail-quick2"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + carb</span>6.0
+                        <div className="doses-detail-quick2"><span className="dose-label">(dps</span>1.7<span className="dose-label"> + carb</span>6.0
                             <span className="dose-label">)</span>
                         </div>
-                        <div style={{ display: showDetails ? 'block' : 'none' }}
-                             className="doses-detail-slow2"><span className="dose-label">(fp</span>2.4)
+                        <div className="doses-detail-slow2"><span className="dose-label">(fp</span>2.4)
                         </div>
                     </div>
                     <div className="menu-pane__factors__scale">

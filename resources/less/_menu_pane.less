@@ -56,11 +56,18 @@
         margin: 5px 0;
         display: grid;
         grid-template-areas:
+            "select select select results"
             "k1 k2 k3 results"
             "gl1 gl2 be results"
             "doses doses doses results"
             "scale scale scale scale";
         gap: 5px;
+        &__select {
+            grid-area: select;
+            .factors-selector {
+                width: 100%;
+            }
+        }
         .factor {
             display: flex;
             /*grid-template-columns: 30px 1fr;*/
@@ -163,16 +170,18 @@
             /*background-color: #00aa00;*/
             grid-area: doses;
             display: grid;
-            grid-template-areas: "quick sign slow sum"
-                               "detail_q1 sign detail_sl1 sum"
-                                "detail_q2 sign detail_sl2 sum";
+            /* Closed: one row so + / = align with the values */
+            grid-template-areas: "quick sign slow sum";
+            grid-template-columns: auto auto auto auto;
             gap: 5px;
             justify-content: center;
-            align-items: center;
+            align-items: baseline;
             font-weight: 600;
             font-size: 1.05rem;
+
             .doses-sign {
                 grid-area: sign;
+                align-self: center;
             }
             .doses-quick {
                 grid-area: quick;
@@ -182,22 +191,41 @@
             }
             .doses-sum {
                 grid-area: sum;
+                align-self: center;
             }
             .doses-detail-quick1 {
                 grid-area: detail_q1;
+                display: none;
             }
             .doses-detail-slow1 {
                 grid-area: detail_sl1;
+                display: none;
             }
             .doses-detail-quick2 {
                 grid-area: detail_q2;
+                display: none;
             }
             .doses-detail-slow2 {
                 grid-area: detail_sl2;
+                display: none;
             }
             .dose-label {
                 font-size: 0.7rem;
                 font-weight: 400;
+            }
+
+            &.is-open {
+                grid-template-areas:
+                    "quick sign slow sum"
+                    "detail_q1 sign detail_sl1 sum"
+                    "detail_q2 sign detail_sl2 sum";
+
+                .doses-detail-quick1,
+                .doses-detail-slow1,
+                .doses-detail-quick2,
+                .doses-detail-slow2 {
+                    display: block;
+                }
             }
         }
     }
