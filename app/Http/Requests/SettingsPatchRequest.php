@@ -39,12 +39,18 @@ class SettingsPatchRequest extends FormRequest
 
         if (isset($this->is_mmol)) {
             $validated['is_mmol'] = (int)$this->is_mmol;
+        } else {
+            $validated['is_mmol'] = 0;
         }
         if (isset($this->is_plasma)) {
             $validated['is_plasma'] = (int)$this->is_plasma;
+        } else {
+            $validated['is_plasma'] = 0;
         }
         if (isset($this->use_freq)) {
             $validated['use_freq'] = !empty($this->use_freq) ? intval($this->use_freq === 'use') : 0;
+        } else {
+            $validated['use_freq'] = 0;
         }
 
         return $validated;

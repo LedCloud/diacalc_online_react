@@ -47,6 +47,17 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
         ->name('dashboard.deleteitem');
     Route::post('/dashboard/groups/{group}/move', [App\Http\Controllers\DashbordController::class, 'moveGroup'])
         ->name('dashboard.groups.move');
+    Route::get('/dashboard/groups/{group}/products', [App\Http\Controllers\DashbordController::class, 'getProducts'])
+        ->name('dashboard.groups.products')
+        ->whereNumber('group');
+    Route::get('/dashboard/products/search', [App\Http\Controllers\DashbordController::class, 'searchProducts'])
+        ->name('dashboard.products.search');
+    Route::post('/dashboard/products/{product}/add-to-menu', [App\Http\Controllers\DashbordController::class, 'addProductToMenu'])
+        ->name('dashboard.products.add_to_menu');
+    Route::patch('/dashboard/products/{product}', [App\Http\Controllers\DashbordController::class, 'updateProduct'])
+        ->name('dashboard.products.update');
+    Route::delete('/dashboard/products/{product}', [App\Http\Controllers\DashbordController::class, 'deleteProduct'])
+        ->name('dashboard.products.delete');
 
     Route::get('/calculations', function () {
         if (auth()) {

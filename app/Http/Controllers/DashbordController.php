@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Settings\MenuInfo;
 use App\Models\Menu;
+use App\Models\Product;
 use App\Models\ProductGroup;
 use App\Services\CalculateFactorsService;
 use Illuminate\Support\Facades\Log;
@@ -118,6 +119,111 @@ class DashbordController
         }
 
         return redirect()->back();
+    }
+
+    public function getProducts(int $group)
+    {
+        $fields = ['id', 'name', 'prot', 'fat', 'carb', 'gi'];
+
+        if ($group === 0) {
+            $setting = auth()->user()->getSetting('User');
+            if ((int) ($setting['use_freq'] ?? 0) !== 1) {
+                abort(404);
+            }
+
+            $groupIds = auth()->user()->productGroups()->pluck('id');
+            $limit = max(0, (int) ($setting['freq_qty'] ?? 0));
+
+            $products = Product::query()
+                ->whereIn('product_group_id', $groupIds)
+                ->orderByDesc('used')
+                ->limit($limit)
+                ->get($fields);
+
+            return response()->json($products);
+        }
+
+        $productGroup = ProductGroup::query()
+            ->where('id', $group)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $products = $productGroup->products()->orderBy('name')->get($fields);
+
+        return response()->json($products);
+    }
+
+    public function searchProducts(Request $request)
+    {
+        $validated = $request->validate([
+            'q' => 'required|string|min:3|max:255',
+        ]);
+
+        $like = '%' . addcslashes($validated['q'], '%_\\') . '%';
+        $groupIds = auth()->user()->productGroups()->pluck('id');
+
+        $products = Product::query()
+            ->whereIn('product_group_id', $groupIds)
+            ->where('name', 'like', $like)
+            ->orderBy('name')
+            ->limit(50)
+            ->get(['id', 'name', 'product_group_id']);
+
+        return response()->json($products);
+    }
+
+    public function addProductToMenu(Product $product)
+    {
+        $this->authorizeUserProduct($product);
+
+        auth()->user()->menus()->create([
+            'name' => $product->name,
+            'prot' => $product->prot,
+            'fat' => $product->fat,
+            'carb' => $product->carb,
+            'gi' => $product->gi,
+            'weight' => 0,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function updateProduct(Request $request, Product $product)
+    {
+        $this->authorizeUserProduct($product);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'prot' => 'numeric|min:0',
+            'fat' => 'numeric|min:0',
+            'carb' => 'numeric|min:0',
+            'gi' => 'integer|min:0|max:255',
+        ]);
+
+        $product->update($validated);
+
+        return redirect()->back();
+    }
+
+    public function deleteProduct(Product $product)
+    {
+        $this->authorizeUserProduct($product);
+
+        $product->delete();
+
+        return redirect()->back();
+    }
+
+    protected function authorizeUserProduct(Product $product): void
+    {
+        $owned = Product::query()
+            ->whereKey($product->id)
+            ->whereHas('productGroup', fn ($q) => $q->where('user_id', auth()->id()))
+            ->exists();
+
+        if (!$owned) {
+            abort(403);
+        }
     }
 
     public function index()

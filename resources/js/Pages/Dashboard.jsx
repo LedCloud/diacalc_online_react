@@ -28,6 +28,7 @@ export default function Dashboard() {
 
     return (
         <AuthenticatedLayout
+            className="single-page"
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
                     Dashboard
@@ -37,8 +38,8 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             <PageContainer>
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div className="p-6 text-gray-900">
+                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg h-full">
+                    <div className="p-6 text-gray-900 h-full min-h-0">
                         <Accordion items={items}/>
                     </div>
                 </div>
