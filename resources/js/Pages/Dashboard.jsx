@@ -4,6 +4,7 @@ import React, {useMemo} from 'react';
 import PageContainer from "@/Components/PageContainer.jsx";
 import Accordion from "@/Components/Accordion.jsx";
 import MenuPane from "@/Components/Dashbord/MenuPane.jsx";
+import ProductsPane from "@/Components/Dashbord/ProductsPane.jsx";
 import {useTrans} from "@/Hooks/useTrans.jsx";
 
 export default function Dashboard() {
@@ -12,6 +13,7 @@ export default function Dashboard() {
     // Stable element identity so Accordion does not receive a fresh <MenuPane />
     // on every Dashboard render (avoids unnecessary reconcile churn).
     const menuPane = useMemo(() => <MenuPane />, []);
+    const productsPane = useMemo(() => <ProductsPane />, []);
 
     const items = useMemo(() => [
         {
@@ -20,9 +22,9 @@ export default function Dashboard() {
         },
         {
             title: __('products'),
-            content: <div>Content Second</div>,
+            content: productsPane,
         },
-    ], [__, menuPane]);
+    ], [__, menuPane, productsPane]);
 
     return (
         <AuthenticatedLayout

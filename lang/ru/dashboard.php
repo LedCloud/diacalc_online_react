@@ -39,4 +39,8 @@ return [
     'dose_prot_fat' => 'БЖ',
     'dose_carb' => 'угл',
     'dose_sum' => 'Σ',
+    'freq_used' => 'Часто используемые',
+    'move_up' => 'Вверх',
+    'move_down' => 'Вниз',
+    'close' => 'Закрыть',
 ];

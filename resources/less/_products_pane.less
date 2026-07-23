@@ -1,0 +1,119 @@
+.products-pane {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    min-height: 200px;
+
+    @media screen and (min-width: 768px) {
+        grid-template-columns: minmax(180px, 1fr) 3fr;
+        grid-template-rows: 1fr;
+        min-height: 280px;
+    }
+
+    &__groups-compact {
+        display: grid;
+        grid-template-columns: 40px auto 40px;
+        gap: 2px;
+        align-items: baseline;
+
+        &__left,
+        &__right,
+        &__name {
+            background-color: #F1F5F9;
+            border-radius: @border-radius;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        @media screen and (min-width: 768px) {
+            display: none;
+        }
+    }
+
+    &__groups-full {
+        display: none;
+
+        @media screen and (min-width: 768px) {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+            overflow: hidden;
+        }
+    }
+
+    &__toolbar {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        align-items: baseline;
+        flex-shrink: 0;
+
+        &--popup {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+            margin-bottom: 4px;
+        }
+
+        &__moves {
+            display: flex;
+            flex-direction: row;
+            gap: 4px;
+            align-items: center;
+        }
+
+        &__close {
+            margin-left: auto;
+            align-self: flex-end;
+        }
+
+        &__btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #334155;
+
+            &:disabled {
+                opacity: 0.35;
+                cursor: not-allowed;
+            }
+
+            &:not(:disabled):hover {
+                color: #0f172a;
+            }
+        }
+    }
+
+    &__popup-list {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-bottom: 4px;
+    }
+
+    &__list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        .group-item {
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 3px;
+            padding: 4px 6px;
+            cursor: pointer;
+        }
+    }
+
+    &__products {
+        min-height: 0;
+        // Products list will go here
+    }
+}

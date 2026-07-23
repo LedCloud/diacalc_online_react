@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Settings\MenuInfo;
 use App\Models\Menu;
+use App\Models\ProductGroup;
 use App\Services\CalculateFactorsService;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -73,6 +74,52 @@ class DashbordController
 
         return redirect()->back();
     }
+    public function moveGroup(Request $request, ProductGroup $group)
+    {
+        if ($group->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'direction' => 'required|in:up,down',
+        ]);
+
+        $groups = auth()->user()->productGroups()->get()->values();
+        $ids = $groups->pluck('id')->all();
+        $index = array_search($group->id, $ids, true);
+
+        if ($index === false || count($ids) < 2) {
+            return redirect()->back();
+        }
+
+        $direction = $validated['direction'];
+        $count = count($ids);
+
+        if ($direction === 'up') {
+            if ($index === 0) {
+                $item = array_shift($ids);
+                $ids[] = $item;
+            } else {
+                [$ids[$index - 1], $ids[$index]] = [$ids[$index], $ids[$index - 1]];
+            }
+        } else {
+            if ($index === $count - 1) {
+                $item = array_pop($ids);
+                array_unshift($ids, $item);
+            } else {
+                [$ids[$index], $ids[$index + 1]] = [$ids[$index + 1], $ids[$index]];
+            }
+        }
+
+        foreach ($ids as $sortOrder => $id) {
+            ProductGroup::where('id', $id)
+                ->where('user_id', auth()->id())
+                ->update(['sort_order' => $sortOrder + 1]);
+        }
+
+        return redirect()->back();
+    }
+
     public function index()
     {
         $menus = auth()->user()->menus;
@@ -87,6 +134,26 @@ class DashbordController
         $masks = MenuInfo::getAllNamed();
         unset($masks['true'], $masks['false']);
 
+        $groups = auth()->user()->productGroups()
+            ->get(['id', 'name', 'sort_order'])
+            ->map(fn (ProductGroup $group) => [
+                'id' => $group->id,
+                'name' => $group->name,
+                'sort_order' => $group->sort_order,
+                'virtual' => false,
+            ])
+            ->values()
+            ->all();
+
+        if ((int) ($setting['use_freq'] ?? 0) === 1) {
+            array_unshift($groups, [
+                'id' => 0,
+                'name' => __('dashboard.freq_used'),
+                'sort_order' => null,
+                'virtual' => true,
+            ]);
+        }
+
         return Inertia::render('Dashboard',
             [
                 'eating' => auth()->user()->eating,
@@ -94,6 +161,7 @@ class DashbordController
                 'settings' => $setting,
                 'menu_masks' => $masks,
                 'factors' => $factors,
+                'groups' => $groups,
             ]
         );
     }

@@ -45,6 +45,8 @@ Route::middleware(['auth', \App\Http\Middleware\InjectRouteTranslations::class])
         ->name('dashboard.updatefactors');
     Route::delete('/dashboard/updatemenu/{menu}', [App\Http\Controllers\DashbordController::class, 'delete'])
         ->name('dashboard.deleteitem');
+    Route::post('/dashboard/groups/{group}/move', [App\Http\Controllers\DashbordController::class, 'moveGroup'])
+        ->name('dashboard.groups.move');
 
     Route::get('/calculations', function () {
         if (auth()) {

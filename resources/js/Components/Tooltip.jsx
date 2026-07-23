@@ -1,10 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Children, isValidElement } from 'react';
 import { createPortal } from 'react-dom';
+
+function childHasBtnClass(children) {
+    return Children.toArray(children).some(
+        (child) =>
+            isValidElement(child) &&
+            typeof child.props.className === 'string' &&
+            child.props.className.split(/\s+/).includes('btn')
+    );
+}
 
 export default function Tooltip({ text, children }) {
     const [visible, setVisible] = useState(false);
     const [coords, setCoords] = useState({ top: 0, left: 0 });
     const triggerRef = useRef(null);
+    const cursor = childHasBtnClass(children) ? 'pointer' : 'help';
 
     const handleMouseEnter = () => {
         if (!triggerRef.current) return;
@@ -32,7 +42,7 @@ export default function Tooltip({ text, children }) {
                 onMouseLeave={handleMouseLeave}
                 onFocus={handleMouseEnter}
                 onBlur={handleMouseLeave}
-                style={{ display: 'inline-block', cursor: 'help' }}
+                style={{ display: 'inline-block', cursor }}
                 tabIndex="-1"
                 className="tooltip"
             >

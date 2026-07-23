@@ -39,4 +39,8 @@ return [
     'dose_prot_fat' => 'PF',
     'dose_carb' => 'carb',
     'dose_sum' => 'Σ',
+    'freq_used' => 'Frequently used',
+    'move_up' => 'Move up',
+    'move_down' => 'Move down',
+    'close' => 'Close',
 ];

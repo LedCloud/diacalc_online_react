@@ -99,6 +99,10 @@
     cursor: help;
     /*border-bottom: 1px dashed #666;*/ /* Визуальный маркер, что элемент интерактивен */
     z-index: 1000;
+
+    &:has(.btn) {
+        cursor: pointer;
+    }
 }
 
 /* Общие стили для самого тултипа (::after) и его стрелочки (::before) */
