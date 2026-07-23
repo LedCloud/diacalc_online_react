@@ -7,5 +7,9 @@ return [
     'carb' => 'Carbohydrates',
     'gi' => 'GI',
     'add_to_products' => 'Add to products',
-    'remove_from_products' => 'Remove from products',
+    'name' => 'Name',
+    'group' => 'Group',
+    'save' => 'Save',
+    'cancel' => 'Cancel',
+    'no_product_groups' => 'Create a product group first',
 ];

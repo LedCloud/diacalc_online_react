@@ -1,16 +1,18 @@
 import {useTrans} from "@/Hooks/useTrans.jsx";
-import {usePage} from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
 import {useEffect, useRef, useState} from "react";
 import {Dialog, DialogPanel, Transition, TransitionChild} from "@headlessui/react";
 import ContextMenu from "@/Components/ContextMenu.jsx";
 import Tooltip from "@/Components/Tooltip.jsx";
+import Modal from "@/Components/Modal.jsx";
+import InputOneLine from "@/Components/InputOneLine.jsx";
 
 export default function ArchivePage(){
     // 1. Создаем ссылку на DOM-элемент списка
     const listRef = useRef(null);
     const groupsListRef = useRef(null);
     const { __ } = useTrans();
-    const {groups, errors} = usePage().props;
+    const {groups, productGroups = []} = usePage().props;
     const [selectedGrId, setSelectedGrId] = useState(groups[0]?.id || null);
     //const [selectedPr, setSelectedPr] = useState(products.length ? products[0].id : 0);
     const [showGroupPopup, setShowGroupPopup] = useState(false);
@@ -20,6 +22,16 @@ export default function ArchivePage(){
     const [cache, setCache] = useState({});
 
     const [loading, setLoading] = useState(false);
+    const [contextProductId, setContextProductId] = useState(null);
+    const [showAddDialog, setShowAddDialog] = useState(false);
+    const [addData, setAddData] = useState({
+        name: '',
+        prot: '',
+        fat: '',
+        carb: '',
+        gi: '',
+        product_group_id: productGroups[0]?.id ?? null,
+    });
 
     const formatter = (val, fractions = 1) => {
         const parsed = parseFloat(val);
@@ -127,14 +139,15 @@ export default function ArchivePage(){
 
     const menuRef = useRef(null);
 
-    // Handle right-click on the specific target element
-    const handleContextMenu = (e) => {
-        e.preventDefault(); // Stop default browser menu
-
+    // Handle right-click on a product
+    const handleContextMenu = (e, productId) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setContextProductId(productId);
         setMenuSettings({
             visible: true,
-            x: e.clientX, // Mouse X position
-            y: e.clientY, // Mouse Y position
+            x: e.clientX,
+            y: e.clientY,
         });
     };
 
@@ -153,15 +166,52 @@ export default function ArchivePage(){
         return () => document.removeEventListener('click', handleClickOutside);
     }, [menuSettings.visible]);
 
+    const openAddDialog = (productId) => {
+        const product = products.find(p => p.id === productId);
+        if (!product) {
+            return;
+        }
+        if (!productGroups.length) {
+            window.alert(__('no_product_groups'));
+            return;
+        }
+        setAddData({
+            name: product.name ?? '',
+            prot: String(product.prot ?? ''),
+            fat: String(product.fat ?? ''),
+            carb: String(product.carb ?? ''),
+            gi: String(product.gi ?? ''),
+            product_group_id: productGroups[0].id,
+        });
+        setShowAddDialog(true);
+    };
+
+    const updateAddField = (value, name) => {
+        setAddData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const saveToProducts = () => {
+        if (!addData.product_group_id) {
+            return;
+        }
+        router.post(route('archive.add_to_products'), {
+            name: addData.name,
+            prot: addData.prot,
+            fat: addData.fat,
+            carb: addData.carb,
+            gi: addData.gi,
+            product_group_id: addData.product_group_id,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => setShowAddDialog(false),
+        });
+    };
+
     const menuItems = [
         {
             name: __("add_to_products"),
-            handler: () => alert(__("add_to_products"))
+            handler: () => openAddDialog(contextProductId),
         },
-        {
-            name: __("remove_from_products"),
-            handler: () => alert(__("remove_from_products")),
-        }
     ];
 
     const closeMenu = () => setMenuSettings(prev => ({ ...prev, visible: false }));
@@ -196,11 +246,15 @@ export default function ArchivePage(){
             </div>
         </div>
         <div ref={listRef}
-            className="products context-menu-box" onContextMenu={handleContextMenu}>
+            className="products context-menu-box">
             {loading ? <p>Loading...</p> : (
                 <>
                 {products.map(product => (
-                    <div className="product-item bg-slate-50 border-2  border-slate-600 rounded-lg" key={product.id}>
+                    <div
+                        className="product-item bg-slate-50 border-2  border-slate-600 rounded-lg"
+                        key={product.id}
+                        onContextMenu={(e) => handleContextMenu(e, product.id)}
+                    >
                         <div className="product-item__name">{product.name}</div>
                         <div className="product-item__description">
                             <Tooltip text={__("prot")}>{formatter(product.prot)}</Tooltip>-
@@ -259,5 +313,69 @@ export default function ArchivePage(){
                     </TransitionChild>
                 </Dialog>
             </Transition>
+
+            <Modal
+                show={showAddDialog}
+                onClose={() => setShowAddDialog(false)}
+                header={__('add_to_products')}
+                maxWidth="md"
+            >
+                <div className="py-3 px-4 flex flex-col gap-2">
+                    <InputOneLine
+                        value={addData.name}
+                        name="name"
+                        label={__('name')}
+                        onChange={updateAddField}
+                    />
+                    <InputOneLine
+                        value={addData.prot}
+                        name="prot"
+                        label={__('prot')}
+                        onChange={updateAddField}
+                    />
+                    <InputOneLine
+                        value={addData.fat}
+                        name="fat"
+                        label={__('fat')}
+                        onChange={updateAddField}
+                    />
+                    <InputOneLine
+                        value={addData.carb}
+                        name="carb"
+                        label={__('carb')}
+                        onChange={updateAddField}
+                    />
+                    <InputOneLine
+                        value={addData.gi}
+                        name="gi"
+                        label={__('gi')}
+                        onChange={updateAddField}
+                    />
+                    <div className="horizontal-group">
+                        <label htmlFor="product_group_id">{__('group')}</label>
+                        <select
+                            id="product_group_id"
+                            value={addData.product_group_id ?? ''}
+                            onChange={(e) => updateAddField(Number(e.target.value), 'product_group_id')}
+                        >
+                            {productGroups.map(group => (
+                                <option key={group.id} value={group.id}>{group.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className="flex gap-3 p-2">
+                    <button
+                        type="button"
+                        className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-blue-400 bg-sky-300"
+                        onClick={saveToProducts}
+                    >{__('save')}</button>
+                    <button
+                        type="button"
+                        className="px-2 py-1 w-24 rounded ring-2 ring-offset-1 ring-slate-400 bg-white"
+                        onClick={() => setShowAddDialog(false)}
+                    >{__('cancel')}</button>
+                </div>
+            </Modal>
         </div>);
 }

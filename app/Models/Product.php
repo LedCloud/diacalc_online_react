@@ -36,7 +36,7 @@ class Product extends Model
     }
 
     /**
-     * Contenct of the complex product
+     * Content of the complex product
      * @return HasMany
      */
     public function content()
