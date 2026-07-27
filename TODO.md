@@ -10,18 +10,26 @@
 - calc OUV fatal **done**
 - ---
 - test all three on mobile, tablet, desktop
-  - factors ok
-  - settings ok
-  - calculations ok
-- langvars for all three from back **done**
-- close dialog on ESC, click outside **done**
-- the hamburger menu is not working properly **done**
-- set BE to the settings from factors on migration from old diacalc **done**
-- Archive page
+  - [x] factors ok
+  - [x] settings ok
+  - [x] calculations ok
+- [x] langvars for all three from back **done**
+- [x] close dialog on ESC, click outside **done**
+- [x] the hamburger menu is not working properly **done**
+- [x] set BE to the settings from factors on migration from old diacalc **done**
+- [x] Archive page
+
+### pwa
+* [ ] think over the ability to start an app without the network
+* [ ] then we should cache the remote data in the local storage
+* [ ] once we get fresh data, put them to local storage to have the last actual copy of data
+* [ ] do not forget the refresh the browser cache once the app code is updated
+  <br>read more https://share.google/aimode/WocWEZTAiEWYePC98
+
+
 
 ---
-
-
+### info
 - Mobile (Base): 320px – 480px (Standard smartphones).
 - Large Phones / Small Tablets: 481px – 767px.
 - Tablets / Small Laptops: 768px – 1024px.

@@ -16,8 +16,6 @@ class DashbordController
     public function updateFactors(Request $request)
     {
         //{"factor":{"k1":1.49,"k2":0.28,"k3":1.33929,"gl1":10.7143,"gl2":5.35714,"be":12}}
-        Log::info('Got factors', $request->all());
-
         $validated = $request->validate([
             'factor' => 'required|array',
             'factor.k1' => 'numeric|min:0.01',
@@ -64,10 +62,17 @@ class DashbordController
             'menu_items.*.weight' => 'numeric|min:0|integer',
         ]);
 
-        $current_ids = auth()->user()->menus->pluck('id')->toArray();
+        $db_ids = auth()->user()->menus->pluck('id')->toArray();
+
+        //$valid_collection = collect($validated['menu_items']);
+        //$request_ids = $valid_collection->pluck('id');
+
+//        $to_update = $db_ids->intersect($request_ids);
+//        $to_delete = $db_ids->diff($request_ids);
+//        $to_create = $request_ids->diff($db_ids);
 
         $to_update = array_column($validated['menu_items'], 'id');
-        $to_delete = array_diff($current_ids, $to_update);
+        $to_delete = array_diff($db_ids, $to_update);
         auth()->user()->menus()->whereIn('id', $to_delete)->delete();
         foreach($validated['menu_items'] as $menu_data) {
             auth()->user()->menus()->where('id', $menu_data['id'])->update(['weight' => $menu_data['weight']]);
