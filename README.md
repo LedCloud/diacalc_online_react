@@ -12,7 +12,7 @@ I plan to make migration smooth for existing users. All data will be converted t
 
 If you can log in at [https://online.diacalc.ru/](https://online.diacalc.ru/), you should be able to log in at [https://react.diacalc.ru/](https://react.diacalc.ru/) as well.
 
-If you cannot log in, contact me at [connie@diacalc.ru](connie@diacalc.ru).
+If you cannot log in, contact me at connie@diacalc.ru.
 
 ### Recommendation
 
