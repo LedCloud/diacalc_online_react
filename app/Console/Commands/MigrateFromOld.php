@@ -269,7 +269,7 @@ class MigrateFromOld extends Command
 
     protected function moveArchive()
     {
-        return false;
+        //return false;
         $groups = DB::connection('old_diacalc')->select('SELECT id, name FROM arcgroups');
         if (!empty($groups)) {
             $group_ids = array_column($groups, 'id');
